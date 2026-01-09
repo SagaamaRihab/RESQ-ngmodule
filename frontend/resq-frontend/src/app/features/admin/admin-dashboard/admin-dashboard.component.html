@@ -1,0 +1,36 @@
+<div class="dashboard">
+
+  <!-- HEADER -->
+  <div class="dashboard-header">
+    <div>
+      <h1>Area Amministratore</h1>
+      <p>Gestione del sistema RESQ</p>
+    </div>
+
+    <div class="status">
+      <span class="badge admin">ADMIN</span>
+      <span class="badge online">Sistema attivo</span>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <div class="cards">
+
+    <div class="card corridors" (click)="goTo('corridors')">
+      <h3>🧱 Corridoi</h3>
+      <p>Gestisci blocchi e sblocchi</p>
+    </div>
+
+    <div class="card map" (click)="goTo('map')">
+      <h3>🗺️ Mappa edificio</h3>
+      <p>Visualizza la struttura</p>
+    </div>
+
+    <div class="card evacuation" (click)="goTo('evacuation')">
+      <h3>🚨 Evacuazioni</h3>
+      <p>Monitoraggio percorsi</p>
+    </div>
+
+  </div>
+
+</div>

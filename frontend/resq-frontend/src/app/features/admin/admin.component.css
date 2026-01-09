@@ -1,0 +1,49 @@
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.logo {
+  margin-bottom: 40px;
+  color: #38bdf8;
+}
+
+.sidebar nav a {
+  color: #cbd5f5;
+  text-decoration: none;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  color: #38bdf8;
+}
+
+.logout {
+  margin-top: auto;
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* CONTENUTO */
+.content {
+  flex: 1;
+  padding: 32px;
+  background: #f8fafc;
+}

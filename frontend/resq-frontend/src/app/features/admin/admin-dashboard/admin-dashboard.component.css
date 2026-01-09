@@ -1,0 +1,74 @@
+.dashboard {
+  padding: 40px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+  font-size: 32px;
+  margin: 0;
+}
+
+.dashboard-header p {
+  color: #666;
+}
+
+.status {
+  display: flex;
+  gap: 12px;
+}
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.badge.admin {
+  background: #0d6efd;
+  color: white;
+}
+
+.badge.online {
+  background: #198754;
+  color: white;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  padding: 28px;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #555;
+}
+
+/* colori */
+.card.corridors { border-left: 6px solid #0d6efd; }
+.card.map       { border-left: 6px solid #6f42c1; }
+.card.evacuation{ border-left: 6px solid #dc3545; }

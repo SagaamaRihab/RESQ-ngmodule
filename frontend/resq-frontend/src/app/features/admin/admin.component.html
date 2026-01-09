@@ -1,0 +1,21 @@
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2 class="logo">RESQ</h2>
+
+    <nav>
+      <a routerLink="/admin" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/admin/corridors">Gestione corridoi</a>
+      <a routerLink="/admin/map">Mappa edificio</a>
+    </nav>
+
+    <button class="logout">Logout</button>
+  </aside>
+
+  <!-- CONTENUTO -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>
