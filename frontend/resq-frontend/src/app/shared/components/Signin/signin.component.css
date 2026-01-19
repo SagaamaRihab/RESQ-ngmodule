@@ -4,6 +4,7 @@
     font-family: arial;
     color: #fff;
 }
+
 body{
     width: 100vw;
     height: 100vh;
@@ -12,9 +13,11 @@ body{
     justify-content: center;
     align-content: center;
 }
+
 ::-webkit-input-placeholder{
     color: #eee;
 }
+
 .wrapper{
     position: relative;
     width: 800px;
@@ -24,19 +27,23 @@ body{
     border: 3px solid #00ffff;
     box-shadow: 0 0 50px 0 #00a6bc;
 }
+
 .form{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
+
 .title{
     font-size: 35px;
 }
+
 .inp{
     padding-bottom: 10px;
     border-bottom: 2px solid #eee;
 }
+
 .input{
     border: none;
     outline: none;
@@ -46,8 +53,8 @@ body{
     padding-right: 10px;
     font-size: 17px;
     color: #0ef;
-
 }
+
 .submit{
     border: none;
     outline: none;
@@ -60,15 +67,18 @@ body{
     cursor: pointer;
     background: linear-gradient(45deg, #0ef, #c800ff);
 }
+
 .footer{
     margin-top: 30px;
     letter-spacing: 0.5px;
     font-size: 14px;
 }
+
 .link{
     color: #0ef;
     text-decoration: none;
 }
+
 .banner{
     position: absolute;
     top: 0;
@@ -84,17 +94,30 @@ body{
     justify-content: center;
     align-items: flex-end;
 }
+
 .wel_text{
     font-size: 20px;
     margin-top: -50px;
     line-height: 50px;
 }
+
 .para{
     margin-top: 10px;
     font-size: 18px;
     line-height: 24px;
     letter-spacing: 1px;
-}    
+}
 
+.success{
+    margin-top: 10px;
+    color: #00ffb3;
+    font-weight: 600;
+    text-align: center;
+}
 
-            
+.error{
+    margin-top: 10px;
+    color: #ff4d4d;
+    font-size: 14px;
+    text-align: center;
+}

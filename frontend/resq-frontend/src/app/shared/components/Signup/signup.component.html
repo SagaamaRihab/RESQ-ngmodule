@@ -41,7 +41,14 @@
                 <i class="fa-solid fa-lock"></i>
             </div>
 
-            <button class="submit" type="submit"  [disabled]="signupForm.invalid">Submit</button>
+            <button class="submit"
+                    type="submit"  
+                    [disabled]="signupForm.invalid || isLoading">
+                
+                <span *ngIf="!isLoading">Submit</span>
+                <span *ngIf="isLoading">Operazione in corso...</span>
+            </button>
+            
             <p class="footer"> Already have an account? <a routerLink="/signin" class="link">Signin</a> </p>
             
              <!-- errore -->

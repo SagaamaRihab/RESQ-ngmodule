@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -12,34 +11,47 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.css']
 })
-export class SigninComponent {
-
+export class SigninComponent implements OnInit {
   email = '';
   password = '';
   errorMessage = '';
+  successMessage = '';
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
-onLogin() {
-  this.authService.signin({
-    email: this.email,
-    password: this.password
-  }).subscribe({
-    next: (res) => {
-      this.router.navigate([res.role === 'ADMIN' ? '/admin' : '/user']);
-    },
-    error: () => {
-      this.errorMessage = 'Credenziali non valide';
+  ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get('registered')) {
+      this.successMessage = 'Registrazione completata con successo. Effettua il login.';
+
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {},
+        replaceUrl: true
+      });
     }
-  });
-}
+  }
 
+  onLogin(): void {
+    this.errorMessage = '';
 
-
-
-
-  
+    this.authService.signin({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: (res) => {
+        if (res.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/user/position']);
+        }
+          },
+      error: () => {
+        this.errorMessage = 'Credenziali non valide';
+      }
+    });
+  }
 }
