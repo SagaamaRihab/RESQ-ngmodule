@@ -1,54 +1,74 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-import { EvacuationService } from '../../core/services/evacuation.service';
-import { EvacuationResponse } from '../../core/models/evacuation-response.model';
-import { PathViewerComponent } from '../../shared/components/path-viewer/path-viewer.component';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
+import { EvacuationService, EvacuationResponse} from '../admin/evacuations/evacuation.service';
 
 @Component({
   selector: 'app-evacuation',
   standalone: true,
-  imports: [CommonModule, FormsModule, PathViewerComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './evacuation.component.html',
-  styleUrls: ['./evacuation.component.css']
+  styleUrls: ['./evacuation.component.css'],
 })
 export class EvacuationComponent {
+  loading = false;
+  errorMsg = '';
+  message = '';
 
   startNode = '';
-  response: EvacuationResponse | null = null;
-  loading = false;
-  error: string | null = null;
+  path: string[] = [];
+  blockedCorridors: string[] = [];
 
-  constructor(private evacuationService: EvacuationService) {}
+  constructor(
+    private evacuationService: EvacuationService,
+    private router: Router
+  ) {}
 
-  calculate(): void {
-  this.error = null;
-  this.response = null;
+  compute(): void {
+    const start = (this.startNode ?? '').trim();
+    if (!start) return;
 
-  if (!this.startNode.trim()) {
-    this.error = 'Inserisci un nodo di partenza';
-    return;
-  }
+    this.loading = true;
+    this.errorMsg = '';
+    this.message = '';
+    this.path = [];
+    this.blockedCorridors = [];
 
-  this.loading = true;
+    this.evacuationService.compute(start).subscribe({
+      next: (res: EvacuationResponse) => {
+        console.log('[EVAC] response', res);
 
-  this.evacuationService
-    .calculateEvacuation(this.startNode.trim())
-    .subscribe({
-      next: (res) => {
-        console.log('RISPOSTA BACKEND:', res); // 🔍 DEBUG
-        this.response = res;
+        this.path = Array.isArray(res?.path) ? res.path : [];
+        this.message = res?.message ?? '';
+        this.blockedCorridors = Array.isArray(res?.blockedCorridors)
+          ? res.blockedCorridors
+          : [];
+
+        
+        this.router.navigate(['/admin/map'], {
+          queryParams: {
+            startNode: start,
+            showPath: 1, // ✅ showPath (pas showPth)
+          },
+        });
+
         this.loading = false;
       },
-      error: (err) => {
-        console.error('ERRORE:', err); // 🔍 DEBUG
-        this.error = 'Errore nel calcolo del percorso';
-        this.loading = false;
-      }
-    });
-}
+      error: (err: unknown) => {
+        console.error('[EVAC] error', err);
 
+        if (err instanceof HttpErrorResponse) {
+          this.errorMsg = err.error?.message ?? err.message ?? 'Errore nel calcolo evacuazione';
+        } else {
+          this.errorMsg = 'Errore nel calcolo evacuazione';
+        }
+
+        this.loading = false;
+      },
+    });
+  }
 }

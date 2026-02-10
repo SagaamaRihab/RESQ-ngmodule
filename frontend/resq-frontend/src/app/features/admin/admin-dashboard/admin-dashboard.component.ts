@@ -1,19 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-
+  imports: [CommonModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent {
+export class AdminDashboardComponent implements OnInit {
+  adminName: string | null = null;
+
   constructor(private router: Router) {}
 
-  goTo(section: string) {
-    this.router.navigate(['admin', section]);
+  ngOnInit(): void {
+    const storedName = localStorage.getItem('username');
+    this.adminName = storedName ? storedName : null;
+  }
+
+  goTo(section: string): void {
+    this.router.navigate(['/admin', section]);
   }
 }
-

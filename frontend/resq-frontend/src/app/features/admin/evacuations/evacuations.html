@@ -1,1 +1,41 @@
-£££<p>evacuations works!</p>
+<div class="card">
+  <h2>Evacuazioni</h2>
+  <p>
+    Calcolare il percorso più breve verso l'uscita più vicina (corridori bloccati esclusi).
+  </p>
+
+  <div class="grid">
+    <div class="field">
+      <label>Edificio</label>
+      <select [(ngModel)]="building" (change)="onBuildingChange()">
+        <option *ngFor="let b of buildings" [value]="b.key">{{ b.label }}</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Nodo iniziale</label>
+      <select [(ngModel)]="startNode">
+        <option value="">-- seleziona nodo --</option>
+        <option *ngFor="let n of nodes" [value]="n">{{ n }}</option>
+      </select>
+    </div>
+
+    <div class="field actions">
+      <button class="btn" (click)="computeAndGoToMap()" [disabled]="loading || !startNode">
+        {{ loading ? 'Calcolo...' : 'Calcola evacuazione' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="hint">Nodi disponibili: {{ nodes.length }}</div>
+
+  <div *ngIf="loading" class="hint">Calcolo in corso...</div>
+  <div *ngIf="message && !errorMsg" class="hint"><strong>{{ message }}</strong></div>
+  <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+
+  
+  <div *ngIf="!loading && blockedCorridors.length" class="hint">
+    Corridori bloccati considerati:
+    <strong>{{ blockedCorridors.join(', ') }}</strong>
+  </div>
+</div>

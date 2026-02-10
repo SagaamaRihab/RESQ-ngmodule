@@ -1,20 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CorridorsComponent } from './corridors';
 
-import { Corridors } from './corridors';
-
-describe('Corridors', () => {
-  let component: Corridors;
-  let fixture: ComponentFixture<Corridors>;
+describe('CorridorsComponent', () => {
+  let component: CorridorsComponent;
+  let fixture: ComponentFixture<CorridorsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Corridors]
-    })
-    .compileComponents();
+      imports: [CorridorsComponent], // ✅ standalone
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Corridors);
+    fixture = TestBed.createComponent(CorridorsComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

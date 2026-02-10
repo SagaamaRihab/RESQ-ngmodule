@@ -1,57 +1,17 @@
-<div class="evacuation-layout">
+<h2>Evacuation</h2>
 
-  <!-- PANNELLO INFO -->
-  <div class="info-panel">
-    <h2>Emergency Evacuation<br />Support System</h2>
+<label>Nœud de départ</label>
+<input [(ngModel)]="startNode" placeholder="ex: B_I_12" />
 
-    
-  </div>
+<button (click)="compute()" [disabled]="loading || !startNode">
+  {{ loading ? 'Calcul...' : 'Calculer' }}
+</button>
 
-  <!-- PANNELLO OPERATIVO -->
-  <div class="form-panel">
-
-    <h1>Evacuation Route Planner</h1>
-
-    <div class="form-group">
-      <label for="start">Nodo di partenza</label>
-      <input
-        id="start"
-        type="text"
-        [(ngModel)]="startNode"
-        placeholder="Es. A101"
-      />
-    </div>
-
-    <button class="primary-btn" (click)="calculate()">
-      Calcola percorso di evacuazione
-    </button>
-
-    <div *ngIf="loading" class="status loading">
-      Calcolo del percorso in corso…
-    </div>
-
-    <div *ngIf="error" class="status error">
-      {{ error }}
-    </div>
-
-    <div *ngIf="response" class="status success">
-  <p class="message">{{ response.message }}</p>
-
-  <!-- Lista testuale -->
-  <ul *ngIf="response.path.length > 0" class="path-list">
-    <li *ngFor="let node of response.path">
-      {{ node }}
-    </li>
-  </ul>
-
-  <!-- Viewer grafico -->
-  <app-path-viewer
-    *ngIf="response.path.length > 0"
-    [path]="response.path">
-  </app-path-viewer>
-</div>
+<p *ngIf="errorMsg" style="color:red">{{ errorMsg }}</p>
 
 
-  </div>
+<p *ngIf="message"><b>{{ message }}</b></p>
 
-</div>
+<ol *ngIf="path.length">
+  <li *ngFor="let n of path">{{ n }}</li>
+</ol>

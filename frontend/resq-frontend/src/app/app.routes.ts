@@ -1,61 +1,54 @@
 import { Routes } from '@angular/router';
-import { EvacuationComponent } from './features/evacuation/evacuation.component';
+
+import { HomeComponent } from './features/home/home.component';
 import { SigninComponent } from './shared/components/Signin/signin.component';
 import { SignupComponent } from './shared/components/Signup/signup.component';
-import { HomeComponent } from './features/home/home.component';
-import { UserComponent } from './features/user/user.component';
-import { AdminComponent } from './features/admin/admin.component';
+
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
-import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
-import { Corridors } from './features/admin/corridors/corridors';
-import { Map } from './features/admin/map/map';
-import { Evacuations } from './features/admin/evacuations/evacuations'; 
-import { authGuard } from './guards/auth-guard';
-import { PositionComponent } from './features/user/position/position.component';
-
 
 export const routes: Routes = [
+  // HOME & AUTH
   { path: '', component: HomeComponent },
-
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
 
+  // ADMIN (protégé)
   {
-    path: 'evacuation',
-    component: EvacuationComponent,
-    canActivate: [AuthGuard]
-  },
-
-  {
-    path: 'user',
-    component: UserComponent,
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin/admin.component').then((m) => m.AdminComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'USER' }
+    data: { role: 'ADMIN' },
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/admin-dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent
+          ),
+      },
+      {
+        path: 'corridors',
+        loadComponent: () =>
+          import('./features/admin/corridors/corridors').then((m) => m.CorridorsComponent),
+      },
+      {
+        path: 'map',
+        loadComponent: () =>
+          import('./features/admin/map/map').then((m) => m.Map),
+      },
+      {
+        path: 'evacuations',
+        loadComponent: () =>
+          import('./features/admin/evacuations/evacuations').then(
+            (m) => m.EvacuationsComponent
+          ),
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    ],
   },
-  
-  {
-  path: 'user/position',
-  component: PositionComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'USER' }
-  },
 
-
-  {
-  path: 'admin',
-  component: AdminComponent, // ton layout (avec router-outlet)
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'ADMIN' },
-  children: [
-    { path: '', component: AdminDashboardComponent },
-    { path: 'corridors', component: Corridors },
-    { path: 'map', component: Map },
-    { path: 'evacuations', component: Evacuations },
-    { path: '**', redirectTo: '', pathMatch: 'full' }
-
-  ]
-}
-
-
+  // FALLBACK
+  { path: '**', redirectTo: '' },
 ];
