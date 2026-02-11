@@ -54,7 +54,11 @@ public class EvacuationPathService {
         }
 
         List<GraphNode> exits = nodes.values().stream()
-                .filter(n -> n.getId().startsWith("E"))
+                .filter(n ->
+                        n.getId().contains("EXIT") ||
+                                n.getId().endsWith("_ENTRANCE")
+                )
+
                 .toList();
 
         PathFindingStrategy strategy = new DijkstraStrategy();

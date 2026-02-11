@@ -1,0 +1,17 @@
+<h2>Evacuation</h2>
+
+<label>Nœud de départ</label>
+<input [(ngModel)]="startNode" placeholder="ex: B_I_12" />
+
+<button (click)="compute()" [disabled]="loading || !startNode">
+  {{ loading ? 'Calcul...' : 'Calculer' }}
+</button>
+
+<p *ngIf="errorMsg" style="color:red">{{ errorMsg }}</p>
+
+
+<p *ngIf="message"><b>{{ message }}</b></p>
+
+<ol *ngIf="path.length">
+  <li *ngFor="let n of path">{{ n }}</li>
+</ol>

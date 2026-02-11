@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+<<<<<<< HEAD
 
 import { HomeComponent } from './features/home/home.component';
 import { SigninComponent } from './shared/components/auth/Signin/signin.component';
@@ -27,10 +28,22 @@ export const routes: Routes = [
   // =====================
   // PUBLIC
   // =====================
+=======
+import { HomeComponent } from './features/home/home.component';
+import { SigninComponent } from './shared/components/Signin/signin.component';
+import { SignupComponent } from './shared/components/Signup/signup.component';
+
+import { AuthGuard } from './core/guards/auth.guard';
+import { RoleGuard } from './core/guards/role.guard';
+
+export const routes: Routes = [
+  // HOME & AUTH
+>>>>>>> d12f3495f6000279035466c8b05ea12879007f17
   { path: '', component: HomeComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
 
+<<<<<<< HEAD
   // =====================
   // USER AREA
   // =====================
@@ -79,4 +92,44 @@ export const routes: Routes = [
   // FALLBACK
   // =====================
   { path: '**', redirectTo: '' }
+=======
+  // ADMIN (protégé)
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin/admin.component').then((m) => m.AdminComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'ADMIN' },
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/admin-dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent
+          ),
+      },
+      {
+        path: 'corridors',
+        loadComponent: () =>
+          import('./features/admin/corridors/corridors').then((m) => m.CorridorsComponent),
+      },
+      {
+        path: 'map',
+        loadComponent: () =>
+          import('./features/admin/map/map').then((m) => m.Map),
+      },
+      {
+        path: 'evacuations',
+        loadComponent: () =>
+          import('./features/admin/evacuations/evacuations').then(
+            (m) => m.EvacuationsComponent
+          ),
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    ],
+  },
+
+  // FALLBACK
+  { path: '**', redirectTo: '' },
+>>>>>>> d12f3495f6000279035466c8b05ea12879007f17
 ];

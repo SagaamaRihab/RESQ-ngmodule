@@ -1,74 +1,126 @@
 .dashboard {
-  padding: 40px;
-}
-
-.dashboard-header {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-.dashboard-header h1 {
-  font-size: 32px;
-  margin: 0;
-}
-
-.dashboard-header p {
-  color: #666;
-}
-
-.status {
-  display: flex;
-  gap: 12px;
-}
-
-.badge {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.badge.admin {
-  background: #0d6efd;
-  color: white;
-}
-
-.badge.online {
-  background: #198754;
-  color: white;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  flex-direction: column;
   gap: 24px;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
 .card {
-  padding: 28px;
   border-radius: 14px;
-  background: white;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  padding: 18px;
+  color: white;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  transition: transform 0.18s ease;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
 }
 
-.card h3 {
-  margin-bottom: 10px;
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
 }
 
 .card p {
-  color: #555;
+  margin: 0;
+  opacity: 0.95;
 }
 
-/* colori */
-.card.corridors { border-left: 6px solid #0d6efd; }
-.card.map       { border-left: 6px solid #6f42c1; }
-.card.evacuation{ border-left: 6px solid #dc3545; }
+.card-corridors {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+}
+
+.card-map {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+}
+
+.card-evac {
+  background: linear-gradient(135deg, #ef4444, #fb7185);
+}
+
+.dashboard-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.widget {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+}
+
+.widget.welcome {
+  background: linear-gradient(135deg, #0ea5e9, #a855f7);
+  color: white;
+}
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.widget-grid .widget {
+  background: white;
+  color: #0f172a;
+}
+
+.widget.info {
+  border-left: 6px solid #0ea5e9;
+}
+
+.widget.success {
+  border-left: 6px solid #22c55e;
+}
+
+.widget.warning {
+  border-left: 6px solid #f59e0b;
+}
+
+.widget.actions {
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.actions-grid button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #6366f1, #38bdf8);
+}
+
+.map-hint {
+  margin: 8px 0 0;
+  opacity: 0.75;
+  font-size: 13px;
+}
+
+.share-btn {
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
