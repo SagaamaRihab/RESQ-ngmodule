@@ -1,61 +1,82 @@
 import { Routes } from '@angular/router';
-import { EvacuationComponent } from './features/evacuation/evacuation.component';
-import { SigninComponent } from './shared/components/Signin/signin.component';
-import { SignupComponent } from './shared/components/Signup/signup.component';
+
+
 import { HomeComponent } from './features/home/home.component';
+import { SigninComponent } from './shared/components/auth/Signin/signin.component';
+import { SignupComponent } from './shared/components/auth/Signup/signup.component';
+import { EvacuationComponent } from './features/user/pages/evacuation/evacuation.component';
+
 import { UserComponent } from './features/user/user.component';
+import { UserDashboardComponent } from './features/user/pages/dashboard/user-dashboard.component';
+import { UserMapComponent } from './features/user/pages/map/user-map.component';
+import { InstructionsComponent } from './features/user/pages/instructions/instruction.component';
+import { UserProfileComponent } from './features/user/profile/profile.component';
+
 import { AdminComponent } from './features/admin/admin.component';
+import { AdminDashboardComponent } from './features/admin/pages/admin-dashboard/admin-dashboard.component';
+import { Corridors } from './features/admin/pages/corridors/corridors';
+import { Map } from './features/admin/pages/map/map';
+import { Evacuations } from './features/admin/pages/evacuations/evacuations';
+
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
-import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
-import { Corridors } from './features/admin/corridors/corridors';
-import { Map } from './features/admin/map/map';
-import { Evacuations } from './features/admin/evacuations/evacuations'; 
-import { authGuard } from './guards/auth-guard';
-import { PositionComponent } from './features/user/position/position.component';
-
+import { BuildingComponent } from './features/user/pages/map/building/building.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
 
+  // =====================
+  // PUBLIC
+  // =====================
+  { path: '', component: HomeComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
 
-  {
-    path: 'evacuation',
-    component: EvacuationComponent,
-    canActivate: [AuthGuard]
-  },
+  // =====================
+  // USER AREA
+  // =====================
+    {
+      path: 'user',
+      component: UserComponent,
+      canActivate: [AuthGuard, RoleGuard],
+      canActivateChild: [RoleGuard],
 
+      data: { roles: ['USER', 'ADMIN'] },
+      children: [
+        { path: '', component: UserDashboardComponent },
+        { path: 'profile', component: UserProfileComponent },
+        {
+          path: 'map',
+          children: [
+            { path: '', component: UserMapComponent },
+            { path: ':building', component: BuildingComponent }
+          ]
+        },
+
+        { path: 'evacuation', component: EvacuationComponent },
+        { path: 'instructions', component: InstructionsComponent }
+      ]
+    },
+
+
+  // =====================
+  // ADMIN AREA
+  // =====================
   {
-    path: 'user',
-    component: UserComponent,
+    path: 'admin',
+    component: AdminComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'USER' }
+    data: { roles: ['ADMIN'] }, // ✅
+    children: [
+      { path: '', component: AdminDashboardComponent },
+      { path: 'corridors', component: Corridors },
+      { path: 'map', component: Map },
+      { path: 'evacuations', component: Evacuations }
+    ]
   },
-  
-  {
-  path: 'user/position',
-  component: PositionComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'USER' }
-  },
 
 
-  {
-  path: 'admin',
-  component: AdminComponent, // ton layout (avec router-outlet)
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'ADMIN' },
-  children: [
-    { path: '', component: AdminDashboardComponent },
-    { path: 'corridors', component: Corridors },
-    { path: 'map', component: Map },
-    { path: 'evacuations', component: Evacuations },
-    { path: '**', redirectTo: '', pathMatch: 'full' }
-
-  ]
-}
-
-
+  // =====================
+  // FALLBACK
+  // =====================
+  { path: '**', redirectTo: '' }
 ];

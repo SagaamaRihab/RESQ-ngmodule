@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Corridor } from '../models/corridor.model';
+import { environment } from '../../environments/environments';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  private readonly API_URL = 'http://localhost:8080/api/map';
+  private readonly API_URL = environment.apiUrl + '/map';
 
   constructor(private http: HttpClient) {}
 

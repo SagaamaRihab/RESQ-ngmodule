@@ -1,28 +1,42 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
+import {
+  CanActivate,
+  CanActivateChild,
+  ActivatedRouteSnapshot,
+  Router
+} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RoleGuard implements CanActivate {
+export class RoleGuard implements CanActivate, CanActivateChild {
 
   constructor(private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
+    return this.checkRole(route);
+  }
+
+  canActivateChild(route: ActivatedRouteSnapshot): boolean {
+    return this.checkRole(route);
+  }
+
+  private checkRole(route: ActivatedRouteSnapshot): boolean {
+
     const userRole = localStorage.getItem('role');
-    const requiredRole = route.data['role'];
+    const allowedRoles = route.data['roles'] as string[];
 
-    console.log('ROLE GUARD → userRole:', userRole);
-    console.log('ROLE GUARD → requiredRole:', requiredRole);
+    console.log('ROLE:', userRole);
+    console.log('ALLOWED:', allowedRoles);
 
-    if (!userRole) {
-      this.router.navigate(['/signin']);
-      return false;
+    if (!allowedRoles) {
+       return true; // eredita dal padre
     }
 
-    if (userRole === requiredRole) {
-      return true;
+    if (userRole && allowedRoles.includes(userRole)) {
+        return true;
     }
+
 
     this.router.navigate(['/signin']);
     return false;

@@ -1,0 +1,440 @@
+/* GOOGLE FONT */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* BACKGROUND */
+body {
+  background: linear-gradient(135deg, #4ca2cd, #67B26F);
+  min-height: 100vh;
+}
+
+/* MAIN */
+.student-profile {
+  padding: 40px 20px;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ===================================
+   HEADER
+=================================== */
+
+.profile-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 25px 30px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+
+
+/* INFO */
+.profile-info h2 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.profile-info p {
+  color: #666;
+  margin: 4px 0 10px;
+}
+
+/* BADGE */
+.badge-role {
+  background: #4ca2cd;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ACTIONS */
+.profile-actions {
+  margin-top: 10px;
+}
+
+.profile-actions button {
+  margin-right: 10px;
+}
+
+/* ===================================
+   CARDS
+=================================== */
+
+.card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card-header {
+  background: transparent;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* ===================================
+   ACCOUNT INFO
+=================================== */
+
+.card-body p {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+.card-body b {
+  color: #222;
+}
+
+/* ===================================
+   STATS
+=================================== */
+
+.stats-box {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.stats-box div {
+  flex: 1;
+}
+
+.stats-box h4 {
+  font-size: 28px;
+  color: #4ca2cd;
+  margin-bottom: 5px;
+}
+
+.stats-box span {
+  font-size: 13px;
+  color: #777;
+}
+
+/* ===================================
+   TABLE
+=================================== */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 600;
+  color: #444;
+  width: 40%;
+}
+
+.table td {
+  color: #555;
+}
+
+.table th,
+.table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ===================================
+   ACTIVITY
+=================================== */
+
+.activity-list {
+  list-style: none;
+}
+
+.activity-list li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* ===================================
+   ABOUT
+=================================== */
+
+.card-body p {
+  line-height: 1.6;
+}
+
+/* ===================================
+   BUTTONS
+=================================== */
+
+.btn {
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #4ca2cd;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #3a8bb5;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+/* ===================================
+   RESPONSIVE
+=================================== */
+
+@media (max-width: 900px) {
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-actions {
+    justify-content: center;
+  }
+
+  .stats-box {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+}
+
+/* ===== MODERN MODAL ===== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+/* BOX */
+
+.modal-box {
+  width: 420px;
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(255,255,255,0.4);
+  animation: scaleIn 0.3s ease;
+}
+
+/* TITLE */
+
+.modal-box h3 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 22px;
+  color: #0f172a;
+}
+
+/* FORM */
+
+.modal-box .form-group {
+  margin-bottom: 14px;
+}
+
+.modal-box label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* INPUT */
+
+.modal-box input,
+.modal-box textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5f5;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+}
+
+.modal-box input:focus,
+.modal-box textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* TEXTAREA */
+
+.modal-box textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+/* BUTTON AREA */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* SAVE */
+
+.modal-actions .btn-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.modal-actions .btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(34,197,94,0.4);
+}
+
+/* CANCEL */
+
+.modal-actions .btn-secondary {
+  background: #e5e7eb;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  color: #374151;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #d1d5db;
+}
+
+/* ANIMATIONS */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+/* HEADER MODAL */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-btn:hover {
+  color: red;
+}
+
+.toast-success {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  background: #28a745;
+  color: white;
+
+  padding: 12px 20px;
+  border-radius: 8px;
+
+  font-weight: 500;
+  font-size: 14px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+  z-index: 9999;
+
+  animation: slideIn 0.3s ease;
+}
+
+/* animazione */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

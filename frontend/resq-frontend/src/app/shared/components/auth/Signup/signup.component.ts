@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { finalize, take } from 'rxjs/operators';
 
 @Component({
@@ -13,9 +13,10 @@ import { finalize, take } from 'rxjs/operators';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-  isLoading: boolean = false;
 
-  formVisible = true;
+  isLoading = false;
+  submitted = false;
+
   role: 'USER' | 'ADMIN' = 'USER';
   errorMessage = '';
 
@@ -24,6 +25,10 @@ export class SignupComponent {
   password = '';
   confirmPassword = '';
   adminKey = '';
+
+  // ✅ password: 6 caratteri, maiuscola, minuscola, numero, speciale
+  passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
 
   constructor(
     private authService: AuthService,
@@ -36,20 +41,24 @@ export class SignupComponent {
   }
 
   onSignup(form: NgForm): void {
+    this.submitted = true;
     this.errorMessage = '';
 
-    if (form.invalid) {
-      this.errorMessage = 'Please fill in all required fields';
+    if (form.invalid) return;
+
+    if (!this.passwordRegex.test(this.password)) {
+      this.errorMessage =
+        'Password non valida';
       return;
     }
 
     if (this.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
+      this.errorMessage = 'Le password non coincidono';
       return;
     }
 
     if (this.role === 'ADMIN' && !this.adminKey) {
-      this.errorMessage = 'Admin Key is required';
+      this.errorMessage = 'Admin Key obbligatoria';
       return;
     }
 
@@ -66,19 +75,21 @@ export class SignupComponent {
 
     this.isLoading = true;
 
-    this.authService.signup(payload).pipe(
-      take(1),
-      finalize(() => (this.isLoading = false))
-    ).subscribe({
-      next: () => {
-        this.resetModel();
-        this.role = 'USER';
-        this.router.navigateByUrl('/signin?registered=true');
-      },
-      error: (error) => {
-        this.errorMessage = error?.error?.message || error?.error || 'Signup failed';
-      }
-    });
+    this.authService.signup(payload)
+      .pipe(
+        take(1),
+        finalize(() => (this.isLoading = false))
+      )
+      .subscribe({
+        next: () => {
+          this.resetModel();
+          this.router.navigateByUrl('/signin?registered=true');
+        },
+        error: (err: any) => {
+          this.errorMessage =
+            err?.error?.message || 'Errore durante la registrazione';
+        }
+      });
   }
 
   private resetModel(): void {
@@ -88,5 +99,6 @@ export class SignupComponent {
     this.confirmPassword = '';
     this.adminKey = '';
     this.errorMessage = '';
+    this.submitted = false;
   }
 }

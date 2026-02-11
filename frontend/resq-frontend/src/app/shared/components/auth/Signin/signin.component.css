@@ -4,6 +4,7 @@
     font-family: arial;
     color: #fff;
 }
+
 body{
     width: 100vw;
     height: 100vh;
@@ -12,42 +13,48 @@ body{
     justify-content: center;
     align-content: center;
 }
+
 ::-webkit-input-placeholder{
     color: #eee;
 }
+
 .wrapper{
     position: relative;
-    width: 1000px;
-    height: 85vh;
+    width: 800px;
+    height: 65vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     border: 3px solid #00ffff;
     box-shadow: 0 0 50px 0 #00a6bc;
 }
+
 .form{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
+
 .title{
     font-size: 35px;
 }
+
 .inp{
     padding-bottom: 10px;
     border-bottom: 2px solid #eee;
 }
+
 .input{
     border: none;
     outline: none;
     background: none;
-    width: 360px;
-    margin-top: 50px;
+    width: 260px;
+    margin-top: 40px;
     padding-right: 10px;
     font-size: 17px;
     color: #0ef;
-
 }
+
 .submit{
     border: none;
     outline: none;
@@ -60,21 +67,24 @@ body{
     cursor: pointer;
     background: linear-gradient(45deg, #0ef, #c800ff);
 }
+
 .footer{
     margin-top: 30px;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.5px;
     font-size: 14px;
 }
+
 .link{
     color: #0ef;
     text-decoration: none;
 }
+
 .banner{
     position: absolute;
     top: 0;
     right: 0;
-    width: 650px;
-    height: 590px;
+    width: 550px;
+    height: 420px;
     background: linear-gradient(to right,#0ef, #c800ff );
     clip-path: polygon(0 0,100% 0,100% 100%, 60% 100%);
     padding-right: 70px;
@@ -84,43 +94,32 @@ body{
     justify-content: center;
     align-items: flex-end;
 }
+
 .wel_text{
     font-size: 20px;
     margin-top: -50px;
     line-height: 50px;
 }
+
 .para{
     margin-top: 10px;
     font-size: 18px;
     line-height: 24px;
     letter-spacing: 1px;
-}  
-
-.role-toggle {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 15px 0 25px;
 }
 
-.pill {
-  padding: 8px 28px;
-  border-radius: 30px;
-  border: 1px solid #00f6ff;
-  color: #00f6ff;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
+.success{
+    margin-top: 10px;
+    color: #00ffb3;
+    font-weight: 600;
+    text-align: center;
 }
 
-.pill:hover {
-  background: rgba(0, 246, 255, 0.15);
+.error{
+    margin-top: 10px;
+    color: #ff4d4d;
+    font-size: 14px;
+    text-align: center;
 }
 
-.pill.active {
-  background: linear-gradient(135deg, #00f6ff, #a855f7);
-  color: #fff;
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
-}
 
-            

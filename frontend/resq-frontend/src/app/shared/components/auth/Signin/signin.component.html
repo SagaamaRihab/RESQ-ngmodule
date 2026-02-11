@@ -1,7 +1,7 @@
 
 <body>
   <div class="wrapper">
-    <form class="form" (ngSubmit)="onLogin()" #loginForm="ngForm">
+    <form class="form" (ngSubmit)="onLogin()" #loginForm="ngForm" autocomplete="off">
       <h1 class="title">Sign in</h1>
 
       <p class="success" *ngIf="successMessage">
@@ -10,24 +10,28 @@
 
       <div class="inp">
         <input
-          type="text"
+          type="email"
           class="input"
           placeholder="email"
           name="email"
           [(ngModel)]="email"
+          autocomplete="off"
+          autocorrect="off"
+          
         />
-        <i class="fa-solid fa-user"></i>
+       
       </div>
 
       <div class="inp">
         <input
           type="password"
-          name="password"
+           name="password"
           class="input"
           placeholder="Password"
           [(ngModel)]="password"
+          autocomplete="new-password"
         />
-        <i class="fa-solid fa-lock"></i>
+        
       </div>
 
       <button type="submit" class="submit">Login</button>

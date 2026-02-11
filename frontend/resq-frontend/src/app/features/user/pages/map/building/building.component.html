@@ -1,0 +1,134 @@
+<div class="building-page">
+
+  <!-- HEADER -->
+  <header class="building-header">
+    <h1>Edificio {{ building }}</h1>
+    <p>Seleziona il piano in cui ti trovi</p>
+  </header>
+
+  <!-- PULSANTI PIANI -->
+  <div class="floor-buttons">
+
+      <!-- EDIFICIO A -->
+      <ng-container *ngIf="building === 'A'">
+
+        <button
+          [class.active]="selectedFloor === 'terra'"
+          (click)="selectFloor('terra')">
+          Piano Terra
+        </button>
+
+        <button
+          [class.active]="selectedFloor === 'primo'"
+          (click)="selectFloor('primo')">
+          Primo Piano
+        </button>
+
+        <button
+          [class.active]="selectedFloor === 'secondo'"
+          (click)="selectFloor('secondo')">
+          Secondo Piano
+        </button>
+
+      </ng-container>
+
+
+      <!-- EDIFICIO B -->
+      <ng-container *ngIf="building === 'B'">
+
+        <button
+          [class.active]="selectedFloor === 'interrato'"
+          (click)="selectFloor('interrato')">
+          Piano Interrato
+        </button>
+
+        <button
+          [class.active]="selectedFloor === 'rialzato'"
+          (click)="selectFloor('rialzato')">
+          Piano Rialzato
+        </button>
+
+        <button
+          [class.active]="selectedFloor === 'primo'"
+          (click)="selectFloor('primo')">
+          Primo Piano
+        </button>
+
+      </ng-container>
+
+  </div>
+
+
+  <!-- CONTENUTO -->
+  <div class="building-content">
+
+    <!-- MAPPA -->
+    <div class="floor-map">
+      <div class="map-wrapper">
+        <img [src]="floorImage" alt="Mappa edificio {{ building }}">
+      </div>
+
+      <!-- FORM EMERGENZA (sotto la mappa) -->
+      <div class="emergency-card">
+        <h2>Emergenza</h2>
+
+        <div class="emergency-row">
+          <label for="pos">Dove ti trovi?</label>
+
+          <select id="pos" [(ngModel)]="selectedPosition">
+            <option value="">-- Seleziona --</option>
+            <option *ngFor="let r of getCurrentRooms()" [value]="r">
+              {{ r }}
+            </option>
+          </select>
+
+          <button class="primary-btn" (click)="calculateEvacuation()" [disabled]="!selectedPosition">
+            Calcola evacuazione
+          </button>
+        </div>
+
+        <div class="emergency-hint">
+          <strong>Uscite disponibili su questo piano:</strong>
+          <span class="exits">{{ getCurrentExits().join(' • ') }}</span>
+        </div>
+
+        <div class="result" *ngIf="evacuationResult">
+          <p class="result-title">Risultato</p>
+          <div class="instructions" *ngIf="nearestExit">
+
+            <h4>Indicazioni di evacuazione</h4>
+
+            <ul>
+              <li *ngFor="let step of getEvacuationInstructions()">
+                {{ step }}
+              </li>
+            </ul>
+
+          </div>
+
+          <p><strong>Partenza:</strong> {{ evacuationResult.from }}</p>
+          <p><strong>Uscita consigliata:</strong> {{ evacuationResult.exitId }}</p>
+          <p class="result-msg">{{ evacuationResult.message }}</p>
+
+          <ol class="steps">
+            <li>Resta calmo e controlla il corridoio.</li>
+            <li>Segui la segnaletica verso <strong>{{ evacuationResult.exitId }}</strong>.</li>
+            <li>Scendi le scale / esci dalla porta e raggiungi il punto di raccolta.</li>
+          </ol>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANNELLO INFO A DESTRA (opzionale) -->
+    <div class="side-panel">
+      <h3>Info piano</h3>
+      <p><strong>Piano:</strong> {{ selectedFloor | titlecase }}</p>
+      <p><strong>Edificio:</strong> {{ building }}</p>
+      <p class="muted">
+        Seleziona la tua posizione e calcola l’uscita più vicina.
+      </p>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<!-- TOPBAR -->
+<header class="topbar">
+  <div>
+    <h1>Dashboard Utente</h1>
+
+    <p class="subtitle">
+      Benvenuta
+      <strong *ngIf="username; else guest">
+        {{ username }}
+      </strong>
+      
+      <br>
+      Seleziona un’azione per continuare
+    </p>
+
+    <ng-template #guest>
+      utente
+    </ng-template>
+  </div>
+
+  <div class="status">
+    <span class="dot"></span>
+    Sistema attivo
+  </div>
+</header>
+
+
+<!-- AZIONI PRINCIPALI -->
+<section class="grid main-actions">
+
+  <article class="card card-map" routerLink="/user/map">
+    <i class="fa-solid fa-map-location-dot"></i>
+    <h2>Mappa edificio</h2>
+    <p>Struttura e punti di interesse</p>
+  </article>
+
+  <article class="card card-evac" routerLink="/user/evacuation">
+    <i class="fa-solid fa-person-running"></i>
+    <h2>Evacuazione</h2>
+    <p>Percorsi di uscita e sicurezza</p>
+  </article>
+
+  <article class="card card-info" routerLink="/user/instructions">
+    <i class="fa-solid fa-circle-info"></i>
+    <h2>Istruzioni</h2>
+    <p>Cosa fare in emergenza</p>
+  </article>
+
+</section>
+
+<!-- STATO UTENTE -->
+<section class="dashboard-widgets">
+
+  <div class="widget-grid">
+
+    <div class="widget info">
+      <i class="fa-solid fa-location-dot"></i>
+      <h4>Posizione</h4>
+      <p>Non condivisa</p>
+    </div>
+
+    <div class="widget success">
+      <i class="fa-solid fa-shield-check"></i>
+      <h4>Stato sicurezza</h4>
+      <p>Nessuna emergenza</p>
+    </div>
+
+    <div class="widget warning">
+      <i class="fa-solid fa-bell"></i>
+      <h4>Avvisi</h4>
+      <p>0 attivi</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- AZIONI RAPIDE -->
+<section class="widget actions">
+  <h3>Azioni rapide</h3>
+
+  <div class="actions-grid">
+    <button routerLink="/user/map">
+      <i class="fa-solid fa-map"></i>
+      Mappa
+    </button>
+
+    <button routerLink="/user/evacuation">
+      <i class="fa-solid fa-person-running"></i>
+      Evacuazione
+    </button>
+
+    <button routerLink="/user/instructions">
+      <i class="fa-solid fa-circle-info"></i>
+      Istruzioni
+    </button>
+  </div>
+</section>

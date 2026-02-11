@@ -1,0 +1,70 @@
+<div class="evacuation-layout">
+
+  <!-- INFO -->
+  <div class="info-panel">
+    <h2>Emergency Evacuation</h2>
+
+    <p>
+      Inserisci il nodo in cui ti trovi e il sistema
+      calcolerà il percorso di evacuazione più sicuro.
+    </p>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-panel">
+
+    <h1>Pianificazione evacuazione</h1>
+
+    <!-- INPUT -->
+    <div class="form-group">
+      <label>Nodo di partenza</label>
+
+      <input
+        type="text"
+        [(ngModel)]="startNode"
+        placeholder="Es. A101"
+      />
+    </div>
+
+    <!-- BOTTONE -->
+    <button
+      class="primary-btn"
+      (click)="calculate()">
+
+      Calcola percorso
+    </button>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="status loading">
+      Calcolo in corso…
+    </div>
+
+    <!-- ERRORE -->
+    <div *ngIf="error" class="status error">
+      {{ error }}
+    </div>
+
+    <!-- RISULTATO -->
+    <div *ngIf="response" class="status success">
+
+      <h3>Risultato</h3>
+
+      <p>{{ response.message }}</p>
+
+      <!-- LISTA PERCORSO -->
+      <ul>
+        <li *ngFor="let node of response.path">
+          {{ node }}
+        </li>
+      </ul>
+
+      <!-- VISUALIZZATORE -->
+      <app-path-viewer
+        *ngIf="response.path.length"
+        [path]="response.path">
+      </app-path-viewer>
+
+    </div>
+
+  </div>
+</div>

@@ -1,2 +1,51 @@
-<h2>Area USER</h2>
-<p>Accesso consentito</p>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">R</div>
+      <div>
+        <h3>RESQ</h3>
+        <p>User Area</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a routerLink="/user" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fa-solid fa-grid-2"></i>
+        Dashboard
+      </a>
+
+      <a routerLink="profile" routerLinkActive="active">
+        <i class="fa-solid fa-map-location-dot"></i>
+        Profile 
+      </a>
+
+      <a routerLink="map" routerLinkActive="active">
+        <i class="fa-solid fa-map-location-dot"></i>
+        Mappa edificio
+      </a>
+
+      <a routerLink="evacuation" routerLinkActive="active">
+        <i class="fa-solid fa-person-running"></i>
+        Evacuazione
+      </a>
+
+      <a routerLink="instructions" routerLinkActive="active">
+        <i class="fa-solid fa-circle-info"></i>
+        Istruzioni
+      </a>
+    </nav>
+
+    <button class="logout" (click)="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Logout
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

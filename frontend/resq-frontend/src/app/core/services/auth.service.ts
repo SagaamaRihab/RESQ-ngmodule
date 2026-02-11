@@ -1,32 +1,31 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-
-interface SigninResponse {
-  token: string;
-  role: string;
-}
+import { tap } from 'rxjs';
+import { environment } from '../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly API_URL = 'http://localhost:8080/api/auth';
-
+ private readonly API_URL = environment.apiUrl + '/auth';
   constructor(private http: HttpClient) {}
 
   // ======================
   // SIGN IN
   // ======================
  signin(data: { email: string; password: string }) {
-    return this.http.post<any>(`${this.API_URL}/signin`, data).pipe(
-      tap(res => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('role', res.role);
-      })
-    );
-  }
+  return this.http.post<any>(`${this.API_URL}/signin`, data).pipe(
+    tap(res => {
+      localStorage.setItem('token', res.token);
+       localStorage.setItem('userId', res.id);
+      localStorage.setItem('role', res.role);
+      localStorage.setItem('username', res.username); 
+      localStorage.setItem('email', res.email);
+
+    })
+  );
+}
 
 
   // ======================
@@ -38,7 +37,7 @@ export class AuthService {
     password: string;
     role: 'USER' | 'ADMIN';
     adminKey?: string;
-  }): Observable<any> {
+  }) {
     return this.http.post(`${this.API_URL}/signup`, data);
   }
 
@@ -59,5 +58,10 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getRole() === 'ADMIN';
+  }
+
+  
+  getUsername(): string | null {
+    return localStorage.getItem('username');
   }
 }

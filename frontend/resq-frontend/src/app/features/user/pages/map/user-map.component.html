@@ -1,0 +1,52 @@
+<div class="map-page">
+
+  <header class="map-header">
+    <h1>Campus universitario di Dalmine</h1>
+    <p>Seleziona l’edificio in cui ti trovi</p>
+  </header>
+
+  <!-- MAPPA GENERALE -->
+  <div class="campus-map">
+    <img
+      src="/assets/maps/campus-dalmine.png"
+      alt="Mappa campus di Dalmine"
+      
+      
+    />
+      
+  </div>
+
+  <!-- EDIFICI -->
+  <section class="buildings">
+
+    <div class="building-card" (click)="openBuilding('A')">
+      <h3>Edificio A</h3>
+      <p>Aule – Biblioteca – Sale studio</p>
+      <button>Apri edificio</button>
+    </div>
+
+    <div class="building-card" (click)="openBuilding('B')">
+      <h3>Edificio B</h3>
+      <p>Aule – Laboratori</p>
+      <button>Apri edificio</button>
+    </div>
+
+    <div class="building-card" (click)="openBuilding('C')">
+      <h3>Edificio C</h3>
+      <p>Aule – Uffici</p>
+      <button>Apri edificio</button>
+    </div>
+
+    <div class="building-card" (click)="openBuilding('D')">
+      <h3>Edificio D</h3>
+      <p>Aula magna – Aula minore</p>
+      <button>Apri edificio</button>
+    </div>
+
+  </section>
+  <router-outlet></router-outlet>
+
+</div>
+
+
+

@@ -1,12 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { EvacuationService } from '../../core/services/evacuation.service';
-import { EvacuationResponse } from '../../core/models/evacuation-response.model';
-import { PathViewerComponent } from '../../shared/components/path-viewer/path-viewer.component';
-
-
+import { EvacuationService } from '../../../../core/services/evacuation.service';
+import { EvacuationResponse } from '../../../../core/models/evacuation-response.model';
+import { PathViewerComponent } from '../../../../shared/components/path-viewer/path-viewer.component';
 
 @Component({
   selector: 'app-evacuation',
@@ -15,7 +13,7 @@ import { PathViewerComponent } from '../../shared/components/path-viewer/path-vi
   templateUrl: './evacuation.component.html',
   styleUrls: ['./evacuation.component.css']
 })
-export class EvacuationComponent {
+export class EvacuationComponent implements OnInit {
 
   startNode = '';
   response: EvacuationResponse | null = null;
@@ -25,30 +23,58 @@ export class EvacuationComponent {
   constructor(private evacuationService: EvacuationService) {}
 
   calculate(): void {
+
+  console.log('CLICK CALCOLA');
+
   this.error = null;
   this.response = null;
+  this.loading = true;
 
   if (!this.startNode.trim()) {
     this.error = 'Inserisci un nodo di partenza';
+    this.loading = false;
     return;
   }
-
-  this.loading = true;
 
   this.evacuationService
     .calculateEvacuation(this.startNode.trim())
     .subscribe({
+
       next: (res) => {
-        console.log('RISPOSTA BACKEND:', res); // 🔍 DEBUG
+        console.log('RISPOSTA SERVER:', res);
+
         this.response = res;
         this.loading = false;
+
+        localStorage.removeItem('startNode');
       },
+
       error: (err) => {
-        console.error('ERRORE:', err); // 🔍 DEBUG
+        console.error('ERRORE:', err);
+
         this.error = 'Errore nel calcolo del percorso';
+        this.loading = false;
+      },
+
+      complete: () => {
+        console.log('COMPLETATO');
         this.loading = false;
       }
     });
 }
+
+
+  ngOnInit(): void {
+
+      const saved = localStorage.getItem('startNode');
+
+      if (saved) {
+        this.startNode = saved;
+
+        this.calculate();
+      }
+
+  }
+
 
 }

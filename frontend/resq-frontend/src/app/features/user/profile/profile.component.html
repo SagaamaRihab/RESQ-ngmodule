@@ -1,0 +1,313 @@
+<div class="student-profile py-4">
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="profile-header mb-4">
+
+      
+
+      <div class="profile-info">
+
+        <h2>{{ username }}</h2>
+        <p>{{ email }}</p>
+
+        
+
+        <div class="profile-actions">
+
+          <!-- OPEN MODAL -->
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="openEditModal()"
+          >
+            Edit Profile
+          </button>
+
+
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="logout()"
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+     <!-- SUCCESS MESSAGE -->
+    <div
+      class="toast-success"
+      *ngIf="showSuccess"
+    >
+      ✅ {{ successMessage }}
+    </div>
+
+
+    <!-- MAIN GRID -->
+    <div class="row">
+
+
+      <!-- LEFT -->
+      <div class="col-lg-4">
+
+        <!-- INFO CARD -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            Account Info
+          </div>
+
+          <div class="card-body" >
+
+            <p><b>Username:</b> {{ username }}</p>
+            <p><b>Email:</b> {{ email }}</p>
+            <p><b>Role:</b> {{ role }}</p>
+            <p><b>Status:</b> Active</p>
+
+          </div>
+
+          
+
+
+          
+
+
+        </div>
+
+
+        <!-- STATS -->
+        <div class="card shadow-sm">
+
+          <div class="card-header">
+            Statistics
+          </div>
+
+          <div class="card-body stats-box">
+
+            <div>
+              <h4>12</h4>
+              <span>Logins</span>
+            </div>
+
+            <div>
+              <h4>5</h4>
+              <span>Evacuations</span>
+            </div>
+
+            <div>
+              <h4>3</h4>
+              <span>Maps</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT -->
+      <div class="col-lg-8">
+
+
+        <!-- GENERAL -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            General Information
+          </div>
+
+          <div class="card-body">
+
+            <table class="table table-bordered">
+
+              <tr>
+                <th>Project</th>
+                <td>RESQ</td>
+              </tr>
+
+              <tr>
+                <th>Account Type</th>
+                <td>User</td>
+              </tr>
+
+              <tr>
+                <th>Registration</th>
+                <td>2025</td>
+              </tr>
+
+              <tr>
+                <th>Access Level</th>
+                <td>Standard</td>
+              </tr>
+
+            </table>
+
+          </div>
+        </div>
+
+
+        <!-- ACADEMIC PROFILE -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            Academic Profile
+          </div>
+
+          <div class="card-body">
+
+            <p><b>Phone:</b> {{ phone || 'Not set' }}</p>
+            <p><b>Academic Year:</b> {{ academicYear }}</p>
+            <p><b>School:</b> {{ school }}</p>
+            <p><b>Course:</b> {{ course }}</p>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTIVITY -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            Recent Activity
+          </div>
+
+          <div class="card-body">
+
+            <ul class="activity-list">
+
+              <li>✔ Login success</li>
+              <li>✔ Viewed building map</li>
+              <li>✔ Started evacuation plan</li>
+              <li>✔ Updated profile</li>
+
+            </ul>
+
+          </div>
+        </div>
+
+
+        <!-- ABOUT -->
+        <div class="card shadow-sm">
+
+          <div class="card-header">
+            About Me
+          </div>
+
+          <div class="card-body">
+
+            <p>{{ about }}</p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- ================= MODAL ================= -->
+
+<!-- EDIT PROFILE MODAL -->
+<div
+  class="modal-overlay"
+  *ngIf="showEditModal"
+  (click)="closeEditModal()"
+>
+
+  <div
+    class="modal-box"
+    (click)="$event.stopPropagation()"
+  >
+
+    <!-- HEADER -->
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+
+      <button
+        class="close-btn"
+        (click)="closeEditModal()"
+      >
+        ✕
+      </button>
+    </div>
+
+   
+
+
+
+    <!-- FORM -->
+
+    <div class="form-group">
+      <label>Username</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="editUsername"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="email"
+        class="form-control"
+        [(ngModel)]="editEmail"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Phone</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="editPhone"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Course</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="editCourse"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>About</label>
+      <textarea
+        class="form-control"
+        rows="3"
+        [(ngModel)]="editAbout"
+      ></textarea>
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="modal-actions">
+
+      <button
+        class="save-btn"
+        (click)="saveProfile()"
+        [disabled]="isSaving"
+      >
+        Save
+      </button>
+
+
+    </div>
+
+  </div>
+
+</div>
