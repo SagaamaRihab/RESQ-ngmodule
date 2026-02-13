@@ -310,22 +310,55 @@ changePassword() {
 
 
 
-
-
-
 changeEmail() {
 
-  if (!this.newEmail) return;
+  if (!this.newEmail) {
+    this.passwordErrorMsg = 'Inserisci una email valida';
+    return;
+  }
 
-  console.log('Nuova email:', this.newEmail);
+  this.passwordSuccessMsg = '';
+  this.passwordErrorMsg = '';
 
-  this.email = this.newEmail;
-  localStorage.setItem('email', this.newEmail);
+  this.userService.changeMyEmail(this.newEmail).subscribe({
 
-  alert('Email aggiornata (demo)');
+    next: (res: any) => {
 
-  this.closeModal();
+      console.log('RISPOSTA BACKEND:', res);
+
+      // ✅ salva token nuovo
+      if (res && res.token) {
+        localStorage.setItem('token', res.token);
+      }
+
+      // ✅ aggiorna email
+      localStorage.setItem('email', this.newEmail);
+      this.email = this.newEmail;
+
+      this.passwordSuccessMsg = 'Email aggiornata con successo!';
+
+      setTimeout(() => {
+        this.closeModal();
+      }, 1000);
+    },
+
+    error: (err) => {
+      console.error('ERRORE CAMBIO EMAIL:', err);
+
+      if (err.status === 401) {
+        this.passwordErrorMsg = 'Sessione scaduta. Rifai login.';
+      } else {
+        this.passwordErrorMsg = 'Errore nel cambio email';
+      }
+    }
+
+  });
 }
+
+
+
+
+
 
 
 deleteAccount() {
@@ -334,14 +367,31 @@ deleteAccount() {
     return;
   }
 
-  console.log('Account eliminato');
+  this.userService.deleteMyAccount().subscribe({
 
-  localStorage.clear();
+    next: () => {
 
-  alert('Account eliminato');
+      alert('Account eliminato con successo');
 
-  this.router.navigate(['/signin']);
+      localStorage.clear();
+
+      this.router.navigate(['/signin']);
+    },
+
+    error: (err) => {
+
+      console.error('Errore eliminazione account', err);
+
+      if (err.status === 401) {
+        alert('Sessione scaduta. Rifai login.');
+      } else {
+        alert('Errore durante eliminazione account');
+      }
+    }
+
+  });
 }
+
 
 
 

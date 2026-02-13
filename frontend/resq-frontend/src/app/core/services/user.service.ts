@@ -51,5 +51,23 @@ export class UserService {
     );
   }
 
+changeMyEmail(newEmail: string) {
+  return this.http.put<any>(
+    `${this.baseUrl}/user/email`,
+    { newEmail },
+    this.getAuthHeaders()
+  );
+}
+
+
+deleteMyAccount() {
+  return this.http.delete<any>(
+    `${this.baseUrl}/me`,
+    this.getAuthHeaders()
+  );
+}
+
+
+
 
 }

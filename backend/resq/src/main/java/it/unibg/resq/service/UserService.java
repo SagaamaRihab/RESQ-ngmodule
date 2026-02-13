@@ -39,7 +39,7 @@ public class UserService {
         return user;
     }
 
-    public User getByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new ResponseStatusException(
@@ -48,6 +48,54 @@ public class UserService {
                         )
                 );
     }
+
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
+
+
+
+    public void changeEmail(String oldEmail, String newEmail) {
+
+        User user = userRepository.findByEmail(oldEmail)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found"
+                        ));
+
+        user.setEmail(newEmail);
+
+        userRepository.save(user);
+    }
+
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found"
+                        ));
+    }
+
+    public void deleteByEmail(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found"
+                        ));
+
+        userRepository.delete(user);
+    }
+
+
+
 
 
 }

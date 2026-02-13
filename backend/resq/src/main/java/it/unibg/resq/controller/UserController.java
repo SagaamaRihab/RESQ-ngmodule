@@ -4,6 +4,8 @@ import it.unibg.resq.dto.ChangePasswordRequest;
 import it.unibg.resq.model.User;
 import it.unibg.resq.security.JwtService;
 import it.unibg.resq.service.UserService;
+import it.unibg.resq.dto.ChangeEmailRequest;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,5 +52,62 @@ public class UserController {
                 Map.of("token", newToken)
         );
     }
+
+
+    @PutMapping("/user/email")
+    public ResponseEntity<?> changeMyEmail(
+            @RequestBody ChangeEmailRequest request,
+            Authentication authentication
+    ) {
+
+        Object principal = authentication.getPrincipal();
+
+        String oldEmail;
+
+        if (principal instanceof User) {
+            oldEmail = ((User) principal).getEmail();
+        } else {
+            oldEmail = principal.toString();
+        }
+
+        // cambia email nel DB
+        userService.changeEmail(oldEmail, request.getNewEmail());
+
+        // recupera user aggiornato
+        User updatedUser = userService.getByEmail(request.getNewEmail());
+
+        // genera token con USER
+        String newToken = jwtService.generateToken(updatedUser);
+
+        return ResponseEntity.ok(
+                Map.of("token", newToken)
+        );
+    }
+
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(Authentication authentication) {
+
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            email = ((User) principal).getEmail();
+        } else {
+            email = principal.toString();
+        }
+
+        userService.deleteByEmail(email);
+
+        return ResponseEntity.ok(
+                Map.of("message", "Account deleted")
+        );
+    }
+
+
+
+
+
 
 }
