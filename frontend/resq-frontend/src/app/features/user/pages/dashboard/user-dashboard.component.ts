@@ -17,6 +17,12 @@ export class UserDashboardComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.username = this.authService.getUsername();
-  }
+
+  const stored = localStorage.getItem('username');
+
+  console.log('USERNAME STORAGE =', stored);
+
+  this.username = stored;
+}
+
 }

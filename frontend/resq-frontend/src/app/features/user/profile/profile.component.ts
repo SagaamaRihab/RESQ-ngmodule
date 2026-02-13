@@ -28,7 +28,29 @@ export class UserProfileComponent implements OnInit {
 
   successMessage: string = '';
   showSuccess: boolean = false;
+  errorMessage: string = '';
+  showError: boolean = false;
+  passwordSuccessMsg: string = '';
+passwordErrorMsg: string = '';
+
+
   isSaving: boolean = false;
+
+  // ===== SETTINGS MODALS =====
+  passwordData: { oldPassword: string; newPassword: string } = {
+  oldPassword: '',
+  newPassword: ''
+};
+
+  showPasswordModal = false;
+  showEmailModal = false;
+  showDeleteModal = false;
+
+ 
+  newEmail = '';
+  
+
+
 
 
   // ===== ABOUT =====
@@ -56,19 +78,22 @@ export class UserProfileComponent implements OnInit {
 
     this.showEditModal = false;
 
-    // ✅ Carica SUBITO dal login
+    // Carica SUBITO dal login
     this.username = localStorage.getItem('username') || '';
     this.email = localStorage.getItem('email') || '';
     this.role = localStorage.getItem('role') || '';
 
-    this.userId = Number(localStorage.getItem('userId'));
+    const token = localStorage.getItem('token');
 
-    if (!this.userId) {
+    if (!token) {
       this.router.navigate(['/signin']);
       return;
     }
 
-    // ✅ Aggiorna dal backend (silenzioso)
+    this.userId = Number(localStorage.getItem('userId') || 0);
+
+
+    // Aggiorna dal backend (silenzioso)
     this.loadProfile();
   }
 
@@ -120,30 +145,24 @@ export class UserProfileComponent implements OnInit {
       about: this.editAbout
     };
 
-    // ✅ chiudi SUBITO il modal
+    // chiudi SUBITO il modal
     this.closeEditModal();
 
-    // ✅ mostra SUBITO il toast
+    // mostra SUBITO il toast
     this.successMessage = 'Profilo aggiornato con successo';
     this.showSuccess = true;
 
     this.userService.updateUser(id, data).subscribe({
 
-      next: (updatedUser) => {
+      next: (updatedUser: any) => {
 
         this.username = updatedUser.username;
         this.email = updatedUser.email;
-        this.phone = updatedUser.phone;
-        this.course = updatedUser.course;
-        this.about = updatedUser.about;
-
-        // ⏱️ toast sparisce
-        setTimeout(() => {
-          this.showSuccess = false;
-        }, 2000);
-
-        this.isSaving = false;
+        this.phone = updatedUser.phone || '';
+        this.course = updatedUser.course || '';
+        this.about = updatedUser.about || '';
       },
+      
 
       error: () => {
         this.isSaving = false;
@@ -158,9 +177,10 @@ export class UserProfileComponent implements OnInit {
 
  loadProfile() {
 
-    const id = Number(localStorage.getItem('userId'));
+    const id = Number(localStorage.getItem('userId') || 0);
 
-    if (!id) return;
+    if (!id) return; // per ora non blocchiamo
+
 
     this.userService.getUserById(id).subscribe({
 
@@ -168,6 +188,24 @@ export class UserProfileComponent implements OnInit {
 
         console.log('USER:', user);
 
+        // Salva in localStorage (serve a dashboard + sidebar)
+        if (user.id) {
+          localStorage.setItem('userId', user.id.toString());
+        }
+
+        if (user.username) {
+          localStorage.setItem('username', user.username);
+        }
+
+        if (user.email) {
+          localStorage.setItem('email', user.email);
+        }
+
+        if (user.role) {
+          localStorage.setItem('role', user.role);
+        }
+
+        // Aggiorna UI
         this.username = user.username;
         this.email = user.email;
         this.role = user.role;
@@ -177,12 +215,136 @@ export class UserProfileComponent implements OnInit {
         this.about = user.about || '';
       },
 
+
       error: (err) => {
         console.error('Load profile error', err);
       }
 
     });
   }
+
+  // ================= SETTINGS =================
+
+openPasswordModal() {
+  this.showPasswordModal = true;
+
+  // reset messaggi
+  this.passwordSuccessMsg = '';
+  this.passwordErrorMsg = '';
+
+  // reset campi
+  this.passwordData = { oldPassword: '', newPassword: '' };
+}
+
+
+openEmailModal() {
+  this.showEmailModal = true;
+}
+
+openDeleteModal() {
+  this.showDeleteModal = true;
+}
+
+closeModal() {
+  this.showPasswordModal = false;
+  this.showEmailModal = false;
+  this.showDeleteModal = false;
+
+  // reset messaggi
+  this.passwordSuccessMsg = '';
+  this.passwordErrorMsg = '';
+
+  // reset campi
+  this.passwordData = { oldPassword: '', newPassword: '' };
+  this.newEmail = '';
+
+  // pulizia vecchi toast generali
+  this.successMessage = '';
+  this.errorMessage = '';
+}
+
+
+
+changePassword() {
+  this.passwordSuccessMsg = '';
+  this.passwordErrorMsg = '';
+
+  // VALIDAZIONE FRONTEND
+  if (!this.passwordData.oldPassword || !this.passwordData.newPassword) {
+    this.passwordErrorMsg = 'Compila tutti i campi.';
+    return;
+  }
+
+  if (this.passwordData.newPassword.length < 6) {
+    this.passwordErrorMsg = 'La nuova password deve avere almeno 6 caratteri.';
+    return;
+  }
+
+  this.userService.changeMyPassword(this.passwordData).subscribe({
+    next: (response: any) => {
+
+      // se backend manda token nuovo, lo aggiorniamo
+      if (response?.token) {
+        localStorage.setItem('token', response.token);
+      }
+
+      this.passwordSuccessMsg = 'Password aggiornata con successo!';
+
+      setTimeout(() => {
+        this.closeModal();
+      }, 1200);
+    },
+
+    error: (err: any) => {
+      if (err.status === 401) {
+        this.passwordErrorMsg = 'Password attuale non corretta.';
+      } else if (err.status === 400) {
+        this.passwordErrorMsg = err?.error?.message || 'Dati non validi.';
+      } else {
+        this.passwordErrorMsg = 'Errore durante il cambio password.';
+      }
+    }
+  });
+}
+
+
+
+
+
+
+
+changeEmail() {
+
+  if (!this.newEmail) return;
+
+  console.log('Nuova email:', this.newEmail);
+
+  this.email = this.newEmail;
+  localStorage.setItem('email', this.newEmail);
+
+  alert('Email aggiornata (demo)');
+
+  this.closeModal();
+}
+
+
+deleteAccount() {
+
+  if (!confirm('Vuoi davvero eliminare il tuo account?')) {
+    return;
+  }
+
+  console.log('Account eliminato');
+
+  localStorage.clear();
+
+  alert('Account eliminato');
+
+  this.router.navigate(['/signin']);
+}
+
+
+
 
 
 

@@ -1,0 +1,19 @@
+/* ===========================
+   FIX TESTO NAVBAR / HEADER
+   =========================== */
+
+.navbar,
+.navbar a,
+.nav-link,
+.navbar-brand,
+.menu-link,
+h1, h2, h3, h4, h5, h6 {
+  opacity: 1 !important;
+  color: #0d1b2a !important; /* blu scuro */
+}
+
+/* Hover */
+.navbar a:hover,
+.nav-link:hover {
+  color: #0d6efd !important; /* blu bootstrap */
+}

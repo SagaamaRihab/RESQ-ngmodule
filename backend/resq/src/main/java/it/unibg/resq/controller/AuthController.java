@@ -7,8 +7,10 @@ import it.unibg.resq.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import it.unibg.resq.dto.SigninResponse;
 
-import java.util.Map; // ✅ IMPORT MANCANTE
+
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,14 +35,19 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody SigninRequest request) {
 
-        String token = authService.signin(request);
-        String role = jwtService.extractRole(token);
+        var user = authService.authenticate(request);
+
+        String token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(
-                Map.of(
-                        "token", token,
-                        "role", role
+                new SigninResponse(
+                        token,
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getRole().name()
                 )
         );
     }
+
 }

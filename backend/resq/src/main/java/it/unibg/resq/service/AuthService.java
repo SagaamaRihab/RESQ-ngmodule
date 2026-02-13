@@ -68,7 +68,8 @@ public class AuthService {
     // =======================
     // SIGNIN
     // =======================
-    public String signin(SigninRequest request) {
+    public User authenticate(SigninRequest request) {
+
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
@@ -88,6 +89,7 @@ public class AuthService {
             );
         }
 
-        return jwtService.generateToken(user);
+        return user;
+
     }
 }

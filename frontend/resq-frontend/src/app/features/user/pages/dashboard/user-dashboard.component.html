@@ -1,17 +1,20 @@
 <!-- TOPBAR -->
 <header class="topbar">
   <div>
-    <h1>Dashboard Utente</h1>
+   <h1>
+      Dashboard di
+      <span *ngIf="username; else guest">
+        {{ username }}
+      </span>
+    </h1>
 
     <p class="subtitle">
       Benvenuta
       <strong *ngIf="username; else guest">
         {{ username }}
       </strong>
-      
-      <br>
-      Seleziona un’azione per continuare
     </p>
+
 
     <ng-template #guest>
       utente

@@ -1,16 +1,19 @@
 package it.unibg.resq.service;
 
-import it.unibg.resq.dto.CorridorDTO;
-import it.unibg.resq.dto.MapDTO;
-import it.unibg.resq.dto.NodeDTO;
+import it.unibg.resq.dto.*;
+import it.unibg.resq.engine.*;
+import it.unibg.resq.model.Corridor;
 import it.unibg.resq.repository.CorridorRepository;
 import it.unibg.resq.repository.NodeRepository;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MapService {
@@ -22,6 +25,9 @@ public class MapService {
     // BLOCCO / SBLOCCO CORRIDOI
     // =========================
     public void blockCorridor(Long id) {
+
+        log.info("Blocco corridoio ID={}", id);
+
         corridorRepository.findById(id).ifPresent(c -> {
             c.setBlocked(true);
             corridorRepository.save(c);
@@ -29,6 +35,9 @@ public class MapService {
     }
 
     public void unblockCorridor(Long id) {
+
+        log.info("Sblocco corridoio ID={}", id);
+
         corridorRepository.findById(id).ifPresent(c -> {
             c.setBlocked(false);
             corridorRepository.save(c);
@@ -39,6 +48,9 @@ public class MapService {
     // SOLO CORRIDOI
     // =========================
     public List<CorridorDTO> getAllCorridors() {
+
+        log.debug("Recupero lista corridoi");
+
         return corridorRepository.findAll().stream()
                 .map(c -> new CorridorDTO(
                         c.getId(),
@@ -54,6 +66,9 @@ public class MapService {
     // 🗺️ MAPPA COMPLETA
     // =========================
     public MapDTO getMap() {
+
+        log.debug("Recupero mappa completa");
+
         List<NodeDTO> nodes = nodeRepository.findAll().stream()
                 .map(n -> new NodeDTO(n.getLabel()))
                 .toList();
@@ -72,116 +87,139 @@ public class MapService {
     }
 
     // =========================
-    // ✅ EVACUATION (Dijkstra)
+    // ✅ EVACUATION (Strategy)
     // =========================
     public List<String> computeEvacuationPath(String startNode) {
-        if (startNode == null || startNode.trim().isEmpty()) return List.of();
-        startNode = startNode.trim();
 
-        // 1) Vérifier que le noeud existe
-        Set<String> allNodes = nodeRepository.findAll().stream()
-                .map(n -> n.getLabel())
-                .collect(Collectors.toSet());
+        log.info("Richiesta percorso evacuazione da nodo: {}", startNode);
 
-        if (!allNodes.contains(startNode)) {
-            // startNode inexistant => pas de chemin
+        if (startNode == null || startNode.isBlank()) {
+            log.warn("Nodo iniziale nullo o vuoto");
             return List.of();
         }
 
-        // 2) Définir les EXIT (ex: ...EXIT..., ...USCITA...)
-        List<String> exits = allNodes.stream()
-                .filter(l -> {
-                    String u = l.toUpperCase(Locale.ROOT);
-                    return u.contains("EXIT") || u.contains("USCITA");
+        startNode = startNode.trim();
+
+        // Verifica nodo esistente
+        boolean exists = nodeRepository
+                .findByLabel(startNode)
+                .isPresent();
+
+        if (!exists) {
+            log.warn("Nodo non trovato: {}", startNode);
+            return List.of();
+        }
+
+        // Costruzione grafo dai corridoi NON bloccati
+        List<Corridor> corridors = corridorRepository.findAll();
+
+        Graph graph = new Graph();
+        Map<String, GraphNode> nodes = new HashMap<>();
+
+        for (Corridor c : corridors) {
+
+            if (c.isBlocked()) continue;
+
+            nodes.putIfAbsent(
+                    c.getFromNode(),
+                    new GraphNode(c.getFromNode())
+            );
+
+            nodes.putIfAbsent(
+                    c.getToNode(),
+                    new GraphNode(c.getToNode())
+            );
+
+            GraphNode from = nodes.get(c.getFromNode());
+            GraphNode to   = nodes.get(c.getToNode());
+
+            graph.addEdge(new GraphEdge(from, to, c.getWeight(), false));
+            graph.addEdge(new GraphEdge(to, from, c.getWeight(), false));
+        }
+
+        GraphNode start = nodes.get(startNode);
+
+        if (start == null) {
+            log.error("Nodo iniziale non presente nel grafo: {}", startNode);
+            return List.of();
+        }
+
+        // Individua EXIT
+        List<GraphNode> exits = nodes.values().stream()
+                .filter(n -> {
+                    String id = n.getId().toUpperCase();
+                    return id.contains("EXIT") || id.contains("USCITA");
                 })
                 .toList();
 
         if (exits.isEmpty()) {
-            // pas d'exit définie dans la DB
+            log.warn("Nessuna uscita trovata nel sistema");
             return List.of();
         }
 
-        // 3) Charger les corridors NON bloqués et construire un graphe bidirectionnel
-        var corridors = corridorRepository.findAll().stream()
-                .filter(c -> !c.isBlocked())
-                .toList();
+        // Motore + Strategia
+        GraphEngine engine = new GraphEngine();
+        engine.setStrategy(new DijkstraStrategy());
 
-        Map<String, List<Edge>> graph = new HashMap<>();
-        for (var c : corridors) {
-            String a = c.getFromNode();
-            String b = c.getToNode();
+        List<GraphNode> bestPath = List.of();
+        double bestCost = Double.MAX_VALUE;
 
-            // weight peut être Double (nullable) ou double (non-null)
-            double w = 1.0;
-            try {
-                // si getWeight() renvoie Double
-                Double ww = (Double) (Object) c.getWeight();
-                if (ww != null) w = ww;
-            } catch (ClassCastException e) {
-                // sinon c'est un double primitif
-                w = c.getWeight();
-            }
+        for (GraphNode exit : exits) {
 
-            graph.computeIfAbsent(a, k -> new ArrayList<>()).add(new Edge(b, w));
-            graph.computeIfAbsent(b, k -> new ArrayList<>()).add(new Edge(a, w));
-        }
+            log.debug("Valutazione uscita: {}", exit.getId());
 
-        // 4) Dijkstra depuis startNode
-        Map<String, Double> dist = new HashMap<>();
-        Map<String, String> prev = new HashMap<>();
-        PriorityQueue<State> pq = new PriorityQueue<>(Comparator.comparingDouble(s -> s.d));
+            List<GraphNode> path =
+                    engine.computePath(graph, start, exit);
 
-        dist.put(startNode, 0.0);
-        pq.add(new State(startNode, 0.0));
+            if (!path.isEmpty()) {
 
-        while (!pq.isEmpty()) {
-            State cur = pq.poll();
-            if (cur.d > dist.getOrDefault(cur.node, Double.POSITIVE_INFINITY)) continue;
+                double cost = calculateCost(path, graph);
 
-            for (Edge e : graph.getOrDefault(cur.node, List.of())) {
-                double nd = cur.d + e.w;
-                if (nd < dist.getOrDefault(e.to, Double.POSITIVE_INFINITY)) {
-                    dist.put(e.to, nd);
-                    prev.put(e.to, cur.node);
-                    pq.add(new State(e.to, nd));
+                log.debug("Costo percorso verso {} = {}", exit.getId(), cost);
+
+                if (cost < bestCost) {
+                    bestCost = cost;
+                    bestPath = path;
                 }
             }
         }
 
-        // 5) Trouver l'exit atteignable la + proche
-        String bestExit = null;
-        double bestDist = Double.POSITIVE_INFINITY;
+        if (bestPath.isEmpty()) {
+            log.warn("Nessun percorso disponibile da {}", startNode);
+            return List.of();
+        }
 
-        for (String ex : exits) {
-            double d = dist.getOrDefault(ex, Double.POSITIVE_INFINITY);
-            if (d < bestDist) {
-                bestDist = d;
-                bestExit = ex;
+        log.info("Percorso trovato da {} con costo {}", startNode, bestCost);
+
+        return bestPath.stream()
+                .map(GraphNode::getId)
+                .toList();
+    }
+
+    // =========================
+    // COSTO
+    // =========================
+    private double calculateCost(
+            List<GraphNode> path,
+            Graph graph
+    ) {
+
+        double cost = 0;
+
+        for (int i = 0; i < path.size() - 1; i++) {
+
+            GraphNode from = path.get(i);
+            GraphNode to   = path.get(i + 1);
+
+            for (GraphEdge e : graph.getEdges(from)) {
+
+                if (e.getTo().equals(to)) {
+                    cost += e.getWeight();
+                    break;
+                }
             }
         }
 
-        if (bestExit == null || bestDist == Double.POSITIVE_INFINITY) {
-            // aucune exit atteignable
-            return List.of();
-        }
-
-        // 6) Reconstruire le chemin
-        LinkedList<String> path = new LinkedList<>();
-        String cur = bestExit;
-        while (cur != null) {
-            path.addFirst(cur);
-            if (cur.equals(startNode)) break;
-            cur = prev.get(cur);
-        }
-
-        if (path.isEmpty() || !path.getFirst().equals(startNode)) {
-            return List.of();
-        }
-
-        return path;
+        return cost;
     }
-
-    // ====== helpers ======
-    private record Edge(String to, double w) {}
-    private record State(String node, double d) {}
 }

@@ -1,12 +1,15 @@
 package it.unibg.resq.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class SigninResponse {
-    private String message;
+
+    private String token;
+    private Long id;
+    private String username;
+    private String email;
     private String role;
 }
-

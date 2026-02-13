@@ -438,3 +438,266 @@ body {
     transform: translateX(0);
   }
 }
+
+.settings-card {
+  margin-top: 20px;
+}
+
+.settings-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-actions button {
+  width: 100%;
+  font-weight: 600;
+}
+
+/* ================= MODAL OVERLAY ================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(15, 23, 42, 0.65); /* blu scuro blur */
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+
+/* ================= MODAL BOX ================= */
+
+.modal-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+
+  border-radius: 16px;
+  padding: 24px 26px;
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.25);
+
+  animation: modalFadeIn 0.25s ease;
+}
+
+
+/* ================= ANIMATION ================= */
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* ================= HEADER ================= */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+
+  font-size: 20px;
+  cursor: pointer;
+  color: #64748b;
+
+  transition: 0.2s;
+}
+
+.modal-header button:hover {
+  color: #ef4444;
+}
+
+
+/* ================= FORM ================= */
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+
+/* ================= BUTTONS ================= */
+
+.save-btn {
+  width: 100%;
+  margin-top: 15px;
+
+  padding: 10px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+}
+
+
+/* ================= DELETE MODAL ================= */
+
+.modal-box p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.btn-danger {
+  width: 100%;
+  margin-top: 14px;
+
+  border-radius: 8px;
+  padding: 10px;
+
+  font-weight: 600;
+}
+
+
+/* ================= SUCCESS TOAST ================= */
+.toast-success {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+.toast-error {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #dc3545;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+/* ================= FORCE TOAST VISIBILITY ================= */
+
+.toast-success,
+.toast-error {
+  position: fixed !important;
+  top: 25px !important;
+  right: 25px !important;
+
+  z-index: 999999 !important;
+
+  min-width: 260px;
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  padding: 14px 22px;
+  border-radius: 10px;
+
+  animation: toastSlide 0.3s ease;
+}
+
+/* SUCCESS */
+.toast-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  color: white !important;
+}
+
+/* ERROR */
+.toast-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: white !important;
+}
+
+/* ANIMATION */
+@keyframes toastSlide {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.success-msg {
+  margin-top: 10px;
+  color: #2ecc71;
+  font-weight: 600;
+}
+
+.error-msg {
+  margin-top: 10px;
+  color: #e74c3c;
+  font-weight: 600;
+}
+

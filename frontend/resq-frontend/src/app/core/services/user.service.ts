@@ -8,10 +8,13 @@ import { Observable } from 'rxjs';
 export class UserService {
 
   private apiUrl = 'http://localhost:8080/api/users';
+  private baseUrl = 'http://localhost:8080/api/user'; // /me/password
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders() {
+  // ===== HEADERS CON TOKEN =====
+  private getAuthHeaders() {
+
     const token = localStorage.getItem('token');
 
     return {
@@ -22,30 +25,31 @@ export class UserService {
     };
   }
 
+  // ===== UPDATE PROFILO =====
   updateUser(id: number, data: any): Observable<any> {
     return this.http.put(
       `${this.apiUrl}/${id}`,
       data,
-      this.getHeaders()
+      this.getAuthHeaders()
     );
   }
 
-  getUser(id: number): Observable<any> {
+  // ===== GET PROFILO =====
+  getUserById(id: number): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/${id}`,
-      this.getHeaders()
+      this.getAuthHeaders()
     );
   }
 
-  getUserById(id: number) {
-  return this.http.get<any>(
-    `${this.apiUrl}/${id}`,
-    this.getHeaders()
-  );
-}
-
-
-
+  // ===== CAMBIO PASSWORD =====
+  changeMyPassword(data: any): Observable<any> {
+    return this.http.put<any>(
+      `${this.baseUrl}/me/password`,
+      data,
+      this.getAuthHeaders()
+    );
+  }
 
 
 }

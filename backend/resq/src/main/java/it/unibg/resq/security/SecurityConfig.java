@@ -24,6 +24,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final AuthEntryPoint authEntryPoint;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,12 +37,34 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+
+                        // CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // AUTH PUBBLICO
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // MAPPA PUBBLICA
                         .requestMatchers(HttpMethod.GET, "/api/map/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/map/evacuation").permitAll()
+
+                        // PROFILO UTENTE
+                        .requestMatchers("/api/user/**").authenticated()
+
+                        // UTENTI (solo login)
+                        .requestMatchers("/api/users/**").authenticated()
+
+                        // ADMIN (se esiste)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // RESTO
                         .anyRequest().authenticated()
                 )
+
+
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(authEntryPoint)
+                )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

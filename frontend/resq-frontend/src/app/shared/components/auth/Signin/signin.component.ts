@@ -58,18 +58,33 @@ export class SigninComponent implements OnInit {
 
         console.log('LOGIN RESPONSE:', res);
 
-        // Salva token e dati
+        // Pulisce vecchi dati sbagliati
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+        localStorage.removeItem('userId');
+
+        // Salva token
         localStorage.setItem('token', res.token);
-        localStorage.setItem('username', res.username);
-        localStorage.setItem('email', res.email);
-        localStorage.setItem('role', res.role);
-        localStorage.setItem('userId', res.id.toString());
 
+        if (res.username) {
+          localStorage.setItem('username', res.username);
+        }
 
-        // Redirect
+        if (res.email) {
+          localStorage.setItem('email', res.email);
+        }
+
+        if (res.role) {
+          localStorage.setItem('role', res.role);
+        }
+
+        if (res.id !== undefined && res.id !== null) {
+          localStorage.setItem('userId', res.id.toString());
+        }
+
         this.router.navigate(['/user']);
-
       },
+
 
 
       error: (err) => {

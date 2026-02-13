@@ -17,15 +17,32 @@ export class AuthService {
  signin(data: { email: string; password: string }) {
   return this.http.post<any>(`${this.API_URL}/signin`, data).pipe(
     tap(res => {
-      localStorage.setItem('token', res.token);
-       localStorage.setItem('userId', res.id);
-      localStorage.setItem('role', res.role);
-      localStorage.setItem('username', res.username); 
-      localStorage.setItem('email', res.email);
+
+      if (res.token) {
+        localStorage.setItem('token', res.token);
+      }
+
+      if (res.id !== undefined && res.id !== null) {
+        localStorage.setItem('userId', String(res.id));
+      }
+
+      if (res.role) {
+        localStorage.setItem('role', String(res.role));
+      }
+
+      if (res.username) {
+        localStorage.setItem('username', String(res.username));
+      }
+
+      if (res.email) {
+        localStorage.setItem('email', String(res.email));
+      }
 
     })
   );
 }
+
+
 
 
   // ======================

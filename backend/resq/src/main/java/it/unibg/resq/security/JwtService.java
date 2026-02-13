@@ -64,9 +64,9 @@ public class JwtService {
 
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
+
 
     // 🔐 Estrae il ruolo dal token
     public String extractRole(String token) {
