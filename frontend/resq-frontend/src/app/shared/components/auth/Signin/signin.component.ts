@@ -82,7 +82,13 @@ export class SigninComponent implements OnInit {
           localStorage.setItem('userId', res.id.toString());
         }
 
-        this.router.navigate(['/user']);
+        // Redirect in base al ruolo
+        if (res.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/user']);
+        }
+
       },
 
 
