@@ -42,6 +42,11 @@ export class UserService {
     );
   }
 
+  getMyProfile() {
+    return this.http.get('/api/user/me');
+  }
+
+
   // ===== CAMBIO PASSWORD =====
   changeMyPassword(data: any): Observable<any> {
     return this.http.put<any>(

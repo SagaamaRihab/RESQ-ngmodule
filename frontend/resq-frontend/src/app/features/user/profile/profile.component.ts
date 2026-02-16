@@ -177,14 +177,10 @@ passwordErrorMsg: string = '';
 
  loadProfile() {
 
-    const id = Number(localStorage.getItem('userId') || 0);
-
-    if (!id) return; // per ora non blocchiamo
+  this.userService.getMyProfile().subscribe({
 
 
-    this.userService.getUserById(id).subscribe({
-
-      next: (user) => {
+      next: (user: any) => {
 
         console.log('USER:', user);
 

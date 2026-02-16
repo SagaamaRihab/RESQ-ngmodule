@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router'; // ✅ AGGIUNGI QUESTO
 
 @Component({
   selector: 'app-instructions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    RouterModule // ✅ AGGIUNGI QUESTO
+  ],
   templateUrl: './instructions.component.html',
   styleUrls: ['./instructions.component.css']
 })

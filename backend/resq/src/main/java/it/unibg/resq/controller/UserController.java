@@ -53,6 +53,25 @@ public class UserController {
         );
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
+
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            email = ((User) principal).getEmail();
+        } else {
+            email = principal.toString();
+        }
+
+        User user = userService.getByEmail(email);
+
+        return ResponseEntity.ok(user);
+    }
+
+
 
     @PutMapping("/user/email")
     public ResponseEntity<?> changeMyEmail(

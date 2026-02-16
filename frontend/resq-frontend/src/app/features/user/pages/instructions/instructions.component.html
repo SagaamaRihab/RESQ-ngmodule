@@ -1,10 +1,69 @@
-<div class="instructions-page">
-  <h2>Istruzioni di emergenza</h2>
+<div class="instructions-container">
 
-  <ul>
-    <li *ngFor="let i of instructions">
-      <strong>{{ i.title }}</strong><br>
-      {{ i.description }}
-    </li>
-  </ul>
+  <div class="instructions-card">
+
+    <h1>Istruzioni di emergenza</h1>
+    <p class="subtitle">
+      Segui attentamente queste indicazioni in caso di emergenza.
+    </p>
+
+    <div class="instruction-item">
+      <div class="icon calm"></div>
+      <div>
+        <h3>Mantieni la calma</h3>
+        <p>
+          Evita il panico e segui le indicazioni fornite dal sistema RESQ.
+        </p>
+      </div>
+    </div>
+
+    <div class="instruction-item">
+      <div class="icon route"></div>
+      <div>
+        <h3>Segui i percorsi</h3>
+        <p>
+          Usa solo le uscite segnalate. Non utilizzare gli ascensori.
+        </p>
+      </div>
+    </div>
+
+    <div class="instruction-item">
+      <div class="icon help"></div>
+      <div>
+        <h3>Aiuta chi è in difficoltà</h3>
+        <p>
+          Presta assistenza alle persone con mobilità ridotta.
+        </p>
+      </div>
+    </div>
+
+    <div class="instruction-item">
+      <div class="icon meeting"></div>
+      <div>
+        <h3>Raggiungi il punto di raccolta</h3>
+        <p>
+          Allontanati dall’edificio e attendi istruzioni ufficiali.
+        </p>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      ⚠️ In caso di pericolo immediato, segui sempre le indicazioni delle autorità.
+    </div>
+
+    <div class="button-container">
+      <button
+        class="go-btn"
+        routerLink="/user/evacuation">
+        Vai alla pianificazione evacuazione
+      </button>
+    </div>
+
+
+
+
+
+
+  </div>
+
 </div>
