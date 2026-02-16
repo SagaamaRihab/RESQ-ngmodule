@@ -11,3 +11,4 @@ dist/
 
 backend/.idea/
 backend/resq/src/main/resources/application.properties
+backend/resq/src/main/resources/application.properties
