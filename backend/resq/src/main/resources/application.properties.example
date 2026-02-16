@@ -6,7 +6,7 @@ server.port=8080
 # ===============================
 # DATASOURCE - POSTGRESQL
 # ===============================
-spring.datasource.url=jdbc:postgresql://localhost:5432/resq-eva
+spring.datasource.url=jdbc:postgresql://localhost:5433/resq-eva
 spring.datasource.username=postgres
 spring.datasource.password=progetto
 spring.datasource.driver-class-name=org.postgresql.Driver
