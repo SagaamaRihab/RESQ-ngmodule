@@ -1,42 +1,55 @@
+<!-- CONTENITORE PRINCIPALE PAGINA EVACUAZIONE -->
 <div class="evacuation-wrapper">
 
+  <!-- CARD CENTRALE CON ANIMAZIONE -->
   <div class="evacuation-card fade-in">
 
-    <!-- HEADER -->
+
+    <!-- ================= HEADER ================= -->
     <div class="card-header">
 
+      <!-- Icona decorativa -->
       <div class="header-icon">
         <i class="fa-solid fa-route"></i>
       </div>
 
-      <h1>Pianificazione evacuazione</h1>
+      <!-- Titolo pagina -->
+      <h1>Evacuation Planning</h1>
 
+      <!-- Separatore grafico -->
       <div class="divider"></div>
 
+      <!-- Descrizione -->
       <p>
-        Inserisci il nodo in cui ti trovi.
-        Il sistema calcolerà il percorso di evacuazione più sicuro.
+
+        Enter your current node.
+        The system will calculate the safest evacuation route.
+
       </p>
 
     </div>
 
 
-    <!-- FORM -->
+    <!-- ================= FORM ================= -->
     <div class="form-section">
 
       <div class="form-group">
 
-        <label for="startNode">Nodo di partenza</label>
+        <!-- Etichetta input -->
+        <label for="startNode">Starting Node</label>
+
 
         <div class="input-wrapper">
 
+          <!-- Icona posizione -->
           <i class="fa-solid fa-location-dot"></i>
 
+          <!-- Campo input -->
           <input
             id="startNode"
             type="text"
             [(ngModel)]="startNode"
-            placeholder="Es. A101"
+            placeholder="e.g. A101"
           />
 
         </div>
@@ -44,13 +57,18 @@
       </div>
 
 
+      <!-- Pulsante calcolo -->
       <button
         class="btn-submit"
         (click)="calculate()"
         [disabled]="loading">
 
-        <span *ngIf="!loading">Calcola percorso</span>
 
+        <!-- Testo normale -->
+        <span *ngIf="!loading">Calculate Route</span>
+
+
+        <!-- Spinner caricamento -->
         <span *ngIf="loading" class="spinner"></span>
 
       </button>
@@ -58,28 +76,41 @@
     </div>
 
 
-    <!-- STATUS -->
+    <!-- ================= STATO ================= -->
 
+    <!-- Messaggio errore -->
     <div *ngIf="error" class="status status-error">
+
       {{ error }}
+
     </div>
 
 
+    <!-- ================= RISULTATO ================= -->
     <div *ngIf="response" class="result-card">
 
-      <h3>Percorso consigliato</h3>
+
+      <h3>Recommended Route</h3>
+
 
       <p>{{ response.message }}</p>
 
+
+      <!-- Lista nodi percorso -->
       <ul class="path-list">
+
         <li *ngFor="let node of response.path">
           {{ node }}
         </li>
+
       </ul>
 
+
+      <!-- Visualizzatore grafico percorso -->
       <app-path-viewer
         *ngIf="response.path.length"
         [path]="response.path">
+
       </app-path-viewer>
 
     </div>

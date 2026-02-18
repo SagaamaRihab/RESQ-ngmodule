@@ -1,36 +1,73 @@
+// ================= IMPORT =================
+
+// Component base Angular
 import { Component } from '@angular/core';
+
+// Moduli comuni
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; // ✅ AGGIUNGI QUESTO
+
+// Router per usare routerLink nel template
+import { RouterModule } from '@angular/router';
+
+
+// ================= COMPONENT =================
 
 @Component({
   selector: 'app-instructions',
+
+  // Standalone component
   standalone: true,
+
+  // Moduli utilizzati dal componente
   imports: [
     CommonModule,
-    RouterModule // ✅ AGGIUNGI QUESTO
+    RouterModule
   ],
+
+  // Template HTML associato
   templateUrl: './instructions.component.html',
+
+  // File CSS associato
   styleUrls: ['./instructions.component.css']
 })
+
 export class InstructionsComponent {
 
+
+  // =================================================
+  // ============ LISTA ISTRUZIONI ===================
+  // =================================================
+
+  /**
+   * Elenco delle istruzioni di emergenza
+   * Mostrate nella pagina Instructions
+   */
   instructions = [
+
     {
-      title: 'Mantieni la calma',
-      description: 'Evita il panico e segui le indicazioni fornite dal sistema RESQ.'
+      title: 'Stay Calm',
+      description:
+        'Avoid panic and follow the instructions provided by the RESQ system.'
     },
+
     {
-      title: 'Segui i percorsi di evacuazione',
-      description: 'Utilizza solo le uscite segnalate e non usare ascensori.'
+      title: 'Follow Evacuation Routes',
+      description:
+        'Use only marked exits and do not use elevators.'
     },
+
     {
-      title: 'Aiuta chi è in difficoltà',
-      description: 'Se possibile, presta assistenza a persone con mobilità ridotta.'
+      title: 'Help People in Need',
+      description:
+        'If possible, assist people with reduced mobility.'
     },
+
     {
-      title: 'Raggiungi il punto di raccolta',
-      description: 'Allontanati dall’edificio e attendi istruzioni dalle autorità.'
+      title: 'Reach the Meeting Point',
+      description:
+        'Move away from the building and wait for instructions from authorities.'
     }
+
   ];
 
 }

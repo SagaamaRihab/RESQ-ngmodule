@@ -1,21 +1,46 @@
+// ================= IMPORT =================
+
+// Component Angular
 import { Component } from '@angular/core';
+
+// Per leggere parametri dalla rotta (es: /map/A)
 import { ActivatedRoute } from '@angular/router';
+
+// Moduli comuni
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-type Floor = 'terra' | 'primo' | 'secondo' | 'interrato' | 'rialzato';
 
-type Point = { x: number; y: number };
+// ================= TYPE DEFINITIONS =================
 
+// Tipi di piano disponibili
+type Floor =
+  | 'ground'
+  | 'first'
+  | 'second'
+  | 'basement'
+  | 'mezzanine';
+
+// Punto sulla mappa
+type Point = {
+  x: number;
+  y: number;
+};
+
+// Uscita base
 type Exit = {
   id: string;
   point: Point;
 };
 
+// Uscita completa con stato
 type FullExit = Exit & {
   status: 'open' | 'blocked';
   description: string;
 };
+
+
+// ================= COMPONENT =================
 
 @Component({
   selector: 'app-building',
@@ -24,15 +49,26 @@ type FullExit = Exit & {
   templateUrl: './building.component.html',
   styleUrls: ['./building.component.css']
 })
+
 export class BuildingComponent {
 
-  building!: string;
-  selectedFloor: Floor = 'terra';
 
+  // =================================================
+  // ============ STATO PRINCIPALE ===================
+  // =================================================
+
+  building!: string;
+
+  // Piano selezionato
+  selectedFloor: Floor = 'ground';
+
+  // Stanza selezionata
   selectedPosition: string = '';
 
+  // Uscita più vicina
   nearestExit: FullExit | null = null;
 
+  // Risultato evacuazione
   evacuationResult: {
     from: string;
     exitId: string;
@@ -40,267 +76,263 @@ export class BuildingComponent {
   } | null = null;
 
 
-  // =====================
-  // STANZE
-  // =====================
+  // =================================================
+  // ============ STANZE =============================
+  // =================================================
 
   ROOMS: Record<string, Record<string, Record<string, Point>>> = {
 
-  A: {
-    terra: {
-      Biblioteca: { x: 25, y: 22 },
-      'Sala Studio': { x: 62, y: 58 }
+    // ========== BUILDING A ==========
+    A: {
+
+      ground: {
+        Library: { x: 25, y: 22 },
+        'Study Room': { x: 62, y: 58 }
+      },
+
+      first: {
+        'Room 3': { x: 52, y: 46 },
+        'Room 4': { x: 60, y: 50 },
+        Bathroom: { x: 35, y: 25 },
+        Laboratory: { x: 20, y: 20 }
+      },
+
+      second: {
+        'Room 7': { x: 28, y: 35 },
+        'Room 8': { x: 36, y: 38 },
+        'Room 9': { x: 55, y: 48 },
+        'Room 10': { x: 65, y: 32 }
+      }
     },
 
-    primo: {
-      'Aula 3': { x: 52, y: 46 },
-      'Aula 4': { x: 60, y: 50 },
-      Bagno: { x: 35, y: 25 },
-      Laboratorio: { x: 20, y: 20 }
+
+    // ========== BUILDING B ==========
+    B: {
+
+      basement: {
+        'Room 12': { x: 30, y: 40 },
+        'Room 13': { x: 40, y: 40 },
+        'Room 14': { x: 50, y: 40 },
+        'Women Bathroom': { x: 20, y: 25 },
+        'Men Bathroom': { x: 22, y: 25 }
+      },
+
+      mezzanine: {
+        'Room 17': { x: 25, y: 35 },
+        'Room 18': { x: 35, y: 35 },
+        'Room 19': { x: 45, y: 35 },
+        'Room 20': { x: 55, y: 35 },
+        'Room 21': { x: 65, y: 35 },
+        'Women Bathroom': { x: 18, y: 20 },
+        'Men Bathroom': { x: 20, y: 20 }
+      },
+
+      first: {
+        'Room 22': { x: 30, y: 45 },
+        'Room 23': { x: 40, y: 45 },
+        'Room 24': { x: 50, y: 45 },
+        'Room 25': { x: 60, y: 45 },
+        'Women Bathroom': { x: 25, y: 28 },
+        'Men Bathroom': { x: 27, y: 28 }
+      }
+
     },
 
-    secondo: {
-      'Aula 7': { x: 28, y: 35 },
-      'Aula 8': { x: 36, y: 38 },
-      'Aula 9': { x: 55, y: 48 },
-      'Aula 10': { x: 65, y: 32 }
+
+    // ========== BUILDING D ==========
+    D: {
+
+      ground: {
+
+        'Main Hall': { x: 35, y: 40 },
+        'Secondary Hall': { x: 70, y: 38 },
+        Reception: { x: 45, y: 55 },
+        'Women Bathroom': { x: 50, y: 22 },
+        'Men Bathroom': { x: 27, y: 28 },
+        'Main Entrance': { x: 48, y: 65 }
+
+      }
+
     }
-  },
+
+  };
 
 
-  B: {
-
-    interrato: {
-      'Aula 12': { x: 30, y: 40 },
-      'Aula 13': { x: 40, y: 40 },
-      'Aula 14': { x: 50, y: 40 },
-      'Bagno Femminile': { x: 20, y: 25 },
-      'Bagno Maschile': { x: 22, y: 25 }
-    },
-
-    rialzato: {
-      'Aula 17': { x: 25, y: 35 },
-      'Aula 18': { x: 35, y: 35 },
-      'Aula 19': { x: 45, y: 35 },
-      'Aula 20': { x: 55, y: 35 },
-      'Aula 21': { x: 65, y: 35 },
-      'Bagno Femminile': { x: 18, y: 20 },
-      'Bagno Maschile': { x: 20, y: 20 }
-    },
-
-    primo: {
-      'Aula 22': { x: 30, y: 45 },
-      'Aula 23': { x: 40, y: 45 },
-      'Aula 24': { x: 50, y: 45 },
-      'Aula 25': { x: 60, y: 45 },
-      'Bagno Femminile': { x: 25, y: 28 },
-      'Bagno Maschile': { x: 27, y: 28 }
-    }
-
-  },
-
-  D: {
-
-    terra: {
-
-      'Aula Magna': { x: 35, y: 40 },
-      'Aula Minore': { x: 70, y: 38 },
-      'Portineria': { x: 45, y: 55 },
-      'Bagno Femminile': { x: 50, y: 22 },
-      'Bagno Maschile': { x: 27, y: 28 },
-      'Ingresso Principale': { x: 48, y: 65 }
-
-    }
-
-  },
-
-
-};
-
-
-
-
-
-
-  // =====================
-  // USCITE
-  // =====================
+  // =================================================
+  // ============ USCITE =============================
+  // =================================================
 
   EXITS: Record<string, Record<string, FullExit[]>> = {
 
-  // =====================
-  // EDIFICIO A
-  // =====================
-  A: {
 
-    terra: [
-      {
-        id: 'Scala Ovest',
-        point: { x: 18, y: 18 },
-        status: 'open',
-        description: 'Vicino alla Biblioteca'
-      },
-      {
-        id: 'Scala Est',
-        point: { x: 72, y: 52 },
-        status: 'blocked',
-        description: 'Zona auditorium'
-      }
-    ],
+    // ========== BUILDING A ==========
+    A: {
 
-    primo: [
-      {
-        id: 'Scala Ovest',
-        point: { x: 15, y: 20 },
-        status: 'open',
-        description: 'Fine corridoio sinistro'
-      },
-      {
-        id: 'Scala Centrale',
-        point: { x: 40, y: 40 },
-        status: 'open',
-        description: 'Vicino ascensori'
-      }
-    ],
+      ground: [
+        {
+          id: 'West Staircase',
+          point: { x: 18, y: 18 },
+          status: 'open',
+          description: 'Near the Library'
+        },
+        {
+          id: 'East Staircase',
+          point: { x: 72, y: 52 },
+          status: 'blocked',
+          description: 'Auditorium area'
+        }
+      ],
 
-    secondo: [
-      {
-        id: 'Scala Ovest',
-        point: { x: 18, y: 28 },
-        status: 'open',
-        description: 'Vicino Aula 7'
-      },
-      {
-        id: 'Scala Est',
-        point: { x: 70, y: 30 },
-        status: 'open',
-        description: 'Fine corridoio destro'
-      }
-    ]
+      first: [
+        {
+          id: 'West Staircase',
+          point: { x: 15, y: 20 },
+          status: 'open',
+          description: 'End of left corridor'
+        },
+        {
+          id: 'Central Staircase',
+          point: { x: 40, y: 40 },
+          status: 'open',
+          description: 'Near elevators'
+        }
+      ],
 
-  },
+      second: [
+        {
+          id: 'West Staircase',
+          point: { x: 18, y: 28 },
+          status: 'open',
+          description: 'Near Room 7'
+        },
+        {
+          id: 'East Staircase',
+          point: { x: 70, y: 30 },
+          status: 'open',
+          description: 'End of right corridor'
+        }
+      ]
 
-
-  // =====================
-  // EDIFICIO B
-  // =====================
-  B: {
-
-    interrato: [
-      {
-        id: 'Scala Nord',
-        point: { x: 20, y: 25 },
-        status: 'open',
-        description: 'Vicino Aula 12'
-      },
-      {
-        id: 'Scala Sud',
-        point: { x: 75, y: 28 },
-        status: 'open',
-        description: 'Uscita verso cortile'
-      }
-    ],
-
-    rialzato: [
-      {
-        id: 'Scala Nord',
-        point: { x: 22, y: 22 },
-        status: 'open',
-        description: 'Vicino Aula 17'
-      },
-      {
-        id: 'Scala Est',
-        point: { x: 70, y: 35 },
-        status: 'open',
-        description: 'Vicino Aula 21'
-      }
-    ],
-
-    primo: [
-      {
-        id: 'Scala Ovest',
-        point: { x: 18, y: 40 },
-        status: 'open',
-        description: 'Vicino Aula 22'
-      }
-    ]
-
-  },
+    },
 
 
-  // =====================
-  // EDIFICIO D
-  // =====================
-  D: {
+    // ========== BUILDING B ==========
+    B: {
 
-    terra: [
+      basement: [
+        {
+          id: 'North Staircase',
+          point: { x: 20, y: 25 },
+          status: 'open',
+          description: 'Near Room 12'
+        },
+        {
+          id: 'South Staircase',
+          point: { x: 75, y: 28 },
+          status: 'open',
+          description: 'Exit to courtyard'
+        }
+      ],
 
-      {
-        id: 'Scala Principale',
-        point: { x: 48, y: 70 },
-        status: 'open',
-        description: 'Ingresso principale'
-      },
+      mezzanine: [
+        {
+          id: 'North Staircase',
+          point: { x: 22, y: 22 },
+          status: 'open',
+          description: 'Near Room 17'
+        },
+        {
+          id: 'East Staircase',
+          point: { x: 70, y: 35 },
+          status: 'open',
+          description: 'Near Room 21'
+        }
+      ],
 
-      {
-        id: 'Scala Laterale',
-        point: { x: 80, y: 30 },
-        status: 'open',
-        description: 'Lato Aula Minore'
-      }
+      first: [
+        {
+          id: 'West Staircase',
+          point: { x: 18, y: 40 },
+          status: 'open',
+          description: 'Near Room 22'
+        }
+      ]
 
-    ]
-
-  }
-
-};
+    },
 
 
+    // ========== BUILDING D ==========
+    D: {
 
+      ground: [
+
+        {
+          id: 'Main Staircase',
+          point: { x: 48, y: 70 },
+          status: 'open',
+          description: 'Main entrance'
+        },
+
+        {
+          id: 'Side Staircase',
+          point: { x: 80, y: 30 },
+          status: 'open',
+          description: 'Secondary hall side'
+        }
+
+      ]
+
+    }
+
+  };
+
+
+  // =================================================
+  // ============ COSTRUTTORE ========================
+  // =================================================
 
   constructor(private route: ActivatedRoute) {
 
-  this.building = this.route.snapshot.paramMap.get('building')!;
+    // Legge edificio dall'URL
+    this.building = this.route.snapshot.paramMap.get('building')!;
 
-  // Imposta piano iniziale in base all'edificio
-  if (this.building === 'A') {
-    this.selectedFloor = 'terra';
+
+    // Imposta piano iniziale
+    if (this.building === 'A') {
+      this.selectedFloor = 'ground';
+    }
+
+    if (this.building === 'B') {
+      this.selectedFloor = 'basement';
+    }
   }
 
-  if (this.building === 'B') {
-    this.selectedFloor = 'interrato';
-  }
-}
 
-
-  // =====================
-  // CAMBIO PIANO
-  // =====================
+  // =================================================
+  // ============ CAMBIO PIANO =======================
+  // =================================================
 
   selectFloor(floor: Floor) {
 
     this.selectedFloor = floor;
 
+    // Reset selezioni
     this.selectedPosition = '';
-
     this.nearestExit = null;
-
     this.evacuationResult = null;
   }
 
 
-  // =====================
-  // DATI SELECT
-  // =====================
+  // =================================================
+  // ============ DATI SELECT ========================
+  // =================================================
 
   getCurrentRooms(): string[] {
 
     const buildingRooms = this.ROOMS[this.building];
-
     if (!buildingRooms) return [];
 
     const floorRooms = buildingRooms[this.selectedFloor];
-
     if (!floorRooms) return [];
 
     return Object.keys(floorRooms);
@@ -314,43 +346,40 @@ export class BuildingComponent {
   }
 
 
-
-  // =====================
-  // CALCOLO EVACUAZIONE
-  // =====================
+  // =================================================
+  // ============ CALCOLO EVACUAZIONE =================
+  // =================================================
 
   calculateEvacuation() {
 
-  if (!this.selectedPosition) return;
+    if (!this.selectedPosition) return;
 
-  const buildingRooms = this.ROOMS[this.building];
+    const buildingRooms = this.ROOMS[this.building];
+    if (!buildingRooms) return;
 
-  if (!buildingRooms) return;
+    const floorRooms = buildingRooms[this.selectedFloor];
+    if (!floorRooms) return;
 
-  const floorRooms = buildingRooms[this.selectedFloor];
-
-  if (!floorRooms) return;
-
-  const start = floorRooms[this.selectedPosition];
-
-  if (!start) return;
-
-  const nearest = this.findNearestExit(start);
-
-  this.nearestExit = nearest;
-
-  this.evacuationResult = {
-    from: this.selectedPosition,
-    exitId: nearest.id,
-    message: `Segui il corridoio verso ${nearest.id}. ${nearest.description}`
-  };
-}
+    const start = floorRooms[this.selectedPosition];
+    if (!start) return;
 
 
+    const nearest = this.findNearestExit(start);
 
-  // =====================
-  // DISTANZA
-  // =====================
+    this.nearestExit = nearest;
+
+
+    this.evacuationResult = {
+      from: this.selectedPosition,
+      exitId: nearest.id,
+      message: `Follow the corridor toward ${nearest.id}. ${nearest.description}`
+    };
+  }
+
+
+  // =================================================
+  // ============ DISTANZA ===========================
+  // =================================================
 
   private distance(a: Point, b: Point): number {
 
@@ -368,14 +397,12 @@ export class BuildingComponent {
         .filter(e => e.status === 'open');
 
 
-
     if (!exits.length) {
-      throw new Error('Nessuna uscita disponibile');
+      throw new Error('No exits available');
     }
 
+
     let nearest = exits[0];
-
-
     let min = this.distance(start, nearest.point);
 
 
@@ -393,51 +420,54 @@ export class BuildingComponent {
   }
 
 
-  // =====================
-  // ISTRUZIONI
-  // =====================
+  // =================================================
+  // ============ ISTRUZIONI =========================
+  // =================================================
 
   getEvacuationInstructions(): string[] {
 
     if (!this.selectedPosition || !this.nearestExit) return [];
 
+
     return [
-      `Esci da: ${this.selectedPosition}`,
-      `Vai verso: ${this.nearestExit.id}`,
-      `Riferimento: ${this.nearestExit.description}`,
-      'Segui la segnaletica verde',
-      'Scendi le scale',
-      'Raggiungi il punto di raccolta'
+      `Exit from: ${this.selectedPosition}`,
+      `Go toward: ${this.nearestExit.id}`,
+      `Reference point: ${this.nearestExit.description}`,
+      'Follow the green signs',
+      'Go down the stairs',
+      'Reach the meeting point'
     ];
   }
 
 
-  // =====================
-  // MAPPA
-  // =====================
+  // =================================================
+  // ============ MAPPA ==============================
+  // =================================================
 
-  
- get floorImage(): string {
-  const MAPS: Record<string, Record<string, string>> = {
-    A: {
-      terra: '/assets/maps/A/piano-terra.png',
-      primo: '/assets/maps/A/primo-piano.png',
-      secondo: '/assets/maps/A/secondo-piano.png',
-    },
-    B: {
-      interrato: '/assets/maps/B/Piano-interrato.png',
-      rialzato: '/assets/maps/B/Piano-Rialzato.png',
-      primo: '/assets/maps/B/Primo-piano (2).png',
-    },
-    D: {
-      terra: '/assets/maps/D/Edificio-D.png',
-    }
-  };
+  get floorImage(): string {
 
-  return MAPS[this.building]?.[this.selectedFloor] ?? '';
-}
+    const MAPS: Record<string, Record<string, string>> = {
+
+      A: {
+        ground: '/assets/maps/A/piano-terra.png',
+        first: '/assets/maps/A/primo-piano.png',
+        second: '/assets/maps/A/secondo-piano.png',
+      },
+
+      B: {
+        basement: '/assets/maps/B/Piano-interrato.png',
+        mezzanine: '/assets/maps/B/Piano-Rialzato.png',
+        first: '/assets/maps/B/Primo-piano (2).png',
+      },
+
+      D: {
+        ground: '/assets/maps/D/Edificio-D.png',
+      }
+
+    };
 
 
-
+    return MAPS[this.building]?.[this.selectedFloor] ?? '';
+  }
 
 }

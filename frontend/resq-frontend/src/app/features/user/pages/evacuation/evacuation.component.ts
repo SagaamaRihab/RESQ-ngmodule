@@ -1,10 +1,23 @@
+// ================= IMPORT =================
+
+// Component Angular
 import { Component, OnInit } from '@angular/core';
+
+// Moduli comuni
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+// Service per chiamare il backend
 import { EvacuationService } from '../../../../core/services/evacuation.service';
+
+// Modello risposta evacuazione
 import { EvacuationResponse } from '../../../../core/models/evacuation-response.model';
+
+// Componente per visualizzare il percorso
 import { PathViewerComponent } from '../../../../shared/components/path-viewer/path-viewer.component';
+
+
+// ================= COMPONENT =================
 
 @Component({
   selector: 'app-evacuation',
@@ -13,69 +26,115 @@ import { PathViewerComponent } from '../../../../shared/components/path-viewer/p
   templateUrl: './evacuation.component.html',
   styleUrls: ['./evacuation.component.css'],
 })
+
 export class EvacuationComponent implements OnInit {
 
+  // =================================================
+  // ============ STATO PRINCIPALE ===================
+  // =================================================
+
+  // Nodo di partenza inserito dall'utente
   startNode = '';
+
+  // Percorso calcolato
   path: string[] = [];
+
+  // Corridoi bloccati (eventuale estensione futura)
   blockedCorridors: string[] = [];
 
+  // Stato caricamento
   loading = false;
+
+  // Messaggio errore
   error: string | null = null;
+
+  // Risposta completa dal backend
   response: EvacuationResponse | null = null;
+
+
+  // =================================================
+  // ============ COSTRUTTORE ========================
+  // =================================================
 
   constructor(
     private evacuationService: EvacuationService
   ) {}
 
+
+  // =================================================
+  // ============ CALCOLO PERCORSO ===================
+  // =================================================
+
   calculate(): void {
 
-    console.log('CLICK CALCOLA');
+    console.log('CALCULATE BUTTON CLICKED');
 
+    // Reset stato
     this.error = null;
     this.response = null;
     this.loading = true;
 
+    // Validazione input
     if (!this.startNode.trim()) {
-      this.error = 'Inserisci un nodo di partenza';
+      this.error = 'Please enter a starting node';
       this.loading = false;
       return;
     }
 
+    // Chiamata al backend
     this.evacuationService
       .calculateEvacuation(this.startNode.trim())
       .subscribe({
 
+        // ================= SUCCESS =================
         next: (res: EvacuationResponse) => {
-          console.log('RISPOSTA SERVER:', res);
+
+          console.log('SERVER RESPONSE:', res);
 
           this.response = res;
           this.path = res?.path ?? [];
           this.blockedCorridors = [];
 
+          // Salva nodo per uso futuro
           localStorage.setItem('startNode', this.startNode);
         },
 
-        error: (err) => {
-          console.error('ERRORE:', err);
 
-          this.error = 'Errore nel calcolo del percorso';
+        // ================= ERROR =================
+        error: (err) => {
+
+          console.error('ERROR:', err);
+
+          this.error = 'Error calculating evacuation route';
           this.loading = false;
         },
 
+
+        // ================= COMPLETE =================
         complete: () => {
-          console.log('COMPLETATO');
+
+          console.log('REQUEST COMPLETED');
+
           this.loading = false;
         }
+
       });
   }
 
 
+  // =================================================
+  // ============ INIZIALIZZAZIONE ===================
+  // =================================================
+
   ngOnInit(): void {
 
+    // Se esiste nodo salvato → ricalcola automaticamente
     const saved = localStorage.getItem('startNode');
 
     if (saved) {
+
       this.startNode = saved;
+
       this.calculate();
     }
 
