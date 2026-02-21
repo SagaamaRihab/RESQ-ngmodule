@@ -1,0 +1,56 @@
+
+<body>
+  <div class="wrapper">
+    <form class="form" (ngSubmit)="onLogin()" #loginForm="ngForm" autocomplete="off">
+      <h1 class="title">Sign in</h1>
+
+      <p class="success" *ngIf="successMessage">
+        {{ successMessage }}
+      </p>
+
+      <div class="inp">
+        <input
+          type="email"
+          class="input"
+          placeholder="email"
+          name="email"
+          [(ngModel)]="email"
+          autocomplete="off"
+          autocorrect="off"
+          
+        />
+       
+      </div>
+
+      <div class="inp">
+        <input
+          type="password"
+           name="password"
+          class="input"
+          placeholder="Password"
+          [(ngModel)]="password"
+          autocomplete="new-password"
+        />
+        
+      </div>
+
+      <button type="submit" class="submit">Login</button>
+
+      <p class="error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
+
+      <p class="footer">
+        Don't have an account?
+        <a routerLink="/signup" class="link"> Sign up now </a>
+      </p>
+    </form>
+
+    <div></div>
+
+    <div class="banner">
+      <h6 class="wel_text">Welcome to the RESQ system</h6><br />
+      <p class="para"></p>
+    </div>
+  </div>
+</body>

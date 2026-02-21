@@ -1,0 +1,147 @@
+<div class="page-card">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1 class="page-title">Mappa edificio</h1>
+      <p class="page-subtitle">Visualizza la struttura e calcola il percorso di evacuazione (corridoi bloccati esclusi).</p>
+    </div>
+
+    <div class="toolbar">
+      <label for="floorSelect">Piano</label>
+      <select
+        id="floorSelect"
+        class="floor-select"
+        [value]="selectedFloorKey"
+        (change)="onFloorChange(($any($event.target)).value)"
+      >
+        <option *ngFor="let f of floors" [value]="f.key">
+          {{ f.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Badge recalcul -->
+  <div *ngIf="showRecalcBadge" class="recalc-badge">
+    {{ recalcReason }}
+  </div>
+
+  <!-- Top panel controls -->
+  <div class="panel">
+    <div class="panel-row">
+      <div class="field">
+        <label for="evacStart">Nodo iniziale</label>
+
+        <select id="evacStart" class="evac-select" [(ngModel)]="evacStartNode">
+          <option value="">-- seleziona nodo --</option>
+          <option *ngFor="let n of floorNodes" [value]="n">
+            {{ n }}
+          </option>
+        </select>
+      </div>
+
+      <div class="actions">
+        
+
+        
+      </div>
+    </div>
+
+    <div *ngIf="evacError" class="alert err">{{ evacError }}</div>
+
+    <div *ngIf="!evacLoading && evacPath.length" class="summary">
+      <span>Percorso: <b>{{ evacPath.length }}</b> nodi</span>
+      <span class="dot">•</span>
+      <span>Corridori bloccati: <b>{{ blockedCorridorsCount }}</b></span>
+    </div>
+
+    <div *ngIf="errorMsg" class="alert err">{{ errorMsg }}</div>
+    <div *ngIf="loading" class="alert info">Caricamento...</div>
+  </div>
+
+  <!-- Layout: map + instructions -->
+  <div *ngIf="!loading && mapData as m" class="layout">
+    <!-- MAP -->
+    <div class="map-card">
+      <div class="map-wrap">
+        <img class="map-img" [src]="selectedFloor.imageUrl" alt="Mappa piano" draggable="false" />
+
+        <svg
+          class="map-svg"
+          [attr.viewBox]="'0 0 ' + selectedFloor.width + ' ' + selectedFloor.height"
+          preserveAspectRatio="xMidYMid meet"
+          (click)="onMapClick($event)"
+        >
+          <!-- PATH -->
+          <polyline
+            *ngIf="evacPath.length > 1"
+            class="evac-line"
+            [class.alert]="highlightPath"
+            [attr.points]="evacPoints"
+          ></polyline>
+
+          <!-- CORRIDOI -->
+          <ng-container *ngFor="let c of m.corridors">
+            <line
+              class="corridor"
+              [class.blocked]="c.blocked"
+              [attr.x1]="pos(c.fromNode).x"
+              [attr.y1]="pos(c.fromNode).y"
+              [attr.x2]="pos(c.toNode).x"
+              [attr.y2]="pos(c.toNode).y"
+              (click)="toggleCorridor(c); $event.stopPropagation()"
+            ></line>
+
+            <text
+              class="corridor-label"
+              [attr.x]="(pos(c.fromNode).x + pos(c.toNode).x) / 2"
+              [attr.y]="(pos(c.fromNode).y + pos(c.toNode).y) / 2 - 8"
+            >
+              {{ c.blocked ? 'CHIUSO' : 'APERTO' }}
+            </text>
+          </ng-container>
+
+          <!-- NODI -->
+          <ng-container *ngFor="let n of m.nodes">
+            <circle
+              class="node"
+              [class.node-start]="n.label === evacStartNode"
+              [class.node-exit]="evacPath.length && n.label === evacPath[evacPath.length - 1]"
+              [attr.cx]="pos(n.label).x"
+              [attr.cy]="pos(n.label).y"
+              r="10"
+            ></circle>
+            <g *ngIf="isNodeBlocked(n.label)"
+               class="node-blocked-x"
+               [attr.transform]="'translate(' +pos(n.label).x + ',' + pos(n.label).y + ')'">
+              <line x1="-12" y1="-12" x2="12" y2="12"></line>
+              <line x1="-12" y1="12" x2="12" y2="-12"></line>
+            </g>
+
+
+            <text class="node-label" [attr.x]="pos(n.label).x" [attr.y]="pos(n.label).y - 14" text-anchor="middle">
+              {{ n.label }}
+            </text>
+          </ng-container>
+        </svg>
+      </div>
+
+     
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div class="side-card">
+      <div class="side-header">
+        <h3 class="side-title">Istruzioni</h3>
+      </div>
+
+      <div class="side-box" *ngIf="!instructions.length">
+        Seleziona un nodo e calcola l’evacuazione per vedere le istruzioni.
+      </div>
+
+      <ol class="steps" *ngIf="instructions.length">
+        <li *ngFor="let s of instructions">{{ s.text }}</li>
+      </ol>
+    </div>
+  </div>
+</div>

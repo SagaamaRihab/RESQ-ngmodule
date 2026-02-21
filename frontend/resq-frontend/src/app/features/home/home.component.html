@@ -1,0 +1,720 @@
+       <main>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    <a class="navbar-brand" href="#">
+                        
+                        <span>RESQ</span>
+                    </a>
+
+                    <div class="d-lg-none ms-auto me-4">
+                        <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
+                    </div>
+    
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+    
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_1">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_2">RESQ System</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_3">Evacuation Planner</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_4">How it works</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_5">Contact us</a>
+                            </li>
+
+                           
+                        </ul>
+
+                        
+                    </div>
+
+                    <a routerLink="/signin" class="btn btn-outline-light rounded-pill px-4">
+                        Sign In
+                    </a>
+
+
+                </div>
+            </nav>
+            
+
+           <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-9 col-12 mx-auto text-center">
+
+                        <h1 class="text-white">
+                            Emergency Evacuation Support System
+                        </h1>
+
+                        <p class="text-white mt-3 mb-4">
+                            RESQ is an intelligent evacuation support system designed to calculate safe and optimized routes within complex buildings, such as universities, in the event of an emergency.
+                        </p>
+
+                        
+
+                    </div>
+
+                </div>
+            </div>
+           </section>
+
+
+           <section class="featured-section" id="section_2">
+                <div class="container">
+                    <div class="row justify-content-center">
+
+                        <!-- BLOCCO 1 -->
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                            <div class="custom-block bg-white shadow-lg h-100">
+                                <div class="custom-block-body">
+
+                                    <h5 class="mb-3">Building Modeling</h5>
+
+                                    <p class="mb-3">
+                                        RESQ represents a university building as a graph, where classrooms, laboratories, staircases, and emergency exits are modeled as interconnected nodes.
+                                    </p>
+
+                                    <p class="mb-0">
+                                        Corridors and passageways between areas are represented as edges, each assigned a weight that represents the distance or traversal cost.
+                                    </p>
+
+                                </div>
+
+                                <img
+                                    src="assets/template/images/topics/exit.jpg"
+                                    class="custom-block-image img-fluid"
+                                    alt="Emergency Exit">
+                            </div>
+                        </div>
+
+                        <!-- BLOCCO 2 -->
+                        <div class="col-lg-6 col-12">
+                            <div class="custom-block custom-block-overlay h-100">
+                                <div class="d-flex flex-column h-100">
+
+                                    <img
+                                        src="assets/template/images/evacuation1.jpg"
+                                        class="custom-block-image img-fluid"
+                                        alt="Emergency Evacuation">
+
+                                    <div class="custom-block-overlay-text d-flex align-items-center">
+                                        <div>
+
+                                            <h5 class="text-white mb-3">
+                                                Evacuation Route Calculation
+                                            </h5>
+
+                                            <p class="text-white mb-3">
+                                               In the event of an emergency, RESQ automatically calculates the safest evacuation route toward one of the available exits, avoiding blocked corridors and selecting the optimal path.
+                                            </p>
+
+                                            <p class="text-white">
+                                                The system is designed to dynamically adapt to environmental changes, providing alternative routes when necessary.
+                                            </p>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="section-overlay"></div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+           
+
+
+            <section class="explore-section section-padding" id="section_2">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-12 text-center">
+                            <h2 class="mb-4">RESQ System Overview</h2>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="design-tab" data-bs-toggle="tab" data-bs-target="#design-tab-pane" type="button" role="tab" aria-controls="design-tab-pane" aria-selected="true">University Building</button>
+                            </li>
+
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="marketing-tab" data-bs-toggle="tab" data-bs-target="#marketing-tab-pane" type="button" role="tab" aria-controls="marketing-tab-pane" aria-selected="false">Maps</button>
+                            </li>
+
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="finance-tab" data-bs-toggle="tab" data-bs-target="#finance-tab-pane" type="button" role="tab" aria-controls="finance-tab-pane" aria-selected="false">Emergency Exits</button>
+                            </li>
+
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="music-tab" data-bs-toggle="tab" data-bs-target="#music-tab-pane" type="button" role="tab" aria-controls="music-tab-pane" aria-selected="false">Evacuation Routes</button>
+                            </li>
+
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="design-tab-pane" role="tabpanel" aria-labelledby="design-tab" tabindex="0">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Classrooms</h5>
+
+                                                            <p class="mb-0"> Lecture halls and laboratories represented as nodes in the evacuation graph.</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/classroom.jpg" class="custom-block-image img-fluid" alt="University classroom">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Corridors</h5>
+
+                                                                <p class="mb-0">Connections between rooms that may be blocked during emergencies.</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/corridor.jpg" class="custom-block-image img-fluid" alt="University corridor">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6 col-12">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Emergency Exits</h5>
+
+                                                                <p class="mb-0">Safe exit points automatically reached by the evacuation algorithm.</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/emergency.png" class="custom-block-image img-fluid" alt="Emergency exit sign">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="marketing-tab-pane" role="tabpanel" aria-labelledby="marketing-tab" tabindex="0">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                                <div class="custom-block bg-white shadow-lg">
+                                                    <a href="">
+                                                        <div class="d-flex">
+                                                            <div>
+                                                                <h5 class="mb-2">Building Floors</h5>
+
+                                                                <p class="mb-0">The university is modeled as a multi-floor structure with classrooms, corridors, staircases and exits.</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <img src="assets/template/images/topics/floors.png" class="custom-block-image img-fluid" alt="Building floor plan">
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                                <div class="custom-block bg-white shadow-lg">
+                                                    <a href="">
+                                                        <div class="d-flex">
+                                                            <div>
+                                                                <h5 class="mb-2">Evacuation Graph</h5>
+
+                                                                <p class="mb-0">Rooms and corridors are converted into a graph used by path-finding algorithms.</p>
+                                                            </div>
+
+                                                            
+                                                        </div>
+
+                                                        <img src="assets/template/images/topics/graph-map.png" class="custom-block-image img-fluid" alt="Graph representation">
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 col-md-6 col-12">
+                                                <div class="custom-block bg-white shadow-lg">
+                                                    <a href="">
+                                                        <div class="d-flex">
+                                                            <div>
+                                                                <h5 class="mb-2">Dynamic Updates</h5>
+
+                                                                <p class="mb-0">Corridors can be blocked or reopened in real time during emergencies.</p>
+                                                            </div>
+
+                                                            
+                                                        </div>
+
+                                                        <img src="assets/template/images/topics/dynamic-map.png" class="custom-block-image img-fluid" alt="Dynamic evacuation map">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                  </div>
+
+                                <div class="tab-pane fade" id="finance-tab-pane" role="tabpanel" aria-labelledby="finance-tab" tabindex="0">   <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-12 mb-4 mb-lg-0">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Exit Identification</h5>
+
+                                                            <p class="mb-0">Emergency exits are modeled as target nodes with higher priority during evacuation.</p>
+                                                        </div>
+
+                                                        
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/exit.jpg" class="custom-block-image img-fluid" alt="Emergency door">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="custom-block custom-block-overlay">
+                                                <div class="d-flex flex-column h-100">
+                                                    <img src="assets/template/images/evacuation2.jpg" class="custom-block-image img-fluid" alt="">
+
+                                                    <div class="custom-block-overlay-text d-flex">
+                                                        <div>
+                                                            <h5 class="text-white mb-2">Accessibility</h5>
+
+                                                            <p class="text-white">Routes can be adapted to ensure accessibility for people with reduced mobility.</p>
+
+                                                            <a href="" class="btn custom-btn mt-2 mt-lg-3">Learn More</a>
+                                                        </div>
+
+                                                        
+                                                    </div>
+
+
+                                                    <div class="section-overlay"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="music-tab-pane" role="tabpanel" aria-labelledby="music-tab" tabindex="0">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Path Finding</h5>
+
+                                                            <p class="mb-0">The system computes the safest path using shortest-path algorithms on the evacuation graph.</p>
+                                                        </div>
+
+                                                        
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/percorso.jpg" class="custom-block-image img-fluid" alt="Path">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Weighted vs Unweighted</h5>
+
+                                                            <p class="mb-0">Routes can be calculated considering distance, congestion, or risk level.</p>
+                                                        </div>
+
+                                                        
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/undraw_happy_music_g6wc.png" class="custom-block-image img-fluid" alt="">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6 col-12">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="topics-detail.html">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Podcast</h5>
+
+                                                            <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                        </div>
+
+                                                        <span class="badge bg-music rounded-pill ms-auto">20</span>
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/undraw_Podcast_audience_re_4i5q.png" class="custom-block-image img-fluid" alt="">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="education-tab-pane" role="tabpanel" aria-labelledby="education-tab" tabindex="0">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-12 mb-4 mb-lg-3">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="topics-detail.html">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Graduation</h5>
+
+                                                            <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                        </div>
+
+                                                        <span class="badge bg-education rounded-pill ms-auto">80</span>
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/undraw_Graduation_re_gthn.png" class="custom-block-image img-fluid" alt="">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="custom-block bg-white shadow-lg">
+                                                <a href="topics-detail.html">
+                                                    <div class="d-flex">
+                                                        <div>
+                                                            <h5 class="mb-2">Educator</h5>
+
+                                                            <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                        </div>
+
+                                                        <span class="badge bg-education rounded-pill ms-auto">75</span>
+                                                    </div>
+
+                                                    <img src="assets/template/images/topics/undraw_Educator_re_ju47.png" class="custom-block-image img-fluid" alt="">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="timeline-section section-padding" id="section_3">
+                <div class="section-overlay"></div>
+
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-12 text-center">
+                            <h2 class="text-white mb-4">How does RESQ work?</h2>
+                        </div>
+
+                        <div class="col-lg-10 col-12 mx-auto">
+                            <div class="timeline-container">
+                                <ul class="vertical-scrollable-timeline" id="vertical-scrollable-timeline">
+                                    <div class="list-progress">
+                                        <div class="inner"></div>
+                                    </div>
+
+                                    <li>
+                                        <h4 class="text-white mb-3">Building Modeling</h4>
+
+                                        <p class="text-white">The university building is modeled as a structured environment composed of classrooms, corridors, staircases and emergency exits.
+                                            Each room is represented as a node, while corridors represent connections between nodes. This abstraction allows the system to digitally reproduce the physical structure of the building.</p>
+
+                                        <div class="icon-holder">
+                                          <i class="bi-search"></i>
+                                        </div>
+                                    </li>
+                                    
+                                    <li>
+                                        <h4 class="text-white mb-3">Evacuation Graph Construction</h4>
+
+                                        <p class="text-white">The building model is converted into a graph structure used by path-finding algorithms.
+                                            Nodes represent rooms and exits, while edges represent corridors with optional weights such as distance, congestion level or risk.
+                                            This graph-based representation is the core of the evacuation logic.</p>
+
+                                        <div class="icon-holder">
+                                          <i class="bi-bookmark"></i>
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <h4 class="text-white mb-3">Emergency Conditions Handling</h4>
+
+                                        <p class="text-white">During an emergency, some corridors or areas may become inaccessible due to hazards such as fire or smoke.
+                                            The system dynamically updates the evacuation graph by disabling blocked paths, ensuring that unsafe routes are automatically excluded from the computation.</p>
+
+                                        <div class="icon-holder">
+                                          <i class="bi-book"></i>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-center mt-5">
+                            <p class="text-white">
+                                Want to learn more?
+                                <a href="#" class="btn custom-btn custom-border-btn ms-3">Check out Youtube</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="faq-section section-padding" id="section_4">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-6 col-12">
+                            <h2 class="mb-4">RESQ – Frequently Asked Questions</h2>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="col-lg-5 col-12">
+                            <img src="assets/template/images/faq_graphic.jpg" class="img-fluid" alt="FAQs">
+                        </div>
+
+                        <div class="col-lg-6 col-12 m-auto">
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        What problem does RESQ solve?
+                                        </button>
+                                    </h2>
+
+                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                           RESQ addresses the challenge of evacuating complex and multi-floor university buildings during emergency situations.
+                                            Unlike static evacuation plans, the system adapts routes dynamically when corridors or exits become unavailable, improving overall safety and efficiency.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        How does the system adapt during an emergency?
+                                    </button>
+                                    </h2>
+
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                           RESQ models the building as a graph of rooms, corridors, and exits.
+                                            When a corridor is blocked or an exit is unavailable, the system automatically recalculates the safest evacuation route using path-finding algorithms. 
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingThree">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        Can RESQ be used in other buildings?
+                                    </button>
+                                    </h2>
+
+                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            Yes. RESQ is designed as a scalable and modular system.
+                                            By updating the building layout and connectivity data, it can be adapted to different environments such as hospitals, offices, or public facilities.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="contact-section section-padding section-bg" id="section_5">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-12 col-12 text-center">
+                            <h2 class="mb-5">Get in touch</h2>
+                        </div>
+
+                        <div class="col-lg-5 col-12 mb-4 mb-lg-0">
+                            <iframe class="google-map" src="https://www.google.com/maps?q=Università%20degli%20Studi%20di%20Bergamo%20Dalmine&output=embed" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-12 mb-3 mb-lg- mb-md-0 ms-auto">
+                            <h4 class="mb-3">Project Info</h4>
+
+                            <p>
+                              RESQ – Emergency Evacuation Support System<br>
+                              University Project – Computer Engineering
+                             </p>
+
+                            <hr>
+
+                            <p class="d-flex align-items-center mb-1">
+                                <span class="me-2">Focus</span>
+                                <span class="site-footer-link">
+                                    Emergency evacuation planning
+                                </span>
+                                
+                            </p>
+
+                            <p class="d-flex align-items-center">
+                                <span class="me-2">Scope</span>
+                                <span class="site-footer-link">
+                                    Academic &amp; educational use
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-12 mx-auto">
+                            <h4 class="mb-3">Academic Context</h4>
+
+                            <p>
+                                University of Bergamo (UniBG)<br>
+                                Department of Engineering
+                            </p>
+
+                            <hr>
+
+                            <p class="d-flex align-items-center mb-1">
+                                <span class="me-2">Course</span>
+                                <span class="site-footer-link">
+                                    Computer Engineering
+                                </span>
+                                
+                            </p>
+
+                            <p class="d-flex align-items-center">
+                                <span class="me-2">Note</span>
+                                <span class="site-footer-link">
+                                    Project developed for exam purposes
+                                </span>
+                                
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </main >
+
+        <footer class="site-footer section-padding">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-3 col-12 mb-4 pb-2">
+                        <a class="navbar-brand mb-2" href="index.html">
+                            <i class="bi-back"></i>
+                            <span>RESQ</span>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Resources</h6>
+
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item">
+                                <a href="#" class="site-footer-link">Home</a>
+                            </li>
+
+                            <li class="site-footer-link-item">
+                                <a href="#" class="site-footer-link">RESQ System</a>
+                            </li>
+
+                            <li class="site-footer-link-item">
+                                <a href="#" class="site-footer-link">Evacuation Planner</a>
+                            </li>
+
+                            <li class="site-footer-link-item">
+                                <a href="#" class="site-footer-link">How it works</a>
+                            </li>
+
+                            <li class="site-footer-link-item">
+                                <a href="#" class="site-footer-link">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                        <h6 class="site-footer-title mb-3">Information</h6>
+
+                        <p class="text-white d-flex mb-1">
+                            <a href="tel: 305-240-9671" class="site-footer-link">
+                                351-240-9671
+                            </a>
+                        </p>
+
+                        <p class="text-white d-flex">
+                            <a href="mailto:info@company.com" class="site-footer-link">
+                                resq.project@unibg.it
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            English</button>
+
+                            <ul class="dropdown-menu">
+                                <li><button class="dropdown-item" type="button">Thai</button></li>
+
+                                <li><button class="dropdown-item" type="button">Myanmar</button></li>
+
+                                <li><button class="dropdown-item" type="button">Arabic</button></li>
+                            </ul>
+                        </div>
+
+                        <p class="copyright-text mt-lg-5 mt-4"> © 2026 RESQ – Emergency Evacuation Support System<br>
+                            Academic project – University of Bergamo
+                        
+                        
+                    </div>
+
+                </div>
+            </div>
+        </footer>

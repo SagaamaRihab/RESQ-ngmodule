@@ -1,0 +1,52 @@
+<div class="page">
+  <div class="header">
+    <h1>Gestione corridoi</h1>
+    <p class="sub">Blocca o sblocca i corridoi del sistema</p>
+  </div>
+
+  <div *ngIf="caricamento" class="info">Caricamento...</div>
+  <div *ngIf="errore" class="error">{{ errore }}</div>
+
+  <div *ngIf="!caricamento && !errore" class="card">
+    <table class="table" *ngIf="corridoi.length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>Da</th>
+          <th>A</th>
+          <th>Peso</th>
+          <th>Stato</th>
+          <th class="right">Azione</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let c of corridoi">
+          <td class="mono">{{ c.fromNode }}</td>
+          <td class="mono">{{ c.toNode }}</td>
+          <td>{{ c.weight }}</td>
+
+          <td>
+            <span class="badge" [class.badge-red]="c.blocked" [class.badge-green]="!c.blocked">
+              {{ c.blocked ? 'BLOCCATO' : 'APERTO' }}
+            </span>
+          </td>
+
+          <td class="right">
+            <button
+              class="btn"
+              [class.btn-red]="!c.blocked"
+              [class.btn-green]="c.blocked"
+              (click)="toggleCorridor(c)"
+            >
+              {{ c.blocked ? 'Sblocca' : 'Blocca' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty">Nessun corridoio trovato.</div>
+    </ng-template>
+  </div>
+</div>

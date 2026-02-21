@@ -1,0 +1,233 @@
+<!-- CONTENITORE PRINCIPALE PAGINA EDIFICIO -->
+<div class="building-page">
+
+  <!-- ================= HEADER ================= -->
+  <header class="building-header">
+
+    <!-- Titolo con edificio selezionato -->
+    <h1>Building {{ building }}</h1>
+
+    <!-- Sottotitolo -->
+    <p>Select the floor you are currently on</p>
+
+  </header>
+
+
+  <!-- ================= PULSANTI PIANI ================= -->
+  <div class="floor-buttons">
+
+
+    <!-- ========== EDIFICIO A ========== -->
+    <ng-container *ngIf="building === 'A'">
+
+      <!-- Piano terra -->
+      <button
+        [class.active]="selectedFloor === 'ground'"
+        (click)="selectFloor('ground')">
+
+        Ground Floor
+
+      </button>
+
+      <!-- Primo piano -->
+      <button
+        [class.active]="selectedFloor === 'first'"
+        (click)="selectFloor('first')">
+
+        First Floor
+
+      </button>
+
+      <!-- Secondo piano -->
+      <button
+        [class.active]="selectedFloor === 'second'"
+        (click)="selectFloor('second')">
+
+        Second Floor
+
+      </button>
+
+    </ng-container>
+
+
+    <!-- ========== EDIFICIO B ========== -->
+    <ng-container *ngIf="building === 'B'">
+
+      <!-- Piano interrato -->
+      <button
+        [class.active]="selectedFloor === 'basement'"
+        (click)="selectFloor('basement')">
+
+        Basement
+
+      </button>
+
+      <!-- Piano rialzato -->
+      <button
+        [class.active]="selectedFloor === 'mezzanine'"
+        (click)="selectFloor('mezzanine')">
+
+        Mezzanine Floor
+
+      </button>
+
+      <!-- Primo piano -->
+      <button
+        [class.active]="selectedFloor === 'first'"
+        (click)="selectFloor('first')">
+
+        First Floor
+
+      </button>
+
+    </ng-container>
+
+  </div>
+
+
+  <!-- ================= CONTENUTO PRINCIPALE ================= -->
+  <div class="building-content">
+
+
+    <!-- ================= MAPPA DEL PIANO ================= -->
+    <div class="floor-map">
+
+      <div class="map-wrapper">
+
+        <!-- Immagine mappa piano -->
+        <img
+          [src]="floorImage"
+          alt="Building {{ building }} floor map"
+        >
+
+      </div>
+
+
+      <!-- ================= CARD EMERGENZA ================= -->
+      <div class="emergency-card">
+
+        <h2>Emergency</h2>
+
+
+        <!-- SELEZIONE POSIZIONE -->
+        <div class="emergency-row">
+
+          <label for="pos">Where are you located?</label>
+
+
+          <!-- Lista stanze -->
+          <select id="pos" [(ngModel)]="selectedPosition">
+
+            <option value="">-- Select --</option>
+
+            <option
+              *ngFor="let r of getCurrentRooms()"
+              [value]="r">
+
+              {{ r }}
+
+            </option>
+
+          </select>
+
+
+          <!-- Pulsante calcolo evacuazione -->
+          <button
+            class="primary-btn"
+            (click)="calculateEvacuation()"
+            [disabled]="!selectedPosition">
+
+            Calculate evacuation
+
+          </button>
+
+        </div>
+
+
+        <!-- USCITE DISPONIBILI -->
+        <div class="emergency-hint">
+
+          <strong>Available exits on this floor:</strong>
+
+          <span class="exits">
+
+            {{ getCurrentExits().join(' • ') }}
+
+          </span>
+
+        </div>
+
+
+        <!-- ================= RISULTATO ================= -->
+        <div class="result" *ngIf="evacuationResult">
+
+          <p class="result-title">Result</p>
+
+
+          <!-- ISTRUZIONI DINAMICHE -->
+          <div class="instructions" *ngIf="nearestExit">
+
+            <h4>Evacuation Instructions</h4>
+
+            <ul>
+
+              <li *ngFor="let step of getEvacuationInstructions()">
+                {{ step }}
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          <!-- DATI RISULTATO -->
+          <p><strong>Starting point:</strong> {{ evacuationResult.from }}</p>
+
+          <p><strong>Recommended exit:</strong> {{ evacuationResult.exitId }}</p>
+
+          <p class="result-msg">{{ evacuationResult.message }}</p>
+
+
+          <!-- ISTRUZIONI STANDARD -->
+          <ol class="steps">
+
+            <li>Stay calm and check the corridor.</li>
+
+            <li>
+              Follow the signs toward
+              <strong>{{ evacuationResult.exitId }}</strong>.
+            </li>
+
+            <li>
+              Go down the stairs / exit the door and reach the meeting point.
+            </li>
+
+          </ol>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= PANNELLO INFO ================= -->
+    <div class="side-panel">
+
+      <h3>Floor Information</h3>
+
+      <p><strong>Floor:</strong> {{ selectedFloor | titlecase }}</p>
+
+      <p><strong>Building:</strong> {{ building }}</p>
+
+      <p class="muted">
+
+        Select your position and calculate the nearest exit.
+
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

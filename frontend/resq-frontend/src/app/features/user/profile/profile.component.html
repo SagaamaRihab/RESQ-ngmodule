@@ -1,0 +1,489 @@
+<!-- CONTENITORE PRINCIPALE DEL PROFILO -->
+<div class="student-profile py-4">
+
+  <div class="container">
+
+    <!-- ================= HEADER PROFILO ================= -->
+    <div class="profile-header mb-4">
+
+      <!-- INFORMAZIONI PRINCIPALI UTENTE -->
+      <div class="profile-info">
+
+        <!-- Nome utente -->
+        <h2>{{ username }}</h2>
+
+        <!-- Email -->
+        <p>{{ email }}</p>
+
+        <!-- PULSANTI AZIONE -->
+        <div class="profile-actions">
+
+          <!-- APRI MODAL MODIFICA PROFILO -->
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="openEditModal()"
+          >
+            Edit Profile
+          </button>
+
+          <!-- LOGOUT -->
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="logout()"
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= MESSAGGIO SUCCESSO ================= -->
+    <div class="toast-success" *ngIf="showSuccess">
+      {{ successMessage }}
+    </div>
+
+    <!-- ================= MESSAGGIO ERRORE ================= -->
+    <div class="toast-error" *ngIf="showError">
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- ================= GRIGLIA PRINCIPALE ================= -->
+    <div class="row">
+
+      <!-- ================= COLONNA SINISTRA ================= -->
+      <div class="col-lg-4">
+
+        <!-- CARD INFO ACCOUNT -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            Account Information
+          </div>
+
+          <div class="card-body">
+
+            <p><b>Username:</b> {{ username }}</p>
+            <p><b>Email:</b> {{ email }}</p>
+            <p><b>Role:</b> {{ role }}</p>
+            <p><b>Status:</b> Active</p>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARD STATISTICHE -->
+        <div class="card shadow-sm">
+
+          <div class="card-header">
+            Statistics
+          </div>
+
+          <div class="card-body stats-box">
+
+            <div>
+              <h4>12</h4>
+              <span>Logins</span>
+            </div>
+
+            <div>
+              <h4>5</h4>
+              <span>Evacuations</span>
+            </div>
+
+            <div>
+              <h4>3</h4>
+              <span>Maps</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ================= COLONNA DESTRA ================= -->
+      <div class="col-lg-8">
+
+
+        <!-- INFORMAZIONI GENERALI -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            General Information
+          </div>
+
+          <div class="card-body">
+
+            <table class="table table-bordered">
+
+              <tr>
+                <th>Project</th>
+                <td>RESQ</td>
+              </tr>
+
+              <tr>
+                <th>Account Type</th>
+                <td>User</td>
+              </tr>
+
+              <tr>
+                <th>Registration Year</th>
+                <td>2025</td>
+              </tr>
+
+              <tr>
+                <th>Access Level</th>
+                <td>Standard</td>
+              </tr>
+
+            </table>
+
+          </div>
+        </div>
+
+
+        <!-- PROFILO ACCADEMICO -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            Academic Profile
+          </div>
+
+          <div class="card-body">
+
+            <p><b>Phone:</b> {{ phone || 'Not set' }}</p>
+            <p><b>Academic Year:</b> {{ academicYear }}</p>
+            <p><b>School:</b> {{ school }}</p>
+            <p><b>Course:</b> {{ course }}</p>
+
+          </div>
+
+        </div>
+
+
+        <!-- ATTIVITÀ RECENTE -->
+        <div class="card shadow-sm mb-3">
+
+          <div class="card-header">
+            Recent Activity
+          </div>
+
+          <div class="card-body">
+
+            <ul class="activity-list">
+
+              <li>✔ Login successful</li>
+              <li>✔ Viewed building map</li>
+              <li>✔ Started evacuation plan</li>
+              <li>✔ Updated profile</li>
+
+            </ul>
+
+          </div>
+        </div>
+
+
+        <!-- SEZIONE "CHI SONO" -->
+        <div class="card shadow-sm">
+
+          <div class="card-header">
+            About Me
+          </div>
+
+          <div class="card-body">
+
+            <p>{{ about }}</p>
+
+          </div>
+        </div>
+
+
+        <!-- IMPOSTAZIONI ACCOUNT -->
+        <div class="card shadow-sm settings-card">
+
+          <div class="card-header">
+            Account Settings
+          </div>
+
+          <div class="card-body settings-actions">
+
+            <!-- CAMBIO PASSWORD -->
+            <button
+              class="btn btn-outline-primary"
+              (click)="openPasswordModal()">
+              Change Password
+            </button>
+
+            <!-- CAMBIO EMAIL -->
+            <button
+              class="btn btn-outline-warning"
+              (click)="openEmailModal()">
+              Change Email
+            </button>
+
+            <!-- ELIMINAZIONE ACCOUNT -->
+            <button
+              class="btn btn-outline-danger"
+              (click)="openDeleteModal()">
+              Delete Account
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- ================= MODAL SECTION ================= -->
+<!-- ================================================= -->
+
+
+<!-- ================= EDIT PROFILE MODAL ================= -->
+<div
+  class="modal-overlay"
+  *ngIf="showEditModal"
+  (click)="closeEditModal()"
+>
+
+  <!-- BOX CENTRALE MODAL -->
+  <div
+    class="modal-box"
+    (click)="$event.stopPropagation()"
+  >
+
+    <!-- HEADER MODAL -->
+    <div class="modal-header">
+
+      <h3>Edit Profile</h3>
+
+      <!-- CHIUSURA MODAL -->
+      <button
+        class="close-btn"
+        (click)="closeEditModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <!-- FORM MODIFICA PROFILO -->
+
+    <div class="form-group">
+      <label>Username</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="editUsername"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="email"
+        class="form-control"
+        [(ngModel)]="editEmail"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Phone</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="editPhone"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Course</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="editCourse"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>About</label>
+      <textarea
+        class="form-control"
+        rows="3"
+        [(ngModel)]="editAbout"
+      ></textarea>
+    </div>
+
+
+    <!-- PULSANTI MODAL -->
+    <div class="modal-actions">
+
+      <button
+        class="save-btn"
+        (click)="saveProfile()"
+        [disabled]="isSaving"
+      >
+        Save
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= PASSWORD MODAL ================= -->
+<div
+  class="modal-overlay"
+  *ngIf="showPasswordModal"
+  (click)="closeModal()"
+>
+
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <!-- MESSAGGIO SUCCESSO PASSWORD -->
+    <div *ngIf="passwordSuccessMsg"
+         class="password-success">
+
+      {{ passwordSuccessMsg }}
+
+    </div>
+
+    <!-- MESSAGGIO ERRORE PASSWORD -->
+    <div *ngIf="passwordErrorMsg"
+         class="password-error">
+
+      {{ passwordErrorMsg }}
+
+    </div>
+
+
+    <div class="modal-header">
+
+      <h3>Change Password</h3>
+
+      <button (click)="closeModal()">✕</button>
+
+    </div>
+
+
+    <div class="form-group">
+      <label>Current Password</label>
+      <input
+        type="password"
+        [(ngModel)]="passwordData.oldPassword"
+        class="form-control"
+      >
+    </div>
+
+
+    <div class="form-group">
+      <label>New Password</label>
+      <input
+        type="password"
+        [(ngModel)]="passwordData.newPassword"
+        class="form-control"
+      >
+    </div>
+
+
+    <button
+      class="save-btn"
+      (click)="changePassword()">
+
+      Save
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= EMAIL MODAL ================= -->
+<div class="modal-overlay" *ngIf="showEmailModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h3>Change Email</h3>
+
+      <button (click)="closeModal()">✕</button>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>New Email</label>
+
+      <input
+        type="email"
+        [(ngModel)]="newEmail"
+        class="form-control">
+
+    </div>
+
+
+    <button
+      class="save-btn"
+      (click)="changeEmail()">
+
+      Save
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= DELETE ACCOUNT MODAL ================= -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h3>Delete Account</h3>
+
+      <button (click)="closeModal()">✕</button>
+
+    </div>
+
+
+    <!-- AVVISO PERICOLO -->
+    <p style="color:red; font-weight:600;">
+
+      ⚠️ Are you sure you want to delete your account?
+      This action cannot be undone.
+
+    </p>
+
+
+    <button
+      class="btn btn-danger"
+      (click)="deleteAccount()">
+
+      Delete Permanently
+
+    </button>
+
+  </div>
+
+</div>

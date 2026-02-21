@@ -1,0 +1,126 @@
+.dashboard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  border-radius: 14px;
+  padding: 18px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  transition: transform 0.18s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.card p {
+  margin: 0;
+  opacity: 0.95;
+}
+
+.card-corridors {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+}
+
+.card-map {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+}
+
+.card-evac {
+  background: linear-gradient(135deg, #ef4444, #fb7185);
+}
+
+.dashboard-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.widget {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+}
+
+.widget.welcome {
+  background: linear-gradient(135deg, #0ea5e9, #a855f7);
+  color: white;
+}
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.widget-grid .widget {
+  background: white;
+  color: #0f172a;
+}
+
+.widget.info {
+  border-left: 6px solid #0ea5e9;
+}
+
+.widget.success {
+  border-left: 6px solid #22c55e;
+}
+
+.widget.warning {
+  border-left: 6px solid #f59e0b;
+}
+
+.widget.actions {
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.actions-grid button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #6366f1, #38bdf8);
+}
+
+.map-hint {
+  margin: 8px 0 0;
+  opacity: 0.75;
+  font-size: 13px;
+}
+
+.share-btn {
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}

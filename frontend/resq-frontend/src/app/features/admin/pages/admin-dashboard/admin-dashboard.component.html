@@ -1,0 +1,57 @@
+<div class="dashboard">
+  <section class="grid">
+    <article class="card card-corridors" (click)="goTo('corridors')">
+      <h2>Corridoi</h2>
+      <p>Gestisci blocchi e sblocchi</p>
+    </article>
+
+    <article class="card card-map" (click)="goTo('map')">
+      <h2>Mappa edificio</h2>
+      <p>Visualizza la struttura</p>
+    </article>
+
+    <article class="card card-evac" (click)="goTo('evacuations')">
+      <h2>Evacuazioni</h2>
+      <p>Monitoraggio emergenze</p>
+    </article>
+  </section>
+
+  <div class="dashboard-widgets">
+    <div class="widget welcome">
+      <h3>Benvenuto 👋</h3>
+      <p>Controllo del sistema RESQ</p>
+    </div>
+
+    <div class="widget-grid">
+      <div class="widget warning">
+        <h4>Corridoi bloccati</h4>
+        <p>3</p>
+      </div>
+
+      <div class="widget info">
+        <h4>Evacuazioni attive</h4>
+        <p>1</p>
+      </div>
+
+      <div class="widget success">
+        <h4>Utenti connessi</h4>
+        <p>12</p>
+      </div>
+    </div>
+
+    <div class="widget actions">
+      <h3>Azioni rapide</h3>
+      <div class="actions-grid">
+        <button (click)="goTo('corridors')">Corridoi</button>
+        <button (click)="goTo('map')">Apri mappa</button>
+        <button (click)="goTo('evacuations')">Evacuazioni</button>
+      </div>
+    </div>
+
+    <div class="widget info">
+      <h4>Anteprima mappa</h4>
+      <p class="map-hint">Clicca per aprire la mappa completa</p>
+      <button class="share-btn" (click)="goTo('map')">Apri mappa</button>
+    </div>
+  </div>
+</div>
