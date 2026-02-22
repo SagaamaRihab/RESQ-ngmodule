@@ -87,6 +87,13 @@
 
 
     <!-- ================= RISULTATO ================= -->
+    
+    <!-- NOTIFICA BLOCCO -->
+    <div *ngIf="notification" class="notification-box">
+      ⚠️ {{ notification }}
+    </div>
+
+    
     <div *ngIf="response" class="result-card">
 
 

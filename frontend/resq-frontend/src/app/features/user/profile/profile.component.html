@@ -40,15 +40,7 @@
 
     </div>
 
-    <!-- ================= MESSAGGIO SUCCESSO ================= -->
-    <div class="toast-success" *ngIf="showSuccess">
-      {{ successMessage }}
-    </div>
-
-    <!-- ================= MESSAGGIO ERRORE ================= -->
-    <div class="toast-error" *ngIf="showError">
-      {{ errorMessage }}
-    </div>
+   
 
 
     <!-- ================= GRIGLIA PRINCIPALE ================= -->
@@ -255,7 +247,7 @@
 <div
   class="modal-overlay"
   *ngIf="showEditModal"
-  (click)="closeEditModal()"
+  
 >
 
   <!-- BOX CENTRALE MODAL -->
@@ -263,6 +255,10 @@
     class="modal-box"
     (click)="$event.stopPropagation()"
   >
+
+  
+ 
+
 
     <!-- HEADER MODAL -->
     <div class="modal-header">
@@ -297,7 +293,14 @@
         type="email"
         class="form-control"
         [(ngModel)]="editEmail"
+        readonly
       >
+
+      <!-- Messaggio informativo -->
+      <small class="text-muted">
+        To change email, use "Change Email" in Account Settings.
+      </small>
+
     </div>
 
     <div class="form-group">
@@ -355,21 +358,7 @@
 
   <div class="modal-box" (click)="$event.stopPropagation()">
 
-    <!-- MESSAGGIO SUCCESSO PASSWORD -->
-    <div *ngIf="passwordSuccessMsg"
-         class="password-success">
-
-      {{ passwordSuccessMsg }}
-
-    </div>
-
-    <!-- MESSAGGIO ERRORE PASSWORD -->
-    <div *ngIf="passwordErrorMsg"
-         class="password-error">
-
-      {{ passwordErrorMsg }}
-
-    </div>
+    
 
 
     <div class="modal-header">
@@ -487,3 +476,16 @@
   </div>
 
 </div>
+
+<!-- ================= TOAST NOTIFICATIONS ================= -->
+
+<!-- TOAST SUCCESS -->
+<div *ngIf="showSuccess" class="custom-toast success-toast">
+  {{ successMessage }}
+</div>
+
+<!-- TOAST ERROR -->
+<div *ngIf="showError" class="custom-toast error-toast">
+  {{ errorMessage }}
+</div>
+

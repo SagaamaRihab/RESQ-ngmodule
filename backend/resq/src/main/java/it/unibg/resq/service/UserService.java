@@ -94,6 +94,20 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public User updateProfile(String email, User data) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
+
+        user.setUsername(data.getUsername());
+        user.setPhone(data.getPhone());
+        user.setCourse(data.getCourse());
+        user.setAbout(data.getAbout());
+
+        return userRepository.save(user);
+    }
+
+
 
 
 

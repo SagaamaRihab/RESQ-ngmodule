@@ -1,16 +1,16 @@
 // ================= IMPORT =================
 
-// Component base di Angular
-import { Component, OnInit } from '@angular/core';
+// Angular base component
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
-// Moduli comuni Angular
+// Angular common modules
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// Router per navigazione
+// Router for navigation
 import { Router } from '@angular/router';
 
-// Service per comunicare con il backend
+// Service to communicate with backend
 import { UserService } from '../../../core/services/user.service';
 
 
@@ -27,7 +27,7 @@ import { UserService } from '../../../core/services/user.service';
 export class UserProfileComponent implements OnInit {
 
   // =================================================
-  // =============== DATI UTENTE BASE ================
+  // =============== BASIC USER DATA =================
   // =================================================
 
   username: string = '';
@@ -36,17 +36,17 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
-  // ============ DATI ACCADEMICI ====================
+  // ============ ACADEMIC DATA ======================
   // =================================================
 
   phone: string = '';
   academicYear: string = '2025/2026';
-  school: string = 'Scuola di Ingegneria';
-  course: string = 'Ingegneria Informatica';
+  school: string = 'Engineering School';
+  course: string = 'Computer Engineering';
 
 
   // =================================================
-  // ============ MESSAGGI TOAST ======================
+  // ============ TOAST MESSAGES =====================
   // =================================================
 
   successMessage: string = '';
@@ -55,20 +55,24 @@ export class UserProfileComponent implements OnInit {
   errorMessage: string = '';
   showError: boolean = false;
 
-  passwordSuccessMsg: string = '';
-  passwordErrorMsg: string = '';
+  
+  modalMessage: string = '';
+  modalType: 'success' | 'error' | '' = '';
+
 
 
   // =================================================
-  // ============ STATO SALVATAGGIO ===================
+  // ============ SAVE STATE =========================
   // =================================================
 
-  // Evita salvataggi multipli
+  // Prevent multiple saves
   isSaving: boolean = false;
+  private toastTimer: any = null;
+
 
 
   // =================================================
-  // ============ DATI PASSWORD ======================
+  // ============ PASSWORD DATA =====================
   // =================================================
 
   passwordData: {
@@ -81,7 +85,7 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
-  // ============ MODAL SETTINGS =====================
+  // ============ SETTINGS MODALS ====================
   // =================================================
 
   showPasswordModal = false;
@@ -92,7 +96,7 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
-  // ============ SEZIONE ABOUT ======================
+  // ============ ABOUT SECTION ======================
   // =================================================
 
   about: string =
@@ -100,14 +104,14 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
-  // ============ MODAL MODIFICA =====================
+  // ============ EDIT MODAL =========================
   // =================================================
 
   showEditModal: boolean = false;
 
 
   // =================================================
-  // ============ CAMPI MODIFICA =====================
+  // ============ EDIT FIELDS ========================
   // =================================================
 
   editUsername: string = '';
@@ -118,30 +122,70 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
-  // ============ COSTRUTTORE ========================
+  // ============ CONSTRUCTOR ========================
   // =================================================
 
   constructor(
-    private router: Router,
-    private userService: UserService
-  ) {}
+  private router: Router,
+  private userService: UserService,
+  
+  private cd: ChangeDetectorRef
+) {}
 
 
-  // ID utente
+  // User ID
   userId!: number;
 
 
+
+private showToast(type: 'success' | 'error', message: string) {
+
+  if (this.toastTimer) {
+    clearTimeout(this.toastTimer);
+  }
+
+  // Reset
+  this.showSuccess = false;
+  this.showError = false;
+
+  // Mostra
+  if (type === 'success') {
+    this.successMessage = message;
+    this.showSuccess = true;
+  } else {
+    this.errorMessage = message;
+    this.showError = true;
+  }
+
+  // Forza Angular
+  this.cd.detectChanges();
+
+  // Auto hide dopo 3s
+  this.toastTimer = setTimeout(() => {
+    this.showSuccess = false;
+    this.showError = false;
+    this.cd.detectChanges();
+  }, 2000);
+}
+
+
+
+
+
+
+
+
   // =================================================
-  // ============ INIZIALIZZAZIONE ===================
+  // ============ INITIALIZATION =====================
   // =================================================
 
   ngOnInit(): void {
 
-    // Chiude eventuale modal aperto
+    // Close any open modal
     this.showEditModal = false;
 
 
-    // Carica dati salvati dal login
+    // Load saved login data
     this.username = localStorage.getItem('username') || '';
     this.email = localStorage.getItem('email') || '';
     this.role = localStorage.getItem('role') || '';
@@ -149,29 +193,36 @@ export class UserProfileComponent implements OnInit {
     const token = localStorage.getItem('token');
 
 
-    // Se non esiste token → redirect al login
+    // If token is missing → redirect to login
     if (!token) {
       this.router.navigate(['/signin']);
       return;
     }
 
 
-    // Recupera ID utente
+    // Get user ID
     this.userId = Number(localStorage.getItem('userId') || 0);
 
 
-    // Carica profilo aggiornato dal backend
+    // Load updated profile from backend
     this.loadProfile();
   }
 
 
   // =================================================
-  // ============ APERTURA MODAL =====================
+  // ============ OPEN EDIT MODAL ====================
   // =================================================
 
   openEditModal(): void {
 
-    // Copia dati attuali nei campi editabili
+
+
+    this.showSuccess = false;
+    this.showError = false;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    // Copy current data into edit fields
     this.editUsername = this.username;
     this.editEmail = this.email;
     this.editPhone = this.phone;
@@ -179,18 +230,25 @@ export class UserProfileComponent implements OnInit {
     this.editAbout = this.about;
 
     this.showEditModal = true;
+
+   
+
+
   }
 
 
   // =================================================
-  // ============ CHIUSURA MODAL =====================
+  // ============ CLOSE EDIT MODAL ===================
   // =================================================
 
   closeEditModal(): void {
 
     this.showEditModal = false;
 
-    // Reset campi
+    this.modalMessage = '';
+    this.modalType = '';
+
+    // Reset fields
     this.editUsername = '';
     this.editEmail = '';
     this.editPhone = '';
@@ -200,66 +258,96 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
-  // ============ SALVATAGGIO PROFILO ================
+  // ============ SAVE PROFILE =======================
   // =================================================
 
-  saveProfile(): void {
+ saveProfile(): void {
 
-    // Evita click multipli
-    if (this.isSaving) return;
+  if (this.isSaving) return;
+  this.isSaving = true;
 
-    this.isSaving = true;
+  const oldUsername = this.username;
+  const oldPhone = this.phone;
+  const oldCourse = this.course;
+  const oldAbout = this.about;
+
+  const data = {
+    username: this.editUsername,
+    phone: this.editPhone,
+    course: this.editCourse,
+    about: this.editAbout
+  };
+
+  this.userService.updateMyProfile(data).subscribe({
+
+    next: (updatedUser: any) => {
+
+      // Costruzione messaggio
+      let changes: string[] = [];
+
+      if (oldUsername !== updatedUser.username)
+        changes.push('Username updated');
+
+      if ((oldPhone || '') !== (updatedUser.phone || ''))
+        changes.push('Phone updated');
+
+      if ((oldCourse || '') !== (updatedUser.course || ''))
+        changes.push('Course updated');
+
+      if ((oldAbout || '') !== (updatedUser.about || ''))
+        changes.push('About updated');
+
+      const message = changes.length
+        ? changes.join(' • ')
+        : 'Profile updated';
+
+      // Aggiorna UI
+      this.username = updatedUser.username;
+      this.phone = updatedUser.phone || '';
+      this.course = updatedUser.course || '';
+      this.about = updatedUser.about || '';
+
+      localStorage.setItem('username', updatedUser.username);
 
 
-    const id = Number(localStorage.getItem('userId'));
-    if (!id) return;
+      /* ✅ CHIUDI MODAL */
+      this.showEditModal = false;
+
+      /* ✅ MOSTRA TOAST */
+      this.showToast('success', message);
+
+      /* 🔥 FORZA AGGIORNAMENTO VIEW */
+      this.cd.detectChanges();
+
+      this.isSaving = false;
+    },
+
+    error: () => {
+
+      this.showEditModal = false;
+
+      this.showToast('error', 'Update failed');
+
+      this.cd.detectChanges();
+
+      this.isSaving = false;
+    }
+
+  });
+}
 
 
-    // Dati da inviare al backend
-    const data = {
-      username: this.editUsername,
-      email: this.editEmail,
-      phone: this.editPhone,
-      course: this.editCourse,
-      about: this.editAbout
-    };
 
 
-    // Chiude subito modal
-    this.closeEditModal();
-
-
-    // Mostra messaggio ottimistico
-    this.successMessage = 'Profilo aggiornato con successo';
-    this.showSuccess = true;
-
-
-    // Chiamata API
-    this.userService.updateUser(id, data).subscribe({
-
-      next: (updatedUser: any) => {
-
-        // Aggiorna UI
-        this.username = updatedUser.username;
-        this.email = updatedUser.email;
-        this.phone = updatedUser.phone || '';
-        this.course = updatedUser.course || '';
-        this.about = updatedUser.about || '';
-      },
-
-      error: () => {
-        this.isSaving = false;
-      }
-
-    });
-  }
 
 
   // =================================================
-  // ============ CARICA PROFILO =====================
+  // ============ LOAD PROFILE =======================
   // =================================================
 
   loadProfile() {
+
+
 
     this.userService.getMyProfile().subscribe({
 
@@ -268,7 +356,7 @@ export class UserProfileComponent implements OnInit {
         console.log('USER:', user);
 
 
-        // Salva dati in localStorage
+        // Save data in localStorage
         if (user.id) {
           localStorage.setItem('userId', user.id.toString());
         }
@@ -286,7 +374,7 @@ export class UserProfileComponent implements OnInit {
         }
 
 
-        // Aggiorna interfaccia
+        // Update UI
         this.username = user.username;
         this.email = user.email;
         this.role = user.role;
@@ -313,11 +401,8 @@ export class UserProfileComponent implements OnInit {
 
     this.showPasswordModal = true;
 
-    // Reset messaggi
-    this.passwordSuccessMsg = '';
-    this.passwordErrorMsg = '';
 
-    // Reset campi
+    // Reset fields
     this.passwordData = { oldPassword: '', newPassword: '' };
   }
 
@@ -332,179 +417,137 @@ export class UserProfileComponent implements OnInit {
   }
 
 
-  closeModal() {
+ closeModal() {
 
-    // Chiude tutti i modal
-    this.showPasswordModal = false;
-    this.showEmailModal = false;
-    this.showDeleteModal = false;
+  this.showPasswordModal = false;
+  this.showEmailModal = false;
+  this.showDeleteModal = false;
 
-    // Reset messaggi
-    this.passwordSuccessMsg = '';
-    this.passwordErrorMsg = '';
+  
 
-    // Reset campi
-    this.passwordData = { oldPassword: '', newPassword: '' };
-    this.newEmail = '';
+  this.passwordData = { oldPassword: '', newPassword: '' };
+  this.newEmail = '';
+}
 
-    // Reset toast
-    this.successMessage = '';
-    this.errorMessage = '';
+
+
+  // =================================================
+  // ============ CHANGE PASSWORD ===================
+  // =================================================
+
+ changePassword() {
+
+  if (!this.passwordData.oldPassword || !this.passwordData.newPassword) {
+    this.showToast('error', 'Please fill in all fields');
+    return;
   }
 
+  if (this.passwordData.newPassword.length < 6) {
+    this.showToast('error', 'New password must be at least 6 characters');
+    return;
+  }
 
-  // =================================================
-  // ============ CAMBIO PASSWORD ===================
-  // =================================================
+  this.userService.changeMyPassword(this.passwordData).subscribe({
 
-  changePassword() {
+    next: (response: any) => {
 
-    this.passwordSuccessMsg = '';
-    this.passwordErrorMsg = '';
-
-
-    // Validazione frontend
-    if (!this.passwordData.oldPassword || !this.passwordData.newPassword) {
-      this.passwordErrorMsg = 'Compila tutti i campi.';
-      return;
-    }
-
-    if (this.passwordData.newPassword.length < 6) {
-      this.passwordErrorMsg = 'La nuova password deve avere almeno 6 caratteri.';
-      return;
-    }
-
-
-    this.userService.changeMyPassword(this.passwordData).subscribe({
-
-      next: (response: any) => {
-
-        // Aggiorna token
-        if (response?.token) {
-          localStorage.setItem('token', response.token);
-        }
-
-        this.passwordSuccessMsg = 'Password aggiornata con successo!';
-
-        setTimeout(() => {
-          this.closeModal();
-        }, 1200);
-      },
-
-
-      error: (err: any) => {
-
-        if (err.status === 401) {
-          this.passwordErrorMsg = 'Password attuale non corretta.';
-        }
-        else if (err.status === 400) {
-          this.passwordErrorMsg = err?.error?.message || 'Dati non validi.';
-        }
-        else {
-          this.passwordErrorMsg = 'Errore durante il cambio password.';
-        }
+      if (response?.token) {
+        localStorage.setItem('token', response.token);
       }
 
-    });
-  }
+      this.showPasswordModal = false;
 
+      this.passwordData = { oldPassword: '', newPassword: '' };
 
-  // =================================================
-  // ============ CAMBIO EMAIL ======================
-  // =================================================
+      this.showToast('success', 'Password updated successfully');
+    },
 
-  changeEmail() {
+    error: (err: any) => {
 
-    if (!this.newEmail) {
-      this.passwordErrorMsg = 'Inserisci una email valida';
-      return;
+      if (err.status === 401) {
+        this.showToast('error', 'Current password is incorrect');
+      } else {
+        this.showToast('error', 'Error while changing password');
+      }
     }
 
+  });
+}
 
-    this.passwordSuccessMsg = '';
-    this.passwordErrorMsg = '';
-
-
-    this.userService.changeMyEmail(this.newEmail).subscribe({
-
-      next: (res: any) => {
-
-        console.log('RISPOSTA BACKEND:', res);
-
-
-        // Salva token nuovo
-        if (res && res.token) {
-          localStorage.setItem('token', res.token);
-        }
-
-
-        // Aggiorna email
-        localStorage.setItem('email', this.newEmail);
-        this.email = this.newEmail;
-
-
-        this.passwordSuccessMsg = 'Email aggiornata con successo!';
-
-
-        setTimeout(() => {
-          this.closeModal();
-        }, 1000);
-      },
-
-
-      error: (err) => {
-
-        console.error('ERRORE CAMBIO EMAIL:', err);
-
-        if (err.status === 401) {
-          this.passwordErrorMsg = 'Sessione scaduta. Rifai login.';
-        }
-        else {
-          this.passwordErrorMsg = 'Errore nel cambio email';
-        }
-      }
-
-    });
-  }
 
 
   // =================================================
-  // ============ ELIMINAZIONE ACCOUNT ===============
+  // ============ CHANGE EMAIL ======================
+  // =================================================
+
+ changeEmail() {
+
+  if (!this.newEmail) {
+    this.showToast('error', 'Please enter a valid email');
+    return;
+  }
+
+  this.userService.changeMyEmail(this.newEmail).subscribe({
+
+    next: (res: any) => {
+
+      if (res?.token) {
+        localStorage.setItem('token', res.token);
+      }
+
+      // Update UI
+      this.email = this.newEmail;
+      localStorage.setItem('email', this.newEmail);
+
+      // Chiudi modal
+      this.showEmailModal = false;
+
+      // Reset input
+      this.newEmail = '';
+
+      // Toast
+      this.showToast('success', 'Email updated successfully');
+    },
+
+    error: () => {
+      this.showToast('error', 'Error while changing email');
+    }
+
+  });
+}
+
+
+
+
+
+  // =================================================
+  // ============ DELETE ACCOUNT =====================
   // =================================================
 
   deleteAccount() {
-
-    if (!confirm('Vuoi davvero eliminare il tuo account?')) {
-      return;
-    }
-
 
     this.userService.deleteMyAccount().subscribe({
 
       next: () => {
 
-        alert('Account eliminato con successo');
+        this.showDeleteModal = false;
 
-        localStorage.clear();
+        this.showToast('success', 'Account deleted successfully');
 
-        this.router.navigate(['/signin']);
+        setTimeout(() => {
+          localStorage.clear();
+          this.router.navigate(['/signin']);
+        }, 2000);
       },
 
-
-      error: (err) => {
-
-        console.error('Errore eliminazione account', err);
-
-        if (err.status === 401) {
-          alert('Sessione scaduta. Rifai login.');
-        }
-        else {
-          alert('Errore durante eliminazione account');
-        }
+      error: () => {
+        this.showToast('error', 'Error while deleting account');
       }
 
     });
   }
+
+
 
 
   // =================================================

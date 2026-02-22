@@ -124,6 +124,29 @@ public class UserController {
         );
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(
+            @RequestBody User updatedData,
+            Authentication authentication
+    ) {
+
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            email = ((User) principal).getEmail();
+        } else {
+            email = principal.toString();
+        }
+
+        // aggiorna utente
+        User updatedUser = userService.updateProfile(email, updatedData);
+
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
 
 
 

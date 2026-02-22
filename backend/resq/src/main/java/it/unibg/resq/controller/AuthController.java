@@ -8,6 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import it.unibg.resq.dto.SigninResponse;
+import java.util.Map;
+import org.springframework.web.server.ResponseStatusException;
+
+
 
 
 
@@ -25,9 +29,14 @@ public class AuthController {
     // =====================
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+
         authService.signup(request);
-        return ResponseEntity.ok("User registered successfully");
+
+        return ResponseEntity.ok(
+                Map.of("message", "User registered successfully")
+        );
     }
+
 
     // =====================
     // SIGNIN
@@ -49,5 +58,16 @@ public class AuthController {
                 )
         );
     }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatus(ResponseStatusException ex) {
+        return ResponseEntity
+                .status(ex.getStatusCode())
+                .body(Map.of(
+                        "error", ex.getStatusCode().toString(),
+                        "message", ex.getReason()
+                ));
+    }
+
 
 }

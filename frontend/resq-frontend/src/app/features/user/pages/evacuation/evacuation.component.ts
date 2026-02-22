@@ -47,6 +47,8 @@ export class EvacuationComponent implements OnInit {
 
   // Messaggio errore
   error: string | null = null;
+  notification: string | null = null;
+
 
   // Risposta completa dal backend
   response: EvacuationResponse | null = null;
@@ -89,15 +91,19 @@ export class EvacuationComponent implements OnInit {
         // ================= SUCCESS =================
         next: (res: EvacuationResponse) => {
 
-          console.log('SERVER RESPONSE:', res);
-
           this.response = res;
           this.path = res?.path ?? [];
-          this.blockedCorridors = [];
 
-          // Salva nodo per uso futuro
-          localStorage.setItem('startNode', this.startNode);
+          // ✅ NOTIFICA
+          this.notification = res.message;
+
+          // sparisce dopo 5 secondi
+          setTimeout(() => {
+            this.notification = null;
+          }, 5000);
+
         },
+        
 
 
         // ================= ERROR =================
