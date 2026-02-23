@@ -5,10 +5,8 @@ import it.unibg.resq.engine.*;
 import it.unibg.resq.model.Corridor;
 import it.unibg.resq.repository.CorridorRepository;
 import it.unibg.resq.repository.NodeRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,7 +23,6 @@ public class MapService {
     // BLOCCO / SBLOCCO CORRIDOI
     // =========================
     public void blockCorridor(Long id) {
-
         log.info("Blocco corridoio ID={}", id);
 
         corridorRepository.findById(id).ifPresent(c -> {
@@ -35,7 +32,6 @@ public class MapService {
     }
 
     public void unblockCorridor(Long id) {
-
         log.info("Sblocco corridoio ID={}", id);
 
         corridorRepository.findById(id).ifPresent(c -> {
@@ -45,11 +41,10 @@ public class MapService {
     }
 
     // =========================
-    // SOLO CORRIDOI
+    // SOLO CORRIDOI (tutti)
     // =========================
     public List<CorridorDTO> getAllCorridors() {
-
-        log.debug("Recupero lista corridoi");
+        log.debug("Recupero lista corridoi (tutti)");
 
         return corridorRepository.findAll().stream()
                 .map(c -> new CorridorDTO(
@@ -63,10 +58,87 @@ public class MapService {
     }
 
     // =========================
+    // SOLO CORRIDOI (filtrati per building + floor)
+    // =========================
+    /**
+     * Usato dal frontend per disegnare i corridoi del piano corrente.
+     *
+     * Esempio:
+     *  building = "B"
+     *  floor    = "interrato"
+     *
+     * Atteso ID nodo consigliato:
+     *  B_I_Aula_12
+     *  B_I_Bagno_Femminile
+     *
+     * Se nel DB hai ID senza floor (es. D_AULA_MAGNA),
+     * il filtro farà fallback solo su building (meno preciso).
+     */
+    public List<CorridorDTO> getCorridorsByBuildingAndFloor(String building, String floor) {
+        if (building == null || building.isBlank()) {
+            return getAllCorridors();
+        }
+
+        building = building.trim().toUpperCase();
+
+        String floorCode = null;
+        if (floor != null && !floor.isBlank()) {
+            floorCode = floorCode(floor.trim());
+        }
+
+        final String prefixWithFloor = (floorCode != null) ? (building + "_" + floorCode + "_") : null;
+        final String prefixBuildingOnly = building + "_";
+
+        log.debug("Filtro corridoi: building={}, floor={}, floorCode={}, prefixWithFloor={}",
+                building, floor, floorCode, prefixWithFloor);
+
+        return corridorRepository.findAll().stream()
+                .map(c -> new CorridorDTO(
+                        c.getId(),
+                        c.getFromNode(),
+                        c.getToNode(),
+                        c.getWeight(),
+                        c.isBlocked()
+                ))
+                .filter(dto -> {
+                    String from = dto.fromNode();
+                    String to = dto.toNode();
+                    if (from == null || to == null) return false;
+
+                    // ✅ CASO MIGLIORE: id contiene anche il floorCode (B_I_...)
+                    if (prefixWithFloor != null) {
+                        return from.startsWith(prefixWithFloor) && to.startsWith(prefixWithFloor);
+                    }
+
+                    // ⚠️ FALLBACK: id contiene solo building (D_...)
+                    return from.startsWith(prefixBuildingOnly) && to.startsWith(prefixBuildingOnly);
+                })
+                .toList();
+    }
+
+    /**
+     * Converte i nomi piano del frontend in codice.
+     * terra -> T
+     * primo -> 1
+     * secondo -> 2
+     * interrato -> I
+     * rialzato -> R
+     */
+    private String floorCode(String floor) {
+        return switch (floor.toLowerCase()) {
+            case "terra" -> "T";
+            case "primo" -> "1";
+            case "secondo" -> "2";
+            case "interrato" -> "I";
+            case "rialzato" -> "R";
+            default -> throw new IllegalArgumentException("Piano non valido: " + floor);
+        };
+    }
+
+    // =========================
     // 🗺️ MAPPA COMPLETA
     // =========================
     public MapDTO getMap() {
-
         log.debug("Recupero mappa completa");
 
         List<NodeDTO> nodes = nodeRepository.findAll().stream()
@@ -101,9 +173,7 @@ public class MapService {
         startNode = startNode.trim();
 
         // Verifica nodo esistente
-        boolean exists = nodeRepository
-                .findByLabel(startNode)
-                .isPresent();
+        boolean exists = nodeRepository.findByLabel(startNode).isPresent();
 
         if (!exists) {
             log.warn("Nodo non trovato: {}", startNode);
@@ -131,8 +201,9 @@ public class MapService {
             );
 
             GraphNode from = nodes.get(c.getFromNode());
-            GraphNode to   = nodes.get(c.getToNode());
+            GraphNode to = nodes.get(c.getToNode());
 
+            // edge non bloccato (false)
             graph.addEdge(new GraphEdge(from, to, c.getWeight(), false));
             graph.addEdge(new GraphEdge(to, from, c.getWeight(), false));
         }
@@ -168,8 +239,7 @@ public class MapService {
 
             log.debug("Valutazione uscita: {}", exit.getId());
 
-            List<GraphNode> path =
-                    engine.computePath(graph, start, exit);
+            List<GraphNode> path = engine.computePath(graph, start, exit);
 
             if (!path.isEmpty()) {
 
@@ -199,17 +269,14 @@ public class MapService {
     // =========================
     // COSTO
     // =========================
-    private double calculateCost(
-            List<GraphNode> path,
-            Graph graph
-    ) {
+    private double calculateCost(List<GraphNode> path, Graph graph) {
 
         double cost = 0;
 
         for (int i = 0; i < path.size() - 1; i++) {
 
             GraphNode from = path.get(i);
-            GraphNode to   = path.get(i + 1);
+            GraphNode to = path.get(i + 1);
 
             for (GraphEdge e : graph.getEdges(from)) {
 

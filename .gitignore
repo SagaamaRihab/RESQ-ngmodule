@@ -60,9 +60,13 @@ target/
 #################################################
 logs/
 *.log
-
+ mio-dashboard
+backend/.idea/
+backend/resq/src/main/resources/application.properties
+backend/resq/src/main/resources/application.properties
 #################################################
 # OS / Misc
 #################################################
 Thumbs.db
 Segnalibri Safari.html
+main

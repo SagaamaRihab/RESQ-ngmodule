@@ -1,123 +1,194 @@
+/* ======================
+   BASE
+====================== */
+:host {
+  display: block;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* ======================
+   LAYOUT
+====================== */
 .layout {
   display: flex;
   min-height: 100vh;
 }
 
+/* ======================
+   SIDEBAR
+====================== */
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #0b1220, #0a1a2e);
-  color: white;
+  background: linear-gradient(180deg, #a2e9f5, #0763d3);
+  color: #0b1220;
   padding: 24px 18px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .brand h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .brand p {
-  margin: 6px 0 0;
-  opacity: 0.75;
-  font-size: 12px;
+  font-size: 11px;
+  opacity: 0.65;
+  margin: 0;
 }
 
+.logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #175ec1, #485bf1);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: white;
+}
+
+/* ======================
+   NAV
+====================== */
 .nav {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 6px;
 }
 
 .nav a {
-  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
   border-radius: 12px;
   text-decoration: none;
-  color: white;
-  opacity: 0.9;
-  transition: 0.2s;
+
+  
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.08);
+
+  transition: transform 0.12s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+  font-size: 14px;
 }
 
-.nav a:hover {
-  background: rgba(255, 255, 255, 0.08);
+
+.nav a:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
 }
+
 
 .nav a.active {
-  background: rgba(255, 255, 255, 0.14);
-  opacity: 1;
+  background: rgba(2, 30, 92, 0.38); 
+  color: #ffffff;
+  box-shadow:
+    0 10px 22px rgba(2, 30, 92, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
-.logout {
-  margin-top: auto;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: none;
-  background: #ef4444;
-  color: white;
-  cursor: pointer;
-  font-weight: 700;
+
+.nav a.active::before {
+  content: "";
+  width: 6px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  margin-right: 10px;
 }
 
+/* ======================
+   MAIN & TOPBAR
+====================== */
 .main {
   flex: 1;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  padding: 28px;
-  gap: 22px;
-  min-width: 0;
+  gap: 28px;
 }
 
 .topbar {
   background: white;
-  border-radius: 18px;
-  padding: 22px;
+  padding: 25px 35px;
+  border-radius: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .topbar h1 {
   margin: 0;
-  font-size: 34px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .topbar p {
-  margin: 6px 0 0;
-  opacity: 0.75;
+  margin: 5px 0 0 0;
+  color: #64748b;
 }
 
-.content {
-  flex: 1;
-  width: 100%;
-  min-width: 0;
-}
-
+/* STATUS & BADGE */
 .status {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: #22c55e;
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
-}
-
-.badge {
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
 }
 
 .badge.admin {
-  background: rgba(236, 72, 153, 0.14);
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  color: #9d174d;
+  background: #fdf2f8;
+  color: #db2777;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #dcfce7;
+}
+
+/* ======================
+   LOGOUT
+====================== */
+.logout {
+  margin-top: auto;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: white;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.logout:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
 }

@@ -14,6 +14,6 @@ export class AdminComponent {
 
   logout(): void {
     localStorage.clear();
-    this.router.navigate(['/signin']);
+    this.router.navigate(['']);
   }
 }

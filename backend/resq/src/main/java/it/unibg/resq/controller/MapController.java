@@ -34,10 +34,19 @@ public class MapController {
     }
 
     // =========================
-    // SOLO CORRIDOI
+    // CORRIDOI (con filtri opzionali)
     // =========================
+    // ✅ Usabile da:
+    // - tab admin: GET /api/map/corridors
+    // - map overlay: GET /api/map/corridors?building=B&floor=interrato
     @GetMapping("/corridors")
-    public List<CorridorDTO> getCorridors() {
+    public List<CorridorDTO> getCorridors(
+            @RequestParam(required = false) String building,
+            @RequestParam(required = false) String floor
+    ) {
+        if (building != null && !building.isBlank() && floor != null && !floor.isBlank()) {
+            return mapService.getCorridorsByBuildingAndFloor(building.trim(), floor.trim());
+        }
         return mapService.getAllCorridors();
     }
 
@@ -63,7 +72,6 @@ public class MapController {
         try {
             List<String> path = mapService.computeEvacuationPath(startNode.trim());
 
-            // Si ton service renvoie liste vide quand pas trouvé :
             if (path == null || path.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
@@ -71,7 +79,6 @@ public class MapController {
             return ResponseEntity.ok(path);
 
         } catch (IllegalArgumentException ex) {
-            // ex: startNode non existant, ecc.
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

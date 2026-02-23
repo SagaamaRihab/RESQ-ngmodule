@@ -15,11 +15,14 @@ import { BuildingComponent } from './features/user/pages/map/building/building.c
 import { AdminComponent } from './features/admin/admin.component';
 import { AdminDashboardComponent } from './features/admin/pages/admin-dashboard/admin-dashboard.component';
 import { CorridorsComponent } from './features/admin/pages/corridors/corridors';
-import { Map } from './features/admin/pages/map/map';
-import { EvacuationsComponent } from './features/admin/pages/evacuations/evacuations';
+import { AdminBuildingComponent} from './features/admin/pages/map/building/admin-building.component';
 
+import {AdminMapComponent} from './features/admin/pages/map/admin-map.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
+import { AdminEvacuationComponent } from './features/admin/pages/evacuation/ admin-evacuation.component';
+
+
 
 export const routes: Routes = [
 
@@ -69,8 +72,12 @@ export const routes: Routes = [
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'corridors', component: CorridorsComponent },
-      { path: 'map', component: Map },
-      { path: 'evacuations', component: EvacuationsComponent }
+
+      { path: 'evacuations', component: AdminEvacuationComponent },
+      { path: 'instructions', component: InstructionsComponent },
+      
+      { path: 'map', component: AdminMapComponent },
+      { path: 'map/:building', component: AdminBuildingComponent },
     ]
   },
 

@@ -1,6 +1,7 @@
 package it.unibg.resq.service;
 
 import it.unibg.resq.dto.ChangePasswordRequest;
+import it.unibg.resq.dto.UserPositionDto; // Import aggiunto
 import it.unibg.resq.model.User;
 import it.unibg.resq.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,12 +10,44 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections; // Import aggiunto
+import java.util.List;        // Import aggiunto
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    // 
+    // NUOVI METODI PER LA POSIZIONE (Iterazione 2)
+    // 
+
+    /**
+     * Aggiorna la posizione dell'utente (Salvataggio nel DB)
+     */
+    public void updateUserLocation(String email, String nodeId) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        // Qui dovresti avere un campo 'currentNodeId' nel tuo modello User
+        // user.setCurrentNodeId(nodeId);
+        userRepository.save(user);
+    }
+
+    /**
+     * Recupera le posizioni di tutti gli utenti attivi per la mappa
+     */
+    public List<UserPositionDto> getActiveUserPositions() {
+        // Per ora restituiamo una lista vuota per far compilare il progetto.
+        // In seguito, implementeremo la logica per mappare gli utenti ai DTO.
+        return Collections.emptyList();
+    }
+
+    // 
+    // METODI ESISTENTI
+    // 
 
     public User changePassword(String email, ChangePasswordRequest request) {
 
@@ -54,10 +87,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-
-
-
-
     public void changeEmail(String oldEmail, String newEmail) {
 
         User user = userRepository.findByEmail(oldEmail)
@@ -71,7 +100,6 @@ public class UserService {
 
         userRepository.save(user);
     }
-
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -93,6 +121,8 @@ public class UserService {
 
         userRepository.delete(user);
     }
+mio-dashboard
+
 
     public User updateProfile(String email, User data) {
 
@@ -112,4 +142,5 @@ public class UserService {
 
 
 
+ main
 }
