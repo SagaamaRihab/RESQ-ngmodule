@@ -20,9 +20,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // =====================================================
+    // 
     // NUOVI METODI PER LA POSIZIONE (Iterazione 2)
-    // =====================================================
+    // 
 
     /**
      * Aggiorna la posizione dell'utente (Salvataggio nel DB)
@@ -45,9 +45,9 @@ public class UserService {
         return Collections.emptyList();
     }
 
-    // =====================================================
+    // 
     // METODI ESISTENTI
-    // =====================================================
+    // 
 
     public User changePassword(String email, ChangePasswordRequest request) {
 
@@ -121,4 +121,26 @@ public class UserService {
 
         userRepository.delete(user);
     }
+mio-dashboard
+
+
+    public User updateProfile(String email, User data) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
+
+        user.setUsername(data.getUsername());
+        user.setPhone(data.getPhone());
+        user.setCourse(data.getCourse());
+        user.setAbout(data.getAbout());
+
+        return userRepository.save(user);
+    }
+
+
+
+
+
+
+ main
 }

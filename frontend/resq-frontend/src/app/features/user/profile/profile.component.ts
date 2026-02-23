@@ -1,10 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+// ================= IMPORT =================
+
+// Angular base component
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+
+// Angular common modules
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+// Router for navigation
 import { Router } from '@angular/router';
+
+// Service to communicate with backend
 import { UserService } from '../../../core/services/user.service';
 
 
+// ================= COMPONENT =================
 
 @Component({
   selector: 'app-user-profile',
@@ -13,98 +23,206 @@ import { UserService } from '../../../core/services/user.service';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
+
 export class UserProfileComponent implements OnInit {
 
-  // ===== BASE USER INFO =====
+  // =================================================
+  // =============== BASIC USER DATA =================
+  // =================================================
+
   username: string = '';
   email: string = '';
   role: string = '';
 
-  // ===== ACADEMIC INFO =====
+
+  // =================================================
+  // ============ ACADEMIC DATA ======================
+  // =================================================
+
   phone: string = '';
   academicYear: string = '2025/2026';
-  school: string = 'Scuola di Ingegneria';
-  course: string = 'Ingegneria Informatica';
+  school: string = 'Engineering School';
+  course: string = 'Computer Engineering';
+
+
+  // =================================================
+  // ============ TOAST MESSAGES =====================
+  // =================================================
 
   successMessage: string = '';
   showSuccess: boolean = false;
+
   errorMessage: string = '';
   showError: boolean = false;
-  passwordSuccessMsg: string = '';
-passwordErrorMsg: string = '';
+
+  
+  modalMessage: string = '';
+  modalType: 'success' | 'error' | '' = '';
 
 
+
+  // =================================================
+  // ============ SAVE STATE =========================
+  // =================================================
+
+  // Prevent multiple saves
   isSaving: boolean = false;
+  private toastTimer: any = null;
 
-  // ===== SETTINGS MODALS =====
-  passwordData: { oldPassword: string; newPassword: string } = {
-  oldPassword: '',
-  newPassword: ''
-};
+
+
+  // =================================================
+  // ============ PASSWORD DATA =====================
+  // =================================================
+
+  passwordData: {
+    oldPassword: string;
+    newPassword: string;
+  } = {
+    oldPassword: '',
+    newPassword: ''
+  };
+
+
+  // =================================================
+  // ============ SETTINGS MODALS ====================
+  // =================================================
 
   showPasswordModal = false;
   showEmailModal = false;
   showDeleteModal = false;
 
- 
   newEmail = '';
-  
 
 
+  // =================================================
+  // ============ ABOUT SECTION ======================
+  // =================================================
 
-
-  // ===== ABOUT =====
   about: string =
     'User of RESQ emergency evacuation system. Interested in safety management and building monitoring.';
 
-  // ===== MODAL STATE =====
+
+  // =================================================
+  // ============ EDIT MODAL =========================
+  // =================================================
+
   showEditModal: boolean = false;
 
-  // ===== EDIT FIELDS =====
+
+  // =================================================
+  // ============ EDIT FIELDS ========================
+  // =================================================
+
   editUsername: string = '';
   editEmail: string = '';
   editPhone: string = '';
   editCourse: string = '';
   editAbout: string = '';
 
+
+  // =================================================
+  // ============ CONSTRUCTOR ========================
+  // =================================================
+
   constructor(
   private router: Router,
-  private userService: UserService
+  private userService: UserService,
+  
+  private cd: ChangeDetectorRef
 ) {}
 
 
+  // User ID
   userId!: number;
+
+
+
+private showToast(type: 'success' | 'error', message: string) {
+
+  if (this.toastTimer) {
+    clearTimeout(this.toastTimer);
+  }
+
+  // Reset
+  this.showSuccess = false;
+  this.showError = false;
+
+  // Mostra
+  if (type === 'success') {
+    this.successMessage = message;
+    this.showSuccess = true;
+  } else {
+    this.errorMessage = message;
+    this.showError = true;
+  }
+
+  // Forza Angular
+  this.cd.detectChanges();
+
+  // Auto hide dopo 3s
+  this.toastTimer = setTimeout(() => {
+    this.showSuccess = false;
+    this.showError = false;
+    this.cd.detectChanges();
+  }, 2000);
+}
+
+
+
+
+
+
+
+
+  // =================================================
+  // ============ INITIALIZATION =====================
+  // =================================================
+
   ngOnInit(): void {
 
+    // Close any open modal
     this.showEditModal = false;
 
-    // Carica SUBITO dal login
+
+    // Load saved login data
     this.username = localStorage.getItem('username') || '';
     this.email = localStorage.getItem('email') || '';
     this.role = localStorage.getItem('role') || '';
 
     const token = localStorage.getItem('token');
 
+
+    // If token is missing → redirect to login
     if (!token) {
       this.router.navigate(['/signin']);
       return;
     }
 
+
+    // Get user ID
     this.userId = Number(localStorage.getItem('userId') || 0);
 
 
-    // Aggiorna dal backend (silenzioso)
+    // Load updated profile from backend
     this.loadProfile();
   }
 
 
+  // =================================================
+  // ============ OPEN EDIT MODAL ====================
+  // =================================================
 
-
-
-
-
-  // ===== MODAL OPEN =====
   openEditModal(): void {
+
+
+
+    this.showSuccess = false;
+    this.showError = false;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    // Copy current data into edit fields
     this.editUsername = this.username;
     this.editEmail = this.email;
     this.editPhone = this.phone;
@@ -112,13 +230,25 @@ passwordErrorMsg: string = '';
     this.editAbout = this.about;
 
     this.showEditModal = true;
+
+   
+
+
   }
 
-  // ===== MODAL CLOSE =====
+
+  // =================================================
+  // ============ CLOSE EDIT MODAL ===================
+  // =================================================
+
   closeEditModal(): void {
+
     this.showEditModal = false;
 
-    // reset campi (opzionale)
+    this.modalMessage = '';
+    this.modalType = '';
+
+    // Reset fields
     this.editUsername = '';
     this.editEmail = '';
     this.editPhone = '';
@@ -127,64 +257,106 @@ passwordErrorMsg: string = '';
   }
 
 
-  // ===== SAVE PROFILE =====
+  // =================================================
+  // ============ SAVE PROFILE =======================
+  // =================================================
+
  saveProfile(): void {
 
-    if (this.isSaving) return; 
+  if (this.isSaving) return;
+  this.isSaving = true;
 
-    this.isSaving = true;
+  const oldUsername = this.username;
+  const oldPhone = this.phone;
+  const oldCourse = this.course;
+  const oldAbout = this.about;
 
-    const id = Number(localStorage.getItem('userId'));
-    if (!id) return;
+  const data = {
+    username: this.editUsername,
+    phone: this.editPhone,
+    course: this.editCourse,
+    about: this.editAbout
+  };
 
-    const data = {
-      username: this.editUsername,
-      email: this.editEmail,
-      phone: this.editPhone,
-      course: this.editCourse,
-      about: this.editAbout
-    };
+  this.userService.updateMyProfile(data).subscribe({
 
-    // chiudi SUBITO il modal
-    this.closeEditModal();
+    next: (updatedUser: any) => {
 
-    // mostra SUBITO il toast
-    this.successMessage = 'Profilo aggiornato con successo';
-    this.showSuccess = true;
+      // Costruzione messaggio
+      let changes: string[] = [];
 
-    this.userService.updateUser(id, data).subscribe({
+      if (oldUsername !== updatedUser.username)
+        changes.push('Username updated');
 
-      next: (updatedUser: any) => {
+      if ((oldPhone || '') !== (updatedUser.phone || ''))
+        changes.push('Phone updated');
 
-        this.username = updatedUser.username;
-        this.email = updatedUser.email;
-        this.phone = updatedUser.phone || '';
-        this.course = updatedUser.course || '';
-        this.about = updatedUser.about || '';
-      },
-      
+      if ((oldCourse || '') !== (updatedUser.course || ''))
+        changes.push('Course updated');
 
-      error: () => {
-        this.isSaving = false;
-      }
+      if ((oldAbout || '') !== (updatedUser.about || ''))
+        changes.push('About updated');
 
-    });
-  }
+      const message = changes.length
+        ? changes.join(' • ')
+        : 'Profile updated';
 
+      // Aggiorna UI
+      this.username = updatedUser.username;
+      this.phone = updatedUser.phone || '';
+      this.course = updatedUser.course || '';
+      this.about = updatedUser.about || '';
 
-
+      localStorage.setItem('username', updatedUser.username);
 
 
- loadProfile() {
+      /* ✅ CHIUDI MODAL */
+      this.showEditModal = false;
 
-  this.userService.getMyProfile().subscribe({
+      /* ✅ MOSTRA TOAST */
+      this.showToast('success', message);
 
+      /* 🔥 FORZA AGGIORNAMENTO VIEW */
+      this.cd.detectChanges();
+
+      this.isSaving = false;
+    },
+
+    error: () => {
+
+      this.showEditModal = false;
+
+      this.showToast('error', 'Update failed');
+
+      this.cd.detectChanges();
+
+      this.isSaving = false;
+    }
+
+  });
+}
+
+
+
+
+
+
+  // =================================================
+  // ============ LOAD PROFILE =======================
+  // =================================================
+
+  loadProfile() {
+
+
+
+    this.userService.getMyProfile().subscribe({
 
       next: (user: any) => {
 
         console.log('USER:', user);
 
-        // Salva in localStorage (serve a dashboard + sidebar)
+
+        // Save data in localStorage
         if (user.id) {
           localStorage.setItem('userId', user.id.toString());
         }
@@ -201,7 +373,8 @@ passwordErrorMsg: string = '';
           localStorage.setItem('role', user.role);
         }
 
-        // Aggiorna UI
+
+        // Update UI
         this.username = user.username;
         this.email = user.email;
         this.role = user.role;
@@ -219,133 +392,125 @@ passwordErrorMsg: string = '';
     });
   }
 
-  // ================= SETTINGS =================
 
-openPasswordModal() {
-  this.showPasswordModal = true;
+  // =================================================
+  // ============ SETTINGS ===========================
+  // =================================================
 
-  // reset messaggi
-  this.passwordSuccessMsg = '';
-  this.passwordErrorMsg = '';
+  openPasswordModal() {
 
-  // reset campi
-  this.passwordData = { oldPassword: '', newPassword: '' };
-}
+    this.showPasswordModal = true;
 
 
-openEmailModal() {
-  this.showEmailModal = true;
-}
+    // Reset fields
+    this.passwordData = { oldPassword: '', newPassword: '' };
+  }
 
-openDeleteModal() {
-  this.showDeleteModal = true;
-}
 
-closeModal() {
+  openEmailModal() {
+    this.showEmailModal = true;
+  }
+
+
+  openDeleteModal() {
+    this.showDeleteModal = true;
+  }
+
+
+ closeModal() {
+
   this.showPasswordModal = false;
   this.showEmailModal = false;
   this.showDeleteModal = false;
 
-  // reset messaggi
-  this.passwordSuccessMsg = '';
-  this.passwordErrorMsg = '';
+  
 
-  // reset campi
   this.passwordData = { oldPassword: '', newPassword: '' };
   this.newEmail = '';
-
-  // pulizia vecchi toast generali
-  this.successMessage = '';
-  this.errorMessage = '';
 }
 
 
 
-changePassword() {
-  this.passwordSuccessMsg = '';
-  this.passwordErrorMsg = '';
+  // =================================================
+  // ============ CHANGE PASSWORD ===================
+  // =================================================
 
-  // VALIDAZIONE FRONTEND
+ changePassword() {
+
   if (!this.passwordData.oldPassword || !this.passwordData.newPassword) {
-    this.passwordErrorMsg = 'Compila tutti i campi.';
+    this.showToast('error', 'Please fill in all fields');
     return;
   }
 
   if (this.passwordData.newPassword.length < 6) {
-    this.passwordErrorMsg = 'La nuova password deve avere almeno 6 caratteri.';
+    this.showToast('error', 'New password must be at least 6 characters');
     return;
   }
 
   this.userService.changeMyPassword(this.passwordData).subscribe({
+
     next: (response: any) => {
 
-      // se backend manda token nuovo, lo aggiorniamo
       if (response?.token) {
         localStorage.setItem('token', response.token);
       }
 
-      this.passwordSuccessMsg = 'Password aggiornata con successo!';
+      this.showPasswordModal = false;
 
-      setTimeout(() => {
-        this.closeModal();
-      }, 1200);
+      this.passwordData = { oldPassword: '', newPassword: '' };
+
+      this.showToast('success', 'Password updated successfully');
     },
 
     error: (err: any) => {
+
       if (err.status === 401) {
-        this.passwordErrorMsg = 'Password attuale non corretta.';
-      } else if (err.status === 400) {
-        this.passwordErrorMsg = err?.error?.message || 'Dati non validi.';
+        this.showToast('error', 'Current password is incorrect');
       } else {
-        this.passwordErrorMsg = 'Errore durante il cambio password.';
+        this.showToast('error', 'Error while changing password');
       }
     }
+
   });
 }
 
 
 
+  // =================================================
+  // ============ CHANGE EMAIL ======================
+  // =================================================
 
-changeEmail() {
+ changeEmail() {
 
   if (!this.newEmail) {
-    this.passwordErrorMsg = 'Inserisci una email valida';
+    this.showToast('error', 'Please enter a valid email');
     return;
   }
-
-  this.passwordSuccessMsg = '';
-  this.passwordErrorMsg = '';
 
   this.userService.changeMyEmail(this.newEmail).subscribe({
 
     next: (res: any) => {
 
-      console.log('RISPOSTA BACKEND:', res);
-
-      // ✅ salva token nuovo
-      if (res && res.token) {
+      if (res?.token) {
         localStorage.setItem('token', res.token);
       }
 
-      // ✅ aggiorna email
-      localStorage.setItem('email', this.newEmail);
+      // Update UI
       this.email = this.newEmail;
+      localStorage.setItem('email', this.newEmail);
 
-      this.passwordSuccessMsg = 'Email aggiornata con successo!';
+      // Chiudi modal
+      this.showEmailModal = false;
 
-      setTimeout(() => {
-        this.closeModal();
-      }, 1000);
+      // Reset input
+      this.newEmail = '';
+
+      // Toast
+      this.showToast('success', 'Email updated successfully');
     },
 
-    error: (err) => {
-      console.error('ERRORE CAMBIO EMAIL:', err);
-
-      if (err.status === 401) {
-        this.passwordErrorMsg = 'Sessione scaduta. Rifai login.';
-      } else {
-        this.passwordErrorMsg = 'Errore nel cambio email';
-      }
+    error: () => {
+      this.showToast('error', 'Error while changing email');
     }
 
   });
@@ -355,52 +520,45 @@ changeEmail() {
 
 
 
+  // =================================================
+  // ============ DELETE ACCOUNT =====================
+  // =================================================
 
+  deleteAccount() {
 
-deleteAccount() {
+    this.userService.deleteMyAccount().subscribe({
 
-  if (!confirm('Vuoi davvero eliminare il tuo account?')) {
-    return;
+      next: () => {
+
+        this.showDeleteModal = false;
+
+        this.showToast('success', 'Account deleted successfully');
+
+        setTimeout(() => {
+          localStorage.clear();
+          this.router.navigate(['/signin']);
+        }, 2000);
+      },
+
+      error: () => {
+        this.showToast('error', 'Error while deleting account');
+      }
+
+    });
   }
 
-  this.userService.deleteMyAccount().subscribe({
-
-    next: () => {
-
-      alert('Account eliminato con successo');
-
-      localStorage.clear();
-
-      this.router.navigate(['/signin']);
-    },
-
-    error: (err) => {
-
-      console.error('Errore eliminazione account', err);
-
-      if (err.status === 401) {
-        alert('Sessione scaduta. Rifai login.');
-      } else {
-        alert('Errore durante eliminazione account');
-      }
-    }
-
-  });
-}
 
 
 
+  // =================================================
+  // ============ LOGOUT =============================
+  // =================================================
 
-
-
-
-
-
-  // ===== LOGOUT =====
   logout(): void {
+
     localStorage.clear();
+
     this.router.navigate(['/signin']);
   }
 
-  
 }

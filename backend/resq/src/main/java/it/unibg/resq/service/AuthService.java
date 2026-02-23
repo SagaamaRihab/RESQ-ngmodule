@@ -35,12 +35,10 @@ public class AuthService {
             );
         }
 
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Username already taken"
-            );
-        }
+
+
+
+
 
 
         // 🔐 controllo ADMIN

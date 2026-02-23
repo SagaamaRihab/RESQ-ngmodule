@@ -1,101 +1,176 @@
-<!-- TOPBAR -->
+<!-- ================= TOPBAR ================= -->
+<!-- Barra superiore con nome utente e stato sistema -->
 <header class="topbar">
+
   <div>
-   <h1>
-      Dashboard di
+
+    <!-- Titolo Dashboard -->
+    <h1>
+      Dashboard of
       <span *ngIf="username; else guest">
         {{ username }}
       </span>
     </h1>
 
+
+    <!-- Sottotitolo di benvenuto -->
     <p class="subtitle">
-      Benvenuta
+
+      Welcome
       <strong *ngIf="username; else guest">
         {{ username }}
       </strong>
+
     </p>
 
 
+    <!-- Testo per utenti non loggati -->
     <ng-template #guest>
-      utente
+      user
     </ng-template>
+
   </div>
 
+
+  <!-- Stato sistema -->
   <div class="status">
+
     <span class="dot"></span>
-    Sistema attivo
+
+    System Active
+
   </div>
+
 </header>
 
 
-<!-- AZIONI PRINCIPALI -->
+<!-- ================= AZIONI PRINCIPALI ================= -->
+<!-- Card principali della dashboard -->
 <section class="grid main-actions">
 
+
+  <!-- MAPPA -->
   <article class="card card-map" routerLink="/user/map">
+
     <i class="fa-solid fa-map-location-dot"></i>
-    <h2>Mappa edificio</h2>
-    <p>Struttura e punti di interesse</p>
+
+    <h2>Building Map</h2>
+
+    <p>Structure and points of interest</p>
+
   </article>
 
+
+  <!-- EVACUAZIONE -->
   <article class="card card-evac" routerLink="/user/evacuation">
+
     <i class="fa-solid fa-person-running"></i>
-    <h2>Evacuazione</h2>
-    <p>Percorsi di uscita e sicurezza</p>
+
+    <h2>Evacuation</h2>
+
+    <p>Exit routes and safety</p>
+
   </article>
 
+
+  <!-- ISTRUZIONI -->
   <article class="card card-info" routerLink="/user/instructions">
+
     <i class="fa-solid fa-circle-info"></i>
-    <h2>Istruzioni</h2>
-    <p>Cosa fare in emergenza</p>
+
+    <h2>Instructions</h2>
+
+    <p>What to do in an emergency</p>
+
   </article>
 
 </section>
 
-<!-- STATO UTENTE -->
+
+<!-- ================= STATO UTENTE ================= -->
 <section class="dashboard-widgets">
 
   <div class="widget-grid">
 
+
+    <!-- POSIZIONE -->
     <div class="widget info">
+
       <i class="fa-solid fa-location-dot"></i>
-      <h4>Posizione</h4>
-      <p>Non condivisa</p>
+
+      <h4>Location</h4>
+
+      <p>Not shared</p>
+
     </div>
 
+
+    <!-- SICUREZZA -->
     <div class="widget success">
+
       <i class="fa-solid fa-shield-check"></i>
-      <h4>Stato sicurezza</h4>
-      <p>Nessuna emergenza</p>
+
+      <h4>Safety Status</h4>
+
+      <p>No emergency</p>
+
     </div>
 
+
+    <!-- AVVISI -->
     <div class="widget warning">
+
       <i class="fa-solid fa-bell"></i>
-      <h4>Avvisi</h4>
-      <p>0 attivi</p>
+
+      <h4>Alerts</h4>
+
+      <p>0 active</p>
+
     </div>
 
   </div>
 
 </section>
 
-<!-- AZIONI RAPIDE -->
+
+<!-- ================= AZIONI RAPIDE ================= -->
 <section class="widget actions">
-  <h3>Azioni rapide</h3>
+
+  <h3>Quick Actions</h3>
+
 
   <div class="actions-grid">
+
+
+    <!-- Pulsante mappa -->
     <button routerLink="/user/map">
+
       <i class="fa-solid fa-map"></i>
-      Mappa
+
+      Map
+
     </button>
 
+
+    <!-- Pulsante evacuazione -->
     <button routerLink="/user/evacuation">
+
       <i class="fa-solid fa-person-running"></i>
-      Evacuazione
+
+      Evacuation
+
     </button>
 
+
+    <!-- Pulsante istruzioni -->
     <button routerLink="/user/instructions">
+
       <i class="fa-solid fa-circle-info"></i>
-      Istruzioni
+
+      Instructions
+
     </button>
+
   </div>
+
 </section>

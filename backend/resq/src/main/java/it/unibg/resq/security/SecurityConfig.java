@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -31,41 +32,32 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+
                 .authorizeHttpRequests(auth -> auth
 
-                        // CORS
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // AUTH PUBBLICO
+                        //  AUTH LIBERO
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // MAPPA PUBBLICA
-                        .requestMatchers(HttpMethod.GET, "/api/map/**").permitAll()
-
-                        // PROFILO UTENTE
-                        .requestMatchers("/api/user/**").authenticated()
-
-                        // UTENTI (solo login)
-                        .requestMatchers("/api/users/**").authenticated()
-
-                        // ADMIN (se esiste)
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        // RESTO
+                        //  TUTTO IL RESTO PROTETTO
                         .anyRequest().authenticated()
                 )
 
+                //  USA IL TUO AuthEntryPoint
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authEntryPoint)
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        })
+                )
 
-                .exceptionHandling(ex ->
-                        ex.authenticationEntryPoint(authEntryPoint)
+
+                .sessionManagement(sess -> sess
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

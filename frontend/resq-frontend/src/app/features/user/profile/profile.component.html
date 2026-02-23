@@ -1,22 +1,24 @@
+<!-- CONTENITORE PRINCIPALE DEL PROFILO -->
 <div class="student-profile py-4">
 
   <div class="container">
 
-    <!-- HEADER -->
+    <!-- ================= HEADER PROFILO ================= -->
     <div class="profile-header mb-4">
 
-      
-
+      <!-- INFORMAZIONI PRINCIPALI UTENTE -->
       <div class="profile-info">
 
+        <!-- Nome utente -->
         <h2>{{ username }}</h2>
+
+        <!-- Email -->
         <p>{{ email }}</p>
 
-        
-
+        <!-- PULSANTI AZIONE -->
         <div class="profile-actions">
 
-          <!-- OPEN MODAL -->
+          <!-- APRI MODAL MODIFICA PROFILO -->
           <button
             class="btn btn-primary btn-sm"
             (click)="openEditModal()"
@@ -24,7 +26,7 @@
             Edit Profile
           </button>
 
-
+          <!-- LOGOUT -->
           <button
             class="btn btn-danger btn-sm"
             (click)="logout()"
@@ -38,34 +40,23 @@
 
     </div>
 
-    <!-- SUCCESS -->
-    <div class="toast-success" *ngIf="showSuccess">
-      {{ successMessage }}
-    </div>
-
-    <!-- ERROR -->
-    <div class="toast-error" *ngIf="showError">
-      {{ errorMessage }}
-    </div>
+   
 
 
-
-
-    <!-- MAIN GRID -->
+    <!-- ================= GRIGLIA PRINCIPALE ================= -->
     <div class="row">
 
-
-      <!-- LEFT -->
+      <!-- ================= COLONNA SINISTRA ================= -->
       <div class="col-lg-4">
 
-        <!-- INFO CARD -->
+        <!-- CARD INFO ACCOUNT -->
         <div class="card shadow-sm mb-3">
 
           <div class="card-header">
-            Account Info
+            Account Information
           </div>
 
-          <div class="card-body" >
+          <div class="card-body">
 
             <p><b>Username:</b> {{ username }}</p>
             <p><b>Email:</b> {{ email }}</p>
@@ -74,16 +65,10 @@
 
           </div>
 
-          
-
-
-          
-
-
         </div>
 
 
-        <!-- STATS -->
+        <!-- CARD STATISTICHE -->
         <div class="card shadow-sm">
 
           <div class="card-header">
@@ -113,11 +98,11 @@
       </div>
 
 
-      <!-- RIGHT -->
+      <!-- ================= COLONNA DESTRA ================= -->
       <div class="col-lg-8">
 
 
-        <!-- GENERAL -->
+        <!-- INFORMAZIONI GENERALI -->
         <div class="card shadow-sm mb-3">
 
           <div class="card-header">
@@ -139,7 +124,7 @@
               </tr>
 
               <tr>
-                <th>Registration</th>
+                <th>Registration Year</th>
                 <td>2025</td>
               </tr>
 
@@ -154,7 +139,7 @@
         </div>
 
 
-        <!-- ACADEMIC PROFILE -->
+        <!-- PROFILO ACCADEMICO -->
         <div class="card shadow-sm mb-3">
 
           <div class="card-header">
@@ -173,7 +158,7 @@
         </div>
 
 
-        <!-- ACTIVITY -->
+        <!-- ATTIVITÀ RECENTE -->
         <div class="card shadow-sm mb-3">
 
           <div class="card-header">
@@ -184,7 +169,7 @@
 
             <ul class="activity-list">
 
-              <li>✔ Login success</li>
+              <li>✔ Login successful</li>
               <li>✔ Viewed building map</li>
               <li>✔ Started evacuation plan</li>
               <li>✔ Updated profile</li>
@@ -195,7 +180,7 @@
         </div>
 
 
-        <!-- ABOUT -->
+        <!-- SEZIONE "CHI SONO" -->
         <div class="card shadow-sm">
 
           <div class="card-header">
@@ -209,37 +194,40 @@
           </div>
         </div>
 
-        <!-- SETTINGS -->
+
+        <!-- IMPOSTAZIONI ACCOUNT -->
         <div class="card shadow-sm settings-card">
 
           <div class="card-header">
-            Impostazioni Account
+            Account Settings
           </div>
 
           <div class="card-body settings-actions">
 
+            <!-- CAMBIO PASSWORD -->
             <button
               class="btn btn-outline-primary"
               (click)="openPasswordModal()">
-               Cambia Password
+              Change Password
             </button>
 
+            <!-- CAMBIO EMAIL -->
             <button
               class="btn btn-outline-warning"
               (click)="openEmailModal()">
-               Cambia Email
+              Change Email
             </button>
 
+            <!-- ELIMINAZIONE ACCOUNT -->
             <button
               class="btn btn-outline-danger"
               (click)="openDeleteModal()">
-               Elimina Account
+              Delete Account
             </button>
 
           </div>
 
         </div>
-
 
       </div>
 
@@ -250,36 +238,45 @@
 </div>
 
 
+<!-- ================================================= -->
+<!-- ================= MODAL SECTION ================= -->
+<!-- ================================================= -->
 
-<!-- ================= MODAL ================= -->
 
-<!-- EDIT PROFILE MODAL -->
+<!-- ================= EDIT PROFILE MODAL ================= -->
 <div
   class="modal-overlay"
   *ngIf="showEditModal"
-  (click)="closeEditModal()"
+  
 >
 
+  <!-- BOX CENTRALE MODAL -->
   <div
     class="modal-box"
     (click)="$event.stopPropagation()"
   >
 
   
+ 
 
-    <!-- HEADER -->
+
+    <!-- HEADER MODAL -->
     <div class="modal-header">
+
       <h3>Edit Profile</h3>
 
+      <!-- CHIUSURA MODAL -->
       <button
         class="close-btn"
         (click)="closeEditModal()"
       >
         ✕
       </button>
+
     </div>
 
-    <!-- FORM -->
+
+    <!-- FORM MODIFICA PROFILO -->
 
     <div class="form-group">
       <label>Username</label>
@@ -296,7 +293,14 @@
         type="email"
         class="form-control"
         [(ngModel)]="editEmail"
+        readonly
       >
+
+      <!-- Messaggio informativo -->
+      <small class="text-muted">
+        To change email, use "Change Email" in Account Settings.
+      </small>
+
     </div>
 
     <div class="form-group">
@@ -326,7 +330,8 @@
       ></textarea>
     </div>
 
-    <!-- ACTIONS -->
+
+    <!-- PULSANTI MODAL -->
     <div class="modal-actions">
 
       <button
@@ -344,38 +349,29 @@
 </div>
 
 
-
 <!-- ================= PASSWORD MODAL ================= -->
-<div class="modal-overlay" *ngIf="showPasswordModal" (click)="closeModal()">
+<div
+  class="modal-overlay"
+  *ngIf="showPasswordModal"
+  (click)="closeModal()"
+>
 
   <div class="modal-box" (click)="$event.stopPropagation()">
 
-    <!-- MESSAGGI PASSWORD -->
-    <div
-      *ngIf="passwordSuccessMsg"
-      style="background:#22c55e;color:white;padding:10px;
-            border-radius:8px;margin-bottom:12px;
-            text-align:center;font-weight:600;"
-    >
-      {{ passwordSuccessMsg }}
-    </div>
+    
 
-    <div
-      *ngIf="passwordErrorMsg"
-      style="background:#ef4444;color:white;padding:10px;
-            border-radius:8px;margin-bottom:12px;
-            text-align:center;font-weight:600;"
-    >
-      {{ passwordErrorMsg }}
-    </div>
 
     <div class="modal-header">
-      <h3>Cambia Password</h3>
+
+      <h3>Change Password</h3>
+
       <button (click)="closeModal()">✕</button>
+
     </div>
 
+
     <div class="form-group">
-      <label>Password attuale</label>
+      <label>Current Password</label>
       <input
         type="password"
         [(ngModel)]="passwordData.oldPassword"
@@ -383,8 +379,9 @@
       >
     </div>
 
+
     <div class="form-group">
-      <label>Nuova Password</label>
+      <label>New Password</label>
       <input
         type="password"
         [(ngModel)]="passwordData.newPassword"
@@ -392,14 +389,18 @@
       >
     </div>
 
-    <button class="save-btn" (click)="changePassword()">
-      Salva
+
+    <button
+      class="save-btn"
+      (click)="changePassword()">
+
+      Save
+
     </button>
 
   </div>
 
 </div>
-
 
 
 <!-- ================= EMAIL MODAL ================= -->
@@ -408,23 +409,32 @@
   <div class="modal-box">
 
     <div class="modal-header">
-      <h3>Cambia Email</h3>
+
+      <h3>Change Email</h3>
+
       <button (click)="closeModal()">✕</button>
+
     </div>
 
+
     <div class="form-group">
-      <label>Nuova Email</label>
+
+      <label>New Email</label>
 
       <input
         type="email"
         [(ngModel)]="newEmail"
         class="form-control">
+
     </div>
+
 
     <button
       class="save-btn"
       (click)="changeEmail()">
-      Salva
+
+      Save
+
     </button>
 
   </div>
@@ -432,30 +442,50 @@
 </div>
 
 
-
-<!-- ================= DELETE MODAL ================= -->
+<!-- ================= DELETE ACCOUNT MODAL ================= -->
 <div class="modal-overlay" *ngIf="showDeleteModal">
 
   <div class="modal-box">
 
     <div class="modal-header">
-      <h3>Elimina Account</h3>
+
+      <h3>Delete Account</h3>
+
       <button (click)="closeModal()">✕</button>
+
     </div>
 
+
+    <!-- AVVISO PERICOLO -->
     <p style="color:red; font-weight:600;">
-      ⚠️ Sei sicura di voler eliminare il tuo account?
-      Questa azione è irreversibile.
+
+      ⚠️ Are you sure you want to delete your account?
+      This action cannot be undone.
+
     </p>
+
 
     <button
       class="btn btn-danger"
       (click)="deleteAccount()">
-      Elimina definitivamente
+
+      Delete Permanently
+
     </button>
 
   </div>
 
 </div>
 
+<!-- ================= TOAST NOTIFICATIONS ================= -->
+
+<!-- TOAST SUCCESS -->
+<div *ngIf="showSuccess" class="custom-toast success-toast">
+  {{ successMessage }}
+</div>
+
+<!-- TOAST ERROR -->
+<div *ngIf="showError" class="custom-toast error-toast">
+  {{ errorMessage }}
+</div>
 

@@ -4,7 +4,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const token = localStorage.getItem('token');
 
-  if (token) {
+  //  Se non c'è token → vai avanti senza modificare
+  if (!token) {
+    return next(req);
+  }
+
+  //  Non mettere token su login/signup
+  const isAuthRequest =
+    req.url.includes('/auth/signin') ||
+    req.url.includes('/auth/signup');
+
+  if (!isAuthRequest) {
 
     const authReq = req.clone({
       setHeaders: {

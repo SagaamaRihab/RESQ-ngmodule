@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,16 +18,12 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public JwtAuthFilter(JwtService jwtService,
-                         UserRepository userRepository) {
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-    }
 
 
     @Override
@@ -35,6 +32,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
+        String path = request.getServletPath();
+
+        // ✅ NON controllare auth (login/signup)
+        if (path.startsWith("/api/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -59,20 +64,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .findByEmail(email)
                     .orElse(null);
 
-            // 🔍 DEBUG (puoi toglierlo dopo)
-            System.out.println("TOKEN EMAIL: " + email);
-            System.out.println("DB USER: " + (user != null ? user.getEmail() : "NULL"));
-
             if (user != null && jwtService.isTokenValid(token, user)) {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                user.getEmail(),   // principal = email
+                                user.getEmail(),
                                 null,
                                 List.of(() -> "ROLE_" + user.getRole().name())
                         );
-
-
 
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
@@ -87,7 +86,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-
 
 }

@@ -1,59 +1,68 @@
-
 <div class="layout">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR: barra laterale sinistra -->
   <aside class="sidebar">
+
+    <!-- Sezione del brand/logo -->
     <div class="brand">
       <div class="logo">R</div>
       <div>
         <h3>RESQ</h3>
-        <p>User Area</p>
+        <p>User Area</p> <!-- Area utente -->
       </div>
     </div>
 
+    <!-- Menu di navigazione -->
     <nav class="nav">
-      <a routerLink="/user" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+
+      <!-- Link alla Dashboard principale -->
+      <a routerLink="/user" 
+         routerLinkActive="active" 
+         [routerLinkActiveOptions]="{ exact: true }">
         <i class="fa-solid fa-grid-2"></i>
         Dashboard
       </a>
 
+      <!-- Link al profilo utente -->
       <a routerLink="profile" routerLinkActive="active">
-        <i class="fa-solid fa-map-location-dot"></i>
-        Profile 
+        <i class="fa-solid fa-user"></i>
+        Profile
       </a>
 
+      <!-- Link alla mappa dell'edificio -->
       <a routerLink="map" routerLinkActive="active">
         <i class="fa-solid fa-map-location-dot"></i>
-        Mappa edificio
+        Building Map
       </a>
 
+      <!-- Link alla sezione evacuazione -->
       <a routerLink="evacuation" routerLinkActive="active">
         <i class="fa-solid fa-person-running"></i>
-        Evacuazione
+        Evacuation
       </a>
 
+      <!-- Link alle istruzioni -->
       <a routerLink="instructions" routerLinkActive="active">
         <i class="fa-solid fa-circle-info"></i>
-        Istruzioni
+        Instructions
       </a>
+
     </nav>
 
+    <!-- Pulsante per il logout -->
     <button class="logout" (click)="logout()">
       <i class="fa-solid fa-right-from-bracket"></i>
       Logout
     </button>
+
   </aside>
 
-  <!-- MAIN -->
+  <!-- AREA PRINCIPALE: dove vengono caricati i contenuti -->
   <main class="main">
+
+    <!-- Qui Angular carica i componenti in base alla rotta -->
     <router-outlet></router-outlet>
+
   </main>
 
 </div>
-
-
-
-
-
-
-

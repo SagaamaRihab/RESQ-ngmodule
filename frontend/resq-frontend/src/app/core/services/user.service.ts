@@ -26,13 +26,14 @@ export class UserService {
   }
 
   // ===== UPDATE PROFILO =====
-  updateUser(id: number, data: any): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/${id}`,
-      data,
-      this.getAuthHeaders()
-    );
-  }
+  updateMyProfile(data: any): Observable<any> {
+  return this.http.put(
+    `${this.baseUrl}/me`,
+    data,
+    this.getAuthHeaders()
+  );
+}
+
 
   // ===== GET PROFILO =====
   getUserById(id: number): Observable<any> {

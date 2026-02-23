@@ -23,9 +23,9 @@ public class UserController {
     private final JwtService jwtService;
     private final UserService userService;
 
-    // =====================================================
+    // 
     // GESTIONE POSIZIONE (Per Mappa Admin)
-    // =====================================================
+    // 
 
     /**
      * ✅ Per l'Admin: Recupera le posizioni di tutti gli utenti per visualizzare i punti sulla mappa
@@ -57,9 +57,9 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Posizione aggiornata con successo"));
     }
 
-    // =====================================================
+    // 
     // PROFILO E SICUREZZA (Esistente)
-    // =====================================================
+    // 
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(Authentication authentication) {
@@ -103,9 +103,9 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Account deleted"));
     }
 
-    // =====================================================
+    // 
     // UTILITY
-    // =====================================================
+    // 
 
     /**
      * Estrae l'email dall'oggetto Authentication per evitare ripetizioni di codice
@@ -117,4 +117,36 @@ public class UserController {
         }
         return principal.toString();
     }
+mio-dashboard
+
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(
+            @RequestBody User updatedData,
+            Authentication authentication
+    ) {
+
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            email = ((User) principal).getEmail();
+        } else {
+            email = principal.toString();
+        }
+
+        // aggiorna utente
+        User updatedUser = userService.updateProfile(email, updatedData);
+
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
+
+
+
+
+
+ main
 }

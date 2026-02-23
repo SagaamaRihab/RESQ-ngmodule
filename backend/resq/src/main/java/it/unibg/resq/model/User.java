@@ -28,6 +28,16 @@ public class User implements UserDetails {   // <-- IMPORTANTE
     @Column(nullable = false)
     private String username;
 
+    @Column
+    private String phone;
+
+    @Column
+    private String course;
+
+    @Column(length = 500)
+    private String about;
+
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 

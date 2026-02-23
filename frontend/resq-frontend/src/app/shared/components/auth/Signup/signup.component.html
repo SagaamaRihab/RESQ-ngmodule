@@ -1,5 +1,6 @@
 
-<body>
+<div class="page-container">
+
     <div class="wrapper">
          <form  class="form" (ngSubmit)="onSignup(signupForm)" #signupForm="ngForm"  autocomplete="off" >
             <h1 class="title">Sign up</h1>
@@ -73,5 +74,57 @@
             <p class="para"></p>
         </div>
     </div>
-</body>
+
+    
+</div>
+
+    
+
+<!-- ================= TOAST NOTIFICATIONS ================= -->
+
+<!-- TOAST SUCCESS -->
+<div *ngIf="showSuccess" class="custom-toast success-toast">
+  {{ successMessage }}
+</div>
+
+<!-- TOAST ERROR -->
+<div *ngIf="showError" class="custom-toast error-toast">
+  {{ errorMessageToast }}
+</div>
+
+
+<!-- MODAL -->
+<div class="custom-modal" *ngIf="showModal">
+
+  <div class="modal-box">
+
+    <!-- ICON -->
+    <div
+      class="icon"
+      [ngClass]="modalType === 'success' ? 'success' : 'error'"
+    >
+      <span *ngIf="modalType === 'success'">✔</span>
+      <span *ngIf="modalType === 'error'">✖</span>
+    </div>
+
+    <!-- TITLE -->
+    <h3>
+      {{ modalType === 'success' ? 'Success!' : 'Error' }}
+    </h3>
+
+    <!-- MESSAGE -->
+    <p>{{ modalMessage }}</p>
+
+    <!-- BUTTON -->
+    <button (click)="closeModal()">
+      OK
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
            
