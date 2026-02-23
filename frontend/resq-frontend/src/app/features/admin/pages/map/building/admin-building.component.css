@@ -1,0 +1,393 @@
+/* ======================
+   LAYOUT PRINCIPALE
+====================== */
+.building-page {
+  padding: 20px;
+}
+
+.building-header {
+  margin-bottom: 24px;
+}
+
+.building-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0c4a6e;
+}
+
+.building-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ======================
+   MAPPA
+====================== */
+.floor-map {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.1);
+}
+
+.map-wrapper {
+  position: relative;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.map-frame {
+  position: relative;
+}
+
+.main-map-img {
+  position: relative;
+  z-index: 1;
+}
+
+/* ======================
+   LAYER COULOIRS
+====================== */
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 80;          
+  pointer-events: none;
+  
+}
+.block-x line {
+  stroke: #ef4444;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 2px rgba(239, 68, 68, 0.35));
+  opacity: 0.95;
+}
+
+/* ======================
+   DIJKSTRA PATH
+====================== */
+.path-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* ======================
+   USERS (BLEU)
+====================== */
+.user-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.user-pulse {
+  width: 14px;
+  height: 14px;
+  background: #0ea5e9;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+}
+
+.user-label {
+  margin-top: 4px;
+  background: rgba(15, 23, 42, 0.8);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* ======================
+   POINT VERT (ME)
+====================== */
+.self-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.self-dot {
+  width: 14px;
+  height: 14px;
+  background: #22c55e;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.65);
+  animation: self-pulse 1.6s infinite;
+}
+
+@keyframes self-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.65); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.self-label {
+  margin-top: 4px;
+  background: rgba(22, 163, 74, 0.92);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ======================
+   BOUTONS PIANI
+====================== */
+.floor-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.floor-buttons button {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #e5e7eb;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.floor-buttons button.active {
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  color: white;
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+
+/* ======================
+   CARD EMERGENZA
+====================== */
+.emergency-card {
+  margin-top: 18px;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #bae6fd;
+}
+
+.emergency-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 15px;
+  align-items: center;
+}
+
+.emergency-row label {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.emergency-row select {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #dbeafe;
+  background: white;
+  outline: none;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.emergency-row select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* ✅ BOUTON BLEU */
+.primary-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(14, 165, 233, 0.3);
+}
+
+.primary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Available exits */
+.emergency-hint {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.emergency-hint .exits {
+  margin-left: 6px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* Result */
+.result {
+  margin-top: 14px;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e2e8f0;
+}
+
+.result-title {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #64748b;
+  margin: 6px 0 10px;
+}
+
+.result-msg {
+  margin-top: 10px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.steps {
+  margin-top: 12px;
+  padding-left: 18px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+
+.instructions {
+  background: #f8fafc;
+  border-left: 5px solid #0ea5e9;
+  padding: 16px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+}
+
+.instructions h4 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: #1d4ed8;
+}
+
+.instructions ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #334155;
+  line-height: 1.7;
+}
+
+/* Muted */
+.muted {
+  color: #64748b;
+}
+
+/* ======================
+   PANNELLO LATERALE
+====================== */
+.side-panel {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* ======================
+   COULOIRS
+====================== */
+.corridor {
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  opacity: 0.95;
+}
+
+.corridor.open {
+  stroke: rgba(14, 165, 233, 0.75);
+  stroke-width: 1.4;
+}
+
+.corridor.blocked {
+  stroke: rgba(239, 68, 68, 0.95);
+  stroke-width: 2.4;
+  stroke-dasharray: 2.5 2.5;
+  filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.35));
+}
+
+/* ======================
+   CHEMIN DIJKSTRA
+====================== */
+.evacuation-line {
+  vector-effect: non-scaling-stroke;
+  stroke: rgba(34, 197, 94, 0.95);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 2px rgba(34, 197, 94, 0.35));
+  opacity: 0.95;
+}
+
+/* ======================
+   NAVIGATION CHEMIN (OPTIONNEL)
+====================== */
+.path-floor-nav {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 120;
+  display: flex;
+  gap: 8px;
+}
+
+.path-floor-nav button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.75);
+  color: white;
+  backdrop-filter: blur(6px);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.path-floor-nav button:hover {
+  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 0.85);
+}

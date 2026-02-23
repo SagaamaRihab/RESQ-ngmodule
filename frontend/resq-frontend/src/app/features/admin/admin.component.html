@@ -4,25 +4,32 @@
       <div class="logo">R</div>
       <div>
         <h3>RESQ</h3>
-        <p>Area amministrativa</p>
+        <p>Administrative area</p>
       </div>
     </div>
 
     <nav class="nav">
       <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        Pannello di controllo
+        Dashboard
       </a>
 
       <a routerLink="/admin/corridors" routerLinkActive="active">
-        Gestione corridoi
+        <i class="fa-solid fa-corridoi"></i>
+        🧱 Corridor management 
       </a>
 
       <a routerLink="/admin/map" routerLinkActive="active">
-        Mappa edificio
+        <i class="fa-solid fa-map-location-dot"></i>
+        Building map
       </a>
 
       <a routerLink="/admin/evacuations" routerLinkActive="active">
-        Evacuazioni
+        <i class="fa-solid fa-person-running"></i>
+        Evacuation
+      </a>
+      <a routerLink="/admin/instructions" routerLinkActive="active">
+        <i class="fa-solid fa-circle-info"></i>
+        Instructions
       </a>
     </nav>
 
@@ -32,14 +39,14 @@
   <main class="main">
     <header class="topbar">
       <div>
-        <h1>Area Amministratore</h1>
-        <p>Gestione del sistema RESQ</p>
+        <h1>Administrative Area</h1>
+        <p>Management of the RESQ system</p>
       </div>
 
       <div class="status">
-        <span class="badge admin">AMMINISTRATORE</span>
+        <span class="badge admin">ADMINISTRATOR</span>
         <span class="dot"></span>
-        Sistema attivo
+        Active system
       </div>
     </header>
 

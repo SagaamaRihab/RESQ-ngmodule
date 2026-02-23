@@ -1,0 +1,157 @@
+<div class="building-page">
+
+  <header class="building-header">
+    <h1>Building {{ building }}</h1>
+    <p>Select the floor you are on</p>
+  </header>
+
+  <!-- FLOOR BUTTONS -->
+  <div class="floor-buttons">
+
+    <ng-container *ngIf="building === 'A'">
+      <button [class.active]="selectedFloor === 'terra'" (click)="selectFloor('terra')">Ground Floor</button>
+      <button [class.active]="selectedFloor === 'primo'" (click)="selectFloor('primo')">First Floor</button>
+      <button [class.active]="selectedFloor === 'secondo'" (click)="selectFloor('secondo')">Second Floor</button>
+    </ng-container>
+
+    <ng-container *ngIf="building === 'B'">
+      <button [class.active]="selectedFloor === 'interrato'" (click)="selectFloor('interrato')">Basement</button>
+      <button [class.active]="selectedFloor === 'rialzato'" (click)="selectFloor('rialzato')">Second Floor</button>
+      <button [class.active]="selectedFloor === 'primo'" (click)="selectFloor('primo')">First Floor</button>
+    </ng-container>
+
+    <ng-container *ngIf="building === 'D'">
+      <button [class.active]="selectedFloor === 'terra'" (click)="selectFloor('terra')">Ground Floor</button>
+    </ng-container>
+
+  </div>
+
+  <div class="building-content">
+
+    <!-- MAP -->
+    <div class="floor-map">
+      <div class="map-wrapper">
+        <div class="map-frame">
+
+          <!-- IMAGE -->
+          <img
+            [src]="floorImage"
+            alt="Map building {{ building }}"
+            class="main-map-img"
+          />
+
+         
+          <svg class="map-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <g *ngFor="let e of displayedEdges">
+              <g
+                *ngIf="e.blocked"
+                class="block-x"
+                [attr.transform]="'translate(' + midX(e) + ' ' + midY(e) + ')'"
+              >
+                <line x1="-2.8" y1="-2.8" x2="2.8" y2="2.8"></line>
+                <line x1="-2.8" y1="2.8" x2="2.8" y2="-2.8"></line>
+              </g>
+            </g>
+          </svg>
+
+          <!-- MY POSITION -->
+          <div class="self-marker" [ngStyle]="getSelectedPositionStyle()">
+            <div class="self-dot"></div>
+            <div class="self-label">Me</div>
+          </div>
+
+          <!-- USERS -->
+          <div
+            class="user-marker"
+            *ngFor="let u of utentiAttivi"
+            [ngStyle]="getUserStyle(u.nodeId)"
+          >
+            <div class="user-pulse"></div>
+            <div class="user-label">{{ u.userId }}</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- EMERGENCY -->
+      <div class="emergency-card">
+        <h2>Emergency</h2>
+
+        <div class="emergency-row">
+          <label for="pos">Where are you?</label>
+
+          <select
+            id="pos"
+            [(ngModel)]="selectedPosition"
+            (ngModelChange)="onSelectedPositionChange()"
+          >
+            <option value="">-- Select --</option>
+            <option *ngFor="let r of getCurrentRooms()" [value]="r">
+              {{ r }}
+            </option>
+          </select>
+
+          <button
+            class="primary-btn"
+            (click)="calculateEvacuation()"
+            [disabled]="!selectedPosition"
+          >
+            Calculate evacuation
+          </button>
+        </div>
+
+        <div class="emergency-hint">
+          <strong>Available exits on this floor:</strong>
+          <span class="exits">
+            {{ (getCurrentExits().length ? getCurrentExits().join(' • ') : '—') }}
+          </span>
+        </div>
+
+        <!-- RESULT / INSTRUCTIONS -->
+        <div class="result" *ngIf="selectedPosition">
+          <ng-container *ngIf="(evacuationPathNodes?.length ?? 0) > 0; else noPath">
+
+            <p class="result-title">Result</p>
+
+            <div class="instructions" *ngIf="recommendedExitId">
+              <h4>Evacuation instructions</h4>
+              <ul>
+                <li *ngFor="let step of getEvacuationInstructionsAdmin()">
+                  {{ step }}
+                </li>
+              </ul>
+            </div>
+
+            <p><strong>Start:</strong> {{ selectedPosition }}</p>
+            <p><strong>Recommended exit:</strong> {{ recommendedExitId || '—' }}</p>
+            <p class="result-msg">{{ evacuationMessage }}</p>
+
+            <ol class="steps" *ngIf="recommendedExitId">
+              <li>Stay calm and check the corridor.</li>
+              <li>Follow the signs towards <strong>{{ recommendedExitId }}</strong>.</li>
+              <li>Use stairs / exit the door and reach the assembly point.</li>
+            </ol>
+
+          </ng-container>
+
+          <ng-template #noPath>
+            <p class="muted">No evacuation path calculated yet (or no path available).</p>
+          </ng-template>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <div class="side-panel">
+      <h3>Live info</h3>
+      <p><strong>Floor:</strong> {{ selectedFloor | titlecase }}</p>
+      <p><strong>Building:</strong> {{ building }}</p>
+      <p><strong>Users on floor:</strong> {{ utentiAttivi.length }}</p>
+      <p><strong>Blocked corridors on this view:</strong> {{ getBlockedCorridorsCount() }}</p>
+      <p *ngIf="selectedPosition"><strong>Selected room:</strong> {{ selectedPosition }}</p>
+      <p *ngIf="(evacuationPathNodes?.length ?? 0) > 0"><strong>Path nodes:</strong> {{ evacuationPathNodes.length }}</p>
+    </div>
+
+  </div>
+</div>

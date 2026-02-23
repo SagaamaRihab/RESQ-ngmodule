@@ -18,7 +18,7 @@ type FullExit = Exit & {
 };
 
 @Component({
-  selector: 'app-building',
+  selector: 'app-building-user',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './building.component.html',
