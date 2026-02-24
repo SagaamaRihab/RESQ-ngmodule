@@ -58,6 +58,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   private routeSub?: Subscription;
   private lastCorridorsSignatureByBuilding: string = '';
   private hasComputedEvacuation = false;
+  private lastEvacCall = 0;
 
   // =============================
   // ROOMS (coords in %)
@@ -207,40 +208,47 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   // CORRIDORS LIVE
   // =============================
   fetchCorridorsLive() {
-    this.http.get<CorridorApiDto[]>('http://localhost:8080/api/map/corridors').subscribe({
-      next: (corridors) => {
-        const allForBuilding = (corridors || []).filter(c =>
-          c.fromNode?.startsWith(this.building + '_') && c.toNode?.startsWith(this.building + '_')
-        );
+  this.http.get<CorridorApiDto[]>('http://localhost:8080/api/map/corridors').subscribe({
+    next: (corridors) => {
+      const allForBuilding = (corridors || []).filter(c =>
+        c.fromNode?.startsWith(this.building + '_') && c.toNode?.startsWith(this.building + '_')
+      );
 
-        const signature = allForBuilding
-          .map(c => `${c.id}:${c.blocked ? 1 : 0}`)
-          .sort()
-          .join('|');
+      const signature = allForBuilding
+        .map(c => `${c.id}:${c.blocked ? 1 : 0}`)
+        .sort()
+        .join('|');
 
-        const changed = signature !== this.lastCorridorsSignatureByBuilding;
-        this.lastCorridorsSignatureByBuilding = signature;
+      const changed = signature !== this.lastCorridorsSignatureByBuilding;
+      this.lastCorridorsSignatureByBuilding = signature;
 
-        const filtered = allForBuilding.filter(c => this.isCorridorOnCurrentView(c.fromNode, c.toNode));
+      const filtered = allForBuilding.filter(c => this.isCorridorOnCurrentView(c.fromNode, c.toNode));
 
-        this.displayedEdges = filtered
-          .map(c => ({
-            fromRoom: this.nodeToRoomName(c.fromNode),
-            toRoom: this.nodeToRoomName(c.toNode),
-            blocked: c.blocked
-          }))
-          .filter(e => this.getRoomPoint(e.fromRoom) && this.getRoomPoint(e.toRoom));
+      this.displayedEdges = filtered
+        .map(c => ({
+          fromRoom: this.nodeToRoomName(c.fromNode),
+          toRoom: this.nodeToRoomName(c.toNode),
+          blocked: c.blocked
+        }))
+        .filter(e => this.getRoomPoint(e.fromRoom) && this.getRoomPoint(e.toRoom));
 
-        // auto-recalc only if already computed once
-        if (changed && this.hasComputedEvacuation && this.selectedPosition) {
-          this.calculateEvacuation(true);
-        }
-      },
-      error: () => {
-        this.displayedEdges = [];
+      // auto-recalc only if already computed once
+      if (changed && this.hasComputedEvacuation && this.selectedPosition) {
+        this.maybeRecalcEvac();
       }
-    });
-  }
+    },
+    error: () => {
+      this.displayedEdges = [];
+    }
+  });
+}
+  private maybeRecalcEvac() {
+  const now = Date.now();
+  if (now - this.lastEvacCall < 3000) return; // minimum 3 secondes
+  this.lastEvacCall = now;
+  this.calculateEvacuation(true);
+}
+  
 
   private isCorridorOnCurrentView(fromNode: string, toNode: string): boolean {
     const a = this.parseNodeId(fromNode);
@@ -291,18 +299,24 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
     return rooms.filter(r => /exit/i.test(r));
   }
 
+  private lastSelectedPosition = '';
+
   onSelectedPositionChange() {
-    this.resetPath();
-    this.hasComputedEvacuation = false;
-  }
+  if (this.selectedPosition === this.lastSelectedPosition) return;
+  this.lastSelectedPosition = this.selectedPosition;
+
+  this.resetPath();
+  this.hasComputedEvacuation = false;
+}
 
   private resetPath() {
-    this.evacuationPathNodes = [];
-    this.evacuationPathSegmentsForCurrentFloor = [];
-    this.recommendedExitId = null;
-    this.evacuationMessage = '';
-    this.evacuationInstructions = [];
-  }
+  console.log('RESET PATH called', { selectedPosition: this.selectedPosition, time: Date.now() });
+  this.evacuationPathNodes = [];
+  this.evacuationPathSegmentsForCurrentFloor = [];
+  this.recommendedExitId = null;
+  this.evacuationMessage = '';
+  this.evacuationInstructions = [];
+}
 
   // =============================
   // EVACUATION API
@@ -311,12 +325,15 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   if (!this.selectedPosition) return;
 
   const startNodeId = this.selectedPositionToNodeId();
+  console.log('UI selectedPosition =', this.selectedPosition);
+  console.log('startNodeId sent to backend =', startNodeId);
   if (!startNodeId) return;
 
   const url = `http://localhost:8080/api/evacuation/from/${encodeURIComponent(startNodeId)}`;
 
     this.http.get<{ path?: string[]; message?: string; instructions?: string[] }>(url).subscribe({
     next: (res) => {
+      console.log('EVAC RESPONSE received', res);
       this.hasComputedEvacuation = true;
 
       this.evacuationPathNodes = res.path ?? [];

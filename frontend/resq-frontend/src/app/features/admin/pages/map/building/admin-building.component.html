@@ -83,7 +83,7 @@
           <select
             id="pos"
             [(ngModel)]="selectedPosition"
-            (ngModelChange)="onSelectedPositionChange()"
+            (Change)="onSelectedPositionChange()"
           >
             <option value="">-- Select --</option>
             <option *ngFor="let r of getCurrentRooms()" [value]="r">
