@@ -1,0 +1,100 @@
+/* ======================
+   BASE
+====================== */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: linear-gradient(180deg, #a4c1dd, #94cbef);
+  color: #0f172a;
+}
+
+/* ======================
+   LAYOUT
+====================== */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ======================
+   SIDEBAR
+====================== */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #a2e9f5, #0763d3);
+  color: rgb(3, 3, 3);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #175ec1, #485bf1);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.brand p {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* NAV */
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #fdfefe;
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+.nav a i {
+  width: 20px;
+  text-align: center;
+}
+
+.nav a:hover {
+  background: rgba(255, 255, 255, 0);
+}
+
+.nav a.active {
+  background: linear-gradient(135deg, #09377b, #6366f1);
+  color: white;
+}
+
+/* LOGOUT */
+.logout {
+  margin-top: auto;
+  background: rgba(3, 3, 3, 0.15);
+  border: 1px solid rgba(8, 8, 8, 0.4);
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* ======================
+   MAIN
+====================== */
+.main {
+  flex: 1;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+

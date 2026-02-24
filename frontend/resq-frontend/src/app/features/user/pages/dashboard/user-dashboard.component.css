@@ -1,0 +1,167 @@
+/* TOPBAR */
+.topbar {
+  background: linear-gradient(135deg, #fefdfd, #e5ecff);
+  border-radius: 22px;
+  padding: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #475569;
+  font-size: 15px;
+}
+
+/* STATUS */
+.status {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status .dot {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* AZIONI PRINCIPALI */
+.main-actions {
+  margin-top: 24px;
+}
+
+.main-actions .card {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.main-actions h2 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.main-actions p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* CARDS */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  border-radius: 14px;
+  padding: 20px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card i {
+  font-size: 26px;
+  margin-bottom: 14px;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+/* CARD COLORS */
+.card-map {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+}
+
+.card-evac {
+  background: linear-gradient(135deg, #ef4444, #fb7185);
+}
+
+.card-info {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+}
+
+/* WIDGETS */
+.dashboard-widgets {
+  margin-top: 32px;
+}
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.widget {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
+}
+
+.widget h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.widget p {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+/* COLOR INDICATORS */
+.widget.info {
+  border-left: 6px solid #0ea5e9;
+}
+
+.widget.success {
+  border-left: 6px solid #22c55e;
+}
+
+.widget.warning {
+  border-left: 6px solid #f59e0b;
+}
+
+/* AZIONI RAPIDE */
+.widget.actions {
+  margin-top: 32px;
+  background: linear-gradient(135deg, #f1f5ff, #ffffff);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.actions-grid button {
+  background: linear-gradient(135deg, #6366f1, #38bdf8);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.actions-grid button:hover {
+  opacity: 0.9;
+}

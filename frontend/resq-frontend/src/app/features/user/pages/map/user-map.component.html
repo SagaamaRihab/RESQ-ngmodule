@@ -1,0 +1,85 @@
+<!-- CONTENITORE PRINCIPALE PAGINA MAPPA -->
+<div class="map-page">
+
+  <!-- ================= HEADER ================= -->
+  <header class="map-header">
+
+    <!-- Titolo del campus -->
+    <h1>Dalmine University Campus</h1>
+
+    <!-- Sottotitolo -->
+    <p>Select the building you are currently in</p>
+
+  </header>
+
+
+  <!-- ================= MAPPA GENERALE ================= -->
+  <div class="campus-map">
+
+    <!-- Immagine della mappa del campus -->
+    <img
+      src="/assets/maps/campus-dalmine.png"
+      alt="Dalmine campus map"
+    />
+
+  </div>
+
+
+  <!-- ================= SEZIONE EDIFICI ================= -->
+  <section class="buildings">
+
+    <!-- EDIFICIO A -->
+    <div class="building-card" (click)="openBuilding('A')">
+
+      <h3>Building A</h3>
+
+      <p>Classrooms – Library – Study rooms</p>
+
+      <button>Open building</button>
+
+    </div>
+
+
+    <!-- EDIFICIO B -->
+    <div class="building-card" (click)="openBuilding('B')">
+
+      <h3>Building B</h3>
+
+      <p>Classrooms – Laboratories</p>
+
+      <button>Open building</button>
+
+    </div>
+
+
+    <!-- EDIFICIO C -->
+    <div class="building-card" (click)="openBuilding('C')">
+
+      <h3>Building C</h3>
+
+      <p>Classrooms – Offices</p>
+
+      <button>Open building</button>
+
+    </div>
+
+
+    <!-- EDIFICIO D -->
+    <div class="building-card" (click)="openBuilding('D')">
+
+      <h3>Building D</h3>
+
+      <p>Main hall – Secondary hall</p>
+
+      <button>Open building</button>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= ROUTER OUTLET ================= -->
+  <!-- Qui vengono caricati i componenti degli edifici -->
+  <router-outlet></router-outlet>
+
+</div>

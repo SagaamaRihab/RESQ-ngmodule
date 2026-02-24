@@ -1,0 +1,53 @@
+<div class="dashboard">
+  <section class="grid">
+    <article class="card card-corridors" (click)="goTo('corridors')">
+      <h2>Corridors  🧱</h2>
+      <p>Manage blocks and unblocks</p>
+    </article>
+
+    <article class="card card-map" (click)="goTo('map')">
+      <h2>Building map 🗺️ </h2>
+      <p>View the building structure</p>
+    </article>
+
+    <article class="card card-evac" (click)="goTo('evacuations')">
+      <h2>Evacuations 🏃‍♂️</h2>
+      <p>Monitor emergencies</p>
+    </article>
+  </section>
+
+  <div class="dashboard-widgets">
+    <div class="widget welcome">
+      <h3>Welcome 👋</h3>
+      <p>RESQ system check</p>
+    </div>
+
+    <div class="widget-grid">
+      <div class="widget warning">
+        <h4>Blocked corridors</h4>
+        <p>3</p>
+      </div>
+
+      <div class="widget info">
+        <h4>Active evacuations</h4>
+        <p>1</p>
+      </div>
+
+      <div class="widget success">
+        <h4>Connected users</h4>
+        <p>12</p>
+      </div>
+    </div>
+
+    <div class="widget actions">
+      <h3>Quick actions</h3>
+      <div class="actions-grid">
+        <button (click)="goTo('corridors')">Corridors</button>
+        <button (click)="goTo('map')">Open map</button>
+        <button (click)="goTo('evacuations')">Evacuations</button>
+      </div>
+    </div>
+
+    
+  </div>
+</div>

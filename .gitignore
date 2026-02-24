@@ -1,0 +1,72 @@
+#################################################
+# macOS
+#################################################
+.DS_Store
+**/.DS_Store
+
+#################################################
+# Node / Angular
+#################################################
+node_modules/
+.angular/
+dist/
+coverage/
+*.tsbuildinfo
+.npm
+.eslintcache
+.stylelintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+#################################################
+# IDE / Editors
+#################################################
+
+# VSCode
+.vscode/
+.vscode-test/
+
+# IntelliJ / WebStorm
+.idea/
+*.iml
+
+# Eclipse / STS
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Workspace
+*.code-workspace
+
+#################################################
+# Backend - Spring Boot / Maven
+#################################################
+
+# Maven build output
+backend/target/
+target/
+
+# Maven wrapper logs
+.mvn/wrapper/maven-wrapper.jar
+
+#################################################
+# Logs
+#################################################
+logs/
+*.log
+ mio-dashboard
+backend/.idea/
+backend/resq/src/main/resources/application.properties
+backend/resq/src/main/resources/application.properties
+#################################################
+# OS / Misc
+#################################################
+Thumbs.db
+Segnalibri Safari.html
+main

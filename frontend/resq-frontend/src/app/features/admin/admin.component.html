@@ -1,0 +1,57 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">R</div>
+      <div>
+        <h3>RESQ</h3>
+        <p>Administrative area</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Dashboard
+      </a>
+
+      <a routerLink="/admin/corridors" routerLinkActive="active">
+        <i class="fa-solid fa-corridoi"></i>
+        🧱 Corridor management 
+      </a>
+
+      <a routerLink="/admin/map" routerLinkActive="active">
+        <i class="fa-solid fa-map-location-dot"></i>
+        Building map
+      </a>
+
+      <a routerLink="/admin/evacuations" routerLinkActive="active">
+        <i class="fa-solid fa-person-running"></i>
+        Evacuation
+      </a>
+      <a routerLink="/admin/instructions" routerLinkActive="active">
+        <i class="fa-solid fa-circle-info"></i>
+        Instructions
+      </a>
+    </nav>
+
+    <button class="logout" (click)="logout()">Exit</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Administrative Area</h1>
+        <p>Management of the RESQ system</p>
+      </div>
+
+      <div class="status">
+        <span class="badge admin">ADMINISTRATOR</span>
+        <span class="dot"></span>
+        Active system
+      </div>
+    </header>
+
+    <section class="content">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

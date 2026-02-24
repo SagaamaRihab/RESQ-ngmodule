@@ -1,0 +1,129 @@
+.instructions-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f7fb;
+  padding: 40px 20px;
+}
+
+.instructions-card {
+  background: white;
+  max-width: 700px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.instructions-card h1 {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Singola istruzione */
+.instruction-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  background: #f9fbff;
+  border: 1px solid #e4ecf7;
+}
+
+.instruction-item h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.instruction-item p {
+  margin: 4px 0 0;
+  color: #555;
+  font-size: 14px;
+}
+
+/* Icone */
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Colori icone */
+.calm {
+  background: #4caf50;
+}
+
+.route {
+  background: #2196f3;
+}
+
+.help {
+  background: #ff9800;
+}
+
+.meeting {
+  background: #9c27b0;
+}
+
+/* Warning */
+.warning-box {
+  margin-top: 25px;
+  padding: 15px;
+  background: #fff4e5;
+  border: 1px solid #ffd59e;
+  border-radius: 10px;
+  color: #a65c00;
+  font-size: 14px;
+}
+
+.instructions-card {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.instruction-item:hover {
+  background: #b5ccf8;
+  transition: 0.3s;
+}
+
+.go-btn {
+  display: block;
+  margin-top: 25px;
+  text-align: center;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.go-btn:hover {
+  background: #1e4fd8;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
