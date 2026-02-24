@@ -1,0 +1,89 @@
+<div class="evacuation-wrapper">
+
+  <div class="evacuation-card fade-in">
+
+    <!-- HEADER -->
+    <div class="card-header">
+
+      <div class="header-icon">
+        <i class="fa-solid fa-route"></i>
+      </div>
+
+      <h1>Evacuation planning</h1>
+
+      <div class="divider"></div>
+
+      <p>
+        Enter the node where you are.
+        The system will calculate the safest evacuation path.
+      </p>
+
+    </div>
+
+
+    <!-- FORM -->
+    <div class="form-section">
+
+      <div class="form-group">
+
+        <label for="startNode">Starting node</label>
+
+        <div class="input-wrapper">
+
+          <i class="fa-solid fa-location-dot"></i>
+
+          <input
+            id="startNode"
+            type="text"
+            [(ngModel)]="startNode"
+            placeholder="Es. A101"
+          />
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="btn-submit"
+        (click)="calculate()"
+        [disabled]="loading">
+
+        <span *ngIf="!loading">Calculate evacuation path</span>
+
+        <span *ngIf="loading" class="spinner"></span>
+
+      </button>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div *ngIf="error" class="status status-error">
+      {{ error }}
+    </div>
+
+
+    <div *ngIf="response" class="result-card">
+
+      <h3>Recommended path</h3>
+
+      <p>{{ response.message }}</p>
+
+      <ul class="path-list">
+        <li *ngFor="let node of response.path">
+          {{ node }}
+        </li>
+      </ul>
+
+      <app-path-viewer
+        *ngIf="response.path.length"
+        [path]="response.path">
+      </app-path-viewer>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,76 @@
+<div class="corridors-container">
+  <div class="header">
+    <h2>Corridor management</h2>
+    <p>Monitor horizontal and vertical connections (stairs)</p>
+  </div>
+
+  <!-- BARRA FILTRI -->
+  <div class="filter-section">
+    <div class="select-group">
+      <label>Select Building</label>
+      <div class="tabs">
+        <button [class.active]="edificioSelezionato === 'A'" (click)="edificioSelezionato='A'; applyFilters()">Building A</button>
+        <button [class.active]="edificioSelezionato === 'B'" (click)="edificioSelezionato='B'; applyFilters()">Building B</button>
+        <button [class.active]="edificioSelezionato === 'D'" (click)="edificioSelezionato='D'; applyFilters()">Building D</button>
+      </div>
+    </div>
+
+    <div class="select-group" *ngIf="edificioSelezionato !== 'D'">
+      <label>Select Plan</label>
+      <select [(ngModel)]="pianoSelezionato" (change)="applyFilters()">
+        <ng-container *ngIf="edificioSelezionato === 'A'">
+          <option value="T">Ground Floor (T)</option>
+          <option value="1">First Floor (1)</option>
+          <option value="2">Second Floor (2)</option>
+        </ng-container>
+        <ng-container *ngIf="edificioSelezionato === 'B'">
+          <option value="I">Basement (I)</option>
+          <option value="R">Raised Floor (R)</option>
+          <option value="P">First Floor (P)</option>
+        </ng-container>
+      </select>
+    </div>
+
+    <div class="search-box">
+      <input type="text" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Cerca nodo o corridoio...">
+    </div>
+  </div>
+
+  <!-- TABELLA DATI -->
+  <div class="table-wrapper" *ngIf="!caricamento">
+    <table *ngIf="corridoiFiltrati.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>Source </th>
+          <th>Destination </th>
+          <th>Weight </th>
+          <th>Current status</th>
+          <th class="text-right">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of corridoiFiltrati">
+          <td class="node-label"><code>{{ c.fromNode }}</code></td>
+          <td class="node-label"><code>{{ c.toNode }}</code></td>
+          <td>{{ c.weight }}</td>
+          <td>
+            <span class="status-badge" [class.blocked]="c.blocked">
+              {{ c.blocked ? '🔴 BLOCKED' : '🟢 ACTIVE' }}
+            </span>
+          </td>
+          <td class="text-right">
+            <button class="btn-action" 
+                    [class.btn-danger]="!c.blocked" 
+                    [class.btn-success]="c.blocked" 
+                    (click)="toggleCorridor(c)">
+              {{ c.blocked ? 'Unblock' : 'Block' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noData>
+      <div class="empty-view">No connections found for the selected filters.</div>
+    </ng-template>
+  </div>
+</div>

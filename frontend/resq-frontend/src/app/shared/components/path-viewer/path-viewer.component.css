@@ -1,0 +1,181 @@
+.map-container {
+  margin-top: 32px;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.map-container h3 {
+  margin-bottom: 16px;
+  color: #1e293b;
+}
+
+.map-svg {
+  width: 100%;
+  overflow: visible;
+}
+
+/* Corridoi */
+.corridor {
+  stroke: #94a3b8;
+  stroke-width: 4;
+}
+
+/* Nodi */
+.node {
+  fill: #e0f2fe;
+  stroke: #0284c7;
+  stroke-width: 3;
+}
+
+/* Uscita */
+.node.exit {
+  fill: #dcfce7;
+  stroke: #16a34a;
+}
+
+/* Etichette */
+.label {
+  font-size: 12px;
+  font-weight: bold;
+  fill: #1e293b;
+  pointer-events: none;
+}
+
+.corridor.animated {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-line 0.6s ease-out forwards;
+}
+
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animated-node {
+  opacity: 0;
+  transform: scale(0.6);
+  transform-origin: center;
+  animation: pop-node 0.4s ease-out forwards;
+}
+
+@keyframes pop-node {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.node.exit {
+  animation: exit-pulse 1.5s infinite;
+}
+
+@keyframes exit-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(22, 163, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
+}
+
+/* Descrizione */
+.description {
+  margin-top: 16px;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+/* Legenda */
+.legend {
+  margin-top: 16px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.legend-node {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 6px;
+  border: 2px solid #0284c7;
+  background: #e0f2fe;
+}
+
+.legend-node.exit {
+  background: #dcfce7;
+  border-color: #16a34a;
+}
+
+.legend-line {
+  width: 22px;
+  height: 4px;
+  background: #94a3b8;
+  margin-right: 6px;
+}
+
+.node.start {
+  fill: #dbeafe;
+  stroke: #2563eb;
+}
+
+.node {
+  fill: #e0f2fe;
+  stroke: #0284c7;
+  stroke-width: 3;
+}
+
+.node.exit {
+  fill: #dcfce7;
+  stroke: #16a34a;
+  animation: exit-pulse 1.5s infinite;
+}
+
+.corridor {
+  stroke: #94a3b8;
+  stroke-width: 4;
+}
+
+.node {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.node:hover {
+  transform: scale(1.08);
+}
+
+/* Info panel */
+.node-info {
+  margin-top: 20px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.node-info h4 {
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.node-info p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #334155;
+}

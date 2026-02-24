@@ -1,0 +1,228 @@
+/* ======================
+   TOPBAR (Area Amministratore)
+====================== */
+.topbar {
+  background: white; /* Sfondo pulito come richiesto precedentemente */
+  border-radius: 22px;
+  padding: 25px 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* ======================
+   STATUS E BADGE
+====================== */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.badge.admin {
+  background: #fdf2f8; /* Rosa chiaro */
+  color: #db2777;    /* Rosa scuro */
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status .dot {
+  width: 10px;
+  height: 10px;
+  background: #22c55e; /* Verde attivo */
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #dcfce7;
+}
+
+/* ======================
+   AZIONI PRINCIPALI (Card grandi modificate)
+====================== */
+.main-actions {
+  margin-top: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+/* Base della Card - Adesso simile ai bottoni delle Azioni Rapide */
+.card {
+  border-radius: 22px;
+  padding: 22px 24px;
+  min-height: 120px;
+  cursor: pointer;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.10);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  border: none;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.card p {
+  margin-top: 8px;
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 500;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.02);
+}
+
+/* COLORI CARD (Gradienti orizzontali stile bottoni) */
+.card-corridors {
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+}
+.card-map {
+  background: linear-gradient(90deg,#38bdf8, #0ea5e9); /* Stile azzurro */
+}
+
+.card-evac {
+  background: linear-gradient(90deg, #fb7185, #ef4444); /* Stile rosso/rosa */
+}
+
+/* ======================
+   WIDGETS (Statistiche)
+====================== */
+.dashboard-widgets {
+  margin-top: 32px;
+}
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.widget {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+}
+
+.widget h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #475569;
+}
+
+.widget p {
+  margin-top: 8px;
+  font-size: 24px; /* Numeri più grandi per le statistiche */
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Indicatori di colore laterali per i Widget */
+.widget.info { border-left: 6px solid #0ea5e9; }
+.widget.success { border-left: 6px solid #22c55e; }
+.widget.warning { border-left: 6px solid #f59e0b; }
+
+/* ======================
+   AZIONI RAPIDE (Ispirazione originale)
+====================== */
+.widget.actions {
+  margin-top: 32px;
+  background: linear-gradient(135deg, #f8faff, #ffffff);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.actions-grid button {
+  background: linear-gradient(90deg, #6366f1, #38bdf8);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 18px;
+  font-weight: 700;
+  box-shadow: 0 12px 26px rgba(99, 102, 241, 0.18);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.actions-grid button:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+}
+/* ====== THEME GENERAL COMME USER ====== */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.topbar {
+  background: linear-gradient(90deg, #ffffff, #eef4ff);
+  border-radius: 24px;
+  padding: 34px 42px;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+/* Grand titre style user */
+.topbar h1 {
+  font-size: 46px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 0;
+  color: #0f172a;
+}
+
+.topbar p {
+  margin-top: 10px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Pastille "Sistema attivo" (comme user) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #22c55e;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(34, 197, 94, 0.25);
+}
+
+.status-pill .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* Sections (comme les cartes blanches de l'user) */
+.section-card {
+  background: white;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(241, 245, 249, 1);
+}
