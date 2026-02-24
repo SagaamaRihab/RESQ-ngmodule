@@ -113,7 +113,7 @@
 
             <p class="result-title">Result</p>
 
-            <div class="instructions" *ngIf="recommendedExitId">
+            <div class="instructions" *ngIf="(evacuationPathNodes?.length ?? 0) > 1">
               <h4>Evacuation instructions</h4>
               <ul>
                 <li *ngFor="let step of getEvacuationInstructionsAdmin()">
@@ -126,9 +126,9 @@
             <p><strong>Recommended exit:</strong> {{ recommendedExitId || '—' }}</p>
             <p class="result-msg">{{ evacuationMessage }}</p>
 
-            <ol class="steps" *ngIf="recommendedExitId">
+            <ol class="steps" *ngIf="(evacuationPathNodes?.length ?? 0) > 1">
               <li>Stay calm and check the corridor.</li>
-              <li>Follow the signs towards <strong>{{ recommendedExitId }}</strong>.</li>
+              <li>Follow the signs towards <strong>{{ (evacuationPathNodes?.length ?? 0) > 1 }}</strong>.</li>
               <li>Use stairs / exit the door and reach the assembly point.</li>
             </ol>
 

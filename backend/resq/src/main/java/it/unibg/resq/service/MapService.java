@@ -219,7 +219,9 @@ public class MapService {
         List<GraphNode> exits = nodes.values().stream()
                 .filter(n -> {
                     String id = n.getId().toUpperCase();
-                    return id.contains("EXIT") || id.contains("USCITA");
+                    return id.contains("EXIT")
+                            || id.contains("USCITA")
+                            || id.endsWith("_ENTRANCE");
                 })
                 .toList();
 

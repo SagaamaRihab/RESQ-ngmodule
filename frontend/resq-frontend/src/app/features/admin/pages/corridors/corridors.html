@@ -55,7 +55,7 @@
           <td>{{ c.weight }}</td>
           <td>
             <span class="status-badge" [class.blocked]="c.blocked">
-              {{ c.blocked ? '🔴 BLOCCATO' : '🟢 ATTIVO' }}
+              {{ c.blocked ? '🔴 BLOCKED' : '🟢 ACTIVE' }}
             </span>
           </td>
           <td class="text-right">
@@ -63,7 +63,7 @@
                     [class.btn-danger]="!c.blocked" 
                     [class.btn-success]="c.blocked" 
                     (click)="toggleCorridor(c)">
-              {{ c.blocked ? 'Sblocca' : 'Blocca' }}
+              {{ c.blocked ? 'Unblock' : 'Block' }}
             </button>
           </td>
         </tr>
