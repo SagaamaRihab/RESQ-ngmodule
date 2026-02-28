@@ -181,7 +181,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   // LIVE USERS
   // =============================
   fetchUserLocations() {
-    this.http.get<UserPositionDto[]>('http://localhost:8080/api/user/active-locations')
+    this.http.get<UserPositionDto[]>('api/user/active-locations')
       .subscribe({
         next: (data) => {
           this.utentiAttivi = (data || []).filter(u => this.isUserOnCurrentView(u.nodeId));
@@ -207,7 +207,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   // CORRIDORS LIVE
   // =============================
   fetchCorridorsLive() {
-    this.http.get<CorridorApiDto[]>('http://localhost:8080/api/map/corridors').subscribe({
+    this.http.get<CorridorApiDto[]>('/api/map/corridors').subscribe({
       next: (corridors) => {
         const allForBuilding = (corridors || []).filter(c =>
           c.fromNode?.startsWith(this.building + '_') && c.toNode?.startsWith(this.building + '_')
@@ -313,7 +313,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   const startNodeId = this.selectedPositionToNodeId();
   if (!startNodeId) return;
 
-  const url = `http://localhost:8080/api/evacuation/from/${encodeURIComponent(startNodeId)}`;
+  const url = `/api/evacuation/from/${encodeURIComponent(startNodeId)}`;
 
     this.http.get<{ path?: string[]; message?: string; instructions?: string[] }>(url).subscribe({
     next: (res) => {

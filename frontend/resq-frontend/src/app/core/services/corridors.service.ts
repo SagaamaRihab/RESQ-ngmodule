@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CorridorDto } from './corridor.dto';
+import { Corridor} from '../models/corridor.model';
 
 @Injectable({ providedIn: 'root' })
 export class CorridorsService {
-  private baseUrl = 'http://localhost:8080/api/map';
+  private baseUrl = '/api/map';
 
   constructor(private http: HttpClient) {}
 
   // lista corridoi
-  getCorridors(): Observable<CorridorDto[]> {
-    return this.http.get<CorridorDto[]>(`${this.baseUrl}/corridors`);
+  getCorridors(): Observable<Corridor[]> {
+    return this.http.get<Corridor[]>(`${this.baseUrl}/corridors`);
   }
 
   //  blocca corridoio

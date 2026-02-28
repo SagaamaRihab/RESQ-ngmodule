@@ -109,15 +109,15 @@
 
         <!-- RESULT / INSTRUCTIONS -->
         <div class="result" *ngIf="selectedPosition">
-          <ng-container *ngIf="(evacuationPathNodes?.length ?? 0) > 0; else noPath">
+          <ng-container *ngIf="evacuationPathNodes.length > 0; else noPath">
 
             <p class="result-title">Result</p>
 
             <!-- ✅ Instructions returned by BACKEND -->
-            <div class="instructions" *ngIf="(evacuationInstructions?.length ?? 0) > 0">
+            <div class="instructions" *ngIf="evacuationInstructions.length > 0">
               <h4>Evacuation instructions</h4>
               <ul>
-                <li *ngFor="let step of (evacuationInstructions?.length ? evacuationInstructions : getEvacuationInstructionsAdmin())">
+                <li *ngFor="let step of (evacuationInstructions.length ? evacuationInstructions : getEvacuationInstructionsAdmin())">
                   {{ step }}
                 </li>
               </ul>
@@ -128,7 +128,7 @@
             <p class="result-msg">{{ evacuationMessage }}</p>
 
             <!-- (optional) You can keep or remove this static list -->
-            <ol class="steps" *ngIf="(evacuationPathNodes?.length ?? 0) > 1">
+            <ol class="steps" *ngIf="(evacuationPathNodes.length ) > 1">
               <li>Stay calm and check the corridor.</li>
               <li>Follow the signs towards <strong>{{ recommendedExitId || 'the exit' }}</strong>.</li>
               <li>Use stairs / exit the door and reach the assembly point.</li>
@@ -152,8 +152,8 @@
       <p><strong>Users on floor:</strong> {{ utentiAttivi.length }}</p>
       <p><strong>Blocked corridors on this view:</strong> {{ getBlockedCorridorsCount() }}</p>
       <p *ngIf="selectedPosition"><strong>Selected room:</strong> {{ selectedPosition }}</p>
-      <p *ngIf="(evacuationPathNodes?.length ?? 0) > 0"><strong>Path nodes:</strong> {{ evacuationPathNodes.length }}</p>
-      <p *ngIf="(evacuationInstructions?.length ?? 0) > 0"><strong>Instructions:</strong> {{ evacuationInstructions.length }}</p>
+      <p *ngIf="evacuationPathNodes.length > 0"><strong>Path nodes:</strong> {{ evacuationPathNodes.length }}</p>
+      <p *ngIf="evacuationInstructions.length > 0"><strong>Instructions:</strong> {{ evacuationInstructions.length }}</p>
     </div>
 
   </div>

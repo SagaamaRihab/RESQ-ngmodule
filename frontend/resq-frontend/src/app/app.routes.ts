@@ -14,13 +14,13 @@ import { BuildingComponent } from './features/user/pages/map/building/building.c
 
 import { AdminComponent } from './features/admin/admin.component';
 import { AdminDashboardComponent } from './features/admin/pages/admin-dashboard/admin-dashboard.component';
-import { CorridorsComponent } from './features/admin/pages/corridors/corridors';
+import { CorridorsComponent } from './features/admin/pages/corridors/corridors.component';
 import { AdminBuildingComponent} from './features/admin/pages/map/building/admin-building.component';
 
 import {AdminMapComponent} from './features/admin/pages/map/admin-map.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
-import { AdminEvacuationComponent } from './features/admin/pages/evacuation/ admin-evacuation.component';
+import { AdminEvacuationComponent } from './features/admin/pages/evacuation/admin-evacuation.component';
 
 
 

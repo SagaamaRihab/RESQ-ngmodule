@@ -80,8 +80,11 @@
           "defaultConfiguration": "development"
         },
 
-        "serve": {
+                "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "resq-frontend:build:production"
@@ -92,6 +95,8 @@
           },
           "defaultConfiguration": "development"
         },
+
+        
 
         "test": {
           "builder": "@angular/build:unit-test"

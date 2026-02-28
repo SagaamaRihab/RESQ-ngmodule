@@ -117,7 +117,7 @@ public class UserController {
         }
         return principal.toString();
     }
-mio-dashboard
+
 
 
     @PutMapping("/me")
@@ -148,5 +148,5 @@ mio-dashboard
 
 
 
- main
+
 }

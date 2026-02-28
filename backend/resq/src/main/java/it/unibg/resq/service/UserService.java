@@ -121,7 +121,7 @@ public class UserService {
 
         userRepository.delete(user);
     }
-mio-dashboard
+
 
 
     public User updateProfile(String email, User data) {
@@ -142,5 +142,5 @@ mio-dashboard
 
 
 
- main
+
 }

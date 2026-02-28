@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { CorridorsService } from './corridors.service';
-import { CorridorDto } from './corridor.dto';
+import { CorridorsService } from '../../../../core/services/corridors.service';
+import { Corridor } from '../../../../core/models/corridor.model';
 
 type Building = 'A' | 'B' | 'D';
 type FloorCode = 'T' | '1' | '2' | 'I' | 'R' | 'P';
@@ -12,12 +12,12 @@ type FloorCode = 'T' | '1' | '2' | 'I' | 'R' | 'P';
   selector: 'app-corridors',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './corridors.html',
-  styleUrls: ['./corridors.css'],
+  templateUrl: './corridors.component.html',
+  styleUrls: ['./corridors.component.css'],
 })
 export class CorridorsComponent implements OnInit {
-  corridoi: CorridorDto[] = [];
-  corridoiFiltrati: CorridorDto[] = [];
+  corridoi: Corridor[] = [];
+  corridoiFiltrati: Corridor[] = [];
 
   // ✅ cohérent avec tes nodes DB (A_T_..., B_I_..., B_P_..., etc.)
   edificioSelezionato: Building = 'A';
@@ -136,7 +136,7 @@ export class CorridorsComponent implements OnInit {
   // =========================
   // TOGGLE BLOCK/UNBLOCK
   // =========================
-  toggleCorridor(c: CorridorDto): void {
+  toggleCorridor(c: Corridor): void {
   const old = c.blocked;
   c.blocked = !c.blocked;           // ✅ update immédiat UI
   this.applyFilters();
