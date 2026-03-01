@@ -1,6 +1,4 @@
-/* ======================
-   LAYOUT PRINCIPALE
-====================== */
+/* admin-building.component.css */
 .building-page {
   padding: 20px;
 }
@@ -22,9 +20,6 @@
   align-items: start;
 }
 
-/* ======================
-   MAPPA
-====================== */
 .floor-map {
   background: white;
   padding: 20px;
@@ -42,25 +37,27 @@
 
 .map-frame {
   position: relative;
+  width: 100%;
+  display: block;
 }
 
 .main-map-img {
+  width: 100%;
+  height: auto;
+  display: block;
   position: relative;
   z-index: 1;
 }
 
-/* ======================
-   LAYER COULOIRS
-====================== */
 .map-overlay {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 80;          
+  z-index: 80;
   pointer-events: none;
-  
 }
+
 .block-x line {
   stroke: #ef4444;
   stroke-width: 1.6;
@@ -69,9 +66,6 @@
   opacity: 0.95;
 }
 
-/* ======================
-   DIJKSTRA PATH
-====================== */
 .path-overlay {
   position: absolute;
   inset: 0;
@@ -83,9 +77,6 @@
   z-index: 60;
 }
 
-/* ======================
-   USERS (BLEU)
-====================== */
 .user-marker {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -123,9 +114,6 @@
   white-space: nowrap;
 }
 
-/* ======================
-   POINT VERT (ME)
-====================== */
 .self-marker {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -163,9 +151,6 @@
   white-space: nowrap;
 }
 
-/* ======================
-   BOUTONS PIANI
-====================== */
 .floor-buttons {
   display: flex;
   gap: 12px;
@@ -188,9 +173,6 @@
   box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
 }
 
-/* ======================
-   CARD EMERGENZA
-====================== */
 .emergency-card {
   margin-top: 18px;
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
@@ -225,7 +207,6 @@
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
-/* ✅ BOUTON BLEU */
 .primary-btn {
   padding: 12px 20px;
   border: none;
@@ -247,7 +228,6 @@
   cursor: not-allowed;
 }
 
-/* Available exits */
 .emergency-hint {
   margin-top: 14px;
   font-size: 14px;
@@ -260,7 +240,6 @@
   font-weight: 700;
 }
 
-/* Result */
 .result {
   margin-top: 14px;
   padding: 15px;
@@ -291,7 +270,6 @@
   line-height: 1.6;
 }
 
-
 .instructions {
   background: #f8fafc;
   border-left: 5px solid #0ea5e9;
@@ -315,14 +293,10 @@
   line-height: 1.7;
 }
 
-/* Muted */
 .muted {
   color: #64748b;
 }
 
-/* ======================
-   PANNELLO LATERALE
-====================== */
 .side-panel {
   background: white;
   border-radius: 18px;
@@ -330,9 +304,6 @@
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
 }
 
-/* ======================
-   COULOIRS
-====================== */
 .corridor {
   vector-effect: non-scaling-stroke;
   stroke-linecap: round;
@@ -351,9 +322,6 @@
   filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.35));
 }
 
-/* ======================
-   CHEMIN DIJKSTRA
-====================== */
 .evacuation-line {
   vector-effect: non-scaling-stroke;
   stroke: rgba(34, 197, 94, 0.95);
@@ -363,9 +331,6 @@
   opacity: 0.95;
 }
 
-/* ======================
-   NAVIGATION CHEMIN (OPTIONNEL)
-====================== */
 .path-floor-nav {
   position: absolute;
   top: 10px;

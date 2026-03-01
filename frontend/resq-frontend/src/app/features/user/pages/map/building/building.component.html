@@ -1,233 +1,174 @@
-<!-- CONTENITORE PRINCIPALE PAGINA EDIFICIO -->
+<!-- admin-building.component.html -->
 <div class="building-page">
-
-  <!-- ================= HEADER ================= -->
   <header class="building-header">
-
-    <!-- Titolo con edificio selezionato -->
     <h1>Building {{ building }}</h1>
-
-    <!-- Sottotitolo -->
-    <p>Select the floor you are currently on</p>
-
+    <p>Select the floor you are on</p>
   </header>
 
-
-  <!-- ================= PULSANTI PIANI ================= -->
   <div class="floor-buttons">
-
-
-    <!-- ========== EDIFICIO A ========== -->
     <ng-container *ngIf="building === 'A'">
-
-      <!-- Piano terra -->
-      <button
-        [class.active]="selectedFloor === 'ground'"
-        (click)="selectFloor('ground')">
-
-        Ground Floor
-
-      </button>
-
-      <!-- Primo piano -->
-      <button
-        [class.active]="selectedFloor === 'first'"
-        (click)="selectFloor('first')">
-
-        First Floor
-
-      </button>
-
-      <!-- Secondo piano -->
-      <button
-        [class.active]="selectedFloor === 'second'"
-        (click)="selectFloor('second')">
-
-        Second Floor
-
-      </button>
-
+      <button [class.active]="selectedFloor === 'terra'" (click)="selectFloor('terra')">Ground Floor</button>
+      <button [class.active]="selectedFloor === 'primo'" (click)="selectFloor('primo')">First Floor</button>
+      <button [class.active]="selectedFloor === 'secondo'" (click)="selectFloor('secondo')">Second Floor</button>
     </ng-container>
 
-
-    <!-- ========== EDIFICIO B ========== -->
     <ng-container *ngIf="building === 'B'">
-
-      <!-- Piano interrato -->
-      <button
-        [class.active]="selectedFloor === 'basement'"
-        (click)="selectFloor('basement')">
-
-        Basement
-
-      </button>
-
-      <!-- Piano rialzato -->
-      <button
-        [class.active]="selectedFloor === 'mezzanine'"
-        (click)="selectFloor('mezzanine')">
-
-        Mezzanine Floor
-
-      </button>
-
-      <!-- Primo piano -->
-      <button
-        [class.active]="selectedFloor === 'first'"
-        (click)="selectFloor('first')">
-
-        First Floor
-
-      </button>
-
+      <button [class.active]="selectedFloor === 'interrato'" (click)="selectFloor('interrato')">Basement</button>
+      <button [class.active]="selectedFloor === 'rialzato'" (click)="selectFloor('rialzato')">Raised Floor</button>
+      <button [class.active]="selectedFloor === 'primo'" (click)="selectFloor('primo')">First Floor</button>
     </ng-container>
 
+    <ng-container *ngIf="building === 'D'">
+      <button [class.active]="selectedFloor === 'terra'" (click)="selectFloor('terra')">Ground Floor</button>
+    </ng-container>
   </div>
 
-
-  <!-- ================= CONTENUTO PRINCIPALE ================= -->
   <div class="building-content">
-
-
-    <!-- ================= MAPPA DEL PIANO ================= -->
     <div class="floor-map">
-
       <div class="map-wrapper">
+        <div class="map-frame">
 
-        <!-- Immagine mappa piano -->
-        <img
-          [src]="floorImage"
-          alt="Building {{ building }} floor map"
-        >
+          <!-- MAP IMAGE -->
+          <img
+            [src]="floorImage"
+            alt="Map building {{ building }}"
+            class="main-map-img"
+          />
 
+          <!-- OVERLAY SVG -->
+          <svg class="map-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+
+            <!-- 🔴 Blocked corridors (red X) -->
+            <g *ngFor="let e of displayedEdges">
+              <g
+                *ngIf="e.blocked"
+                class="block-x"
+                [attr.transform]="'translate(' + midX(e) + ' ' + midY(e) + ')'"
+              >
+                <line x1="-2.8" y1="-2.8" x2="2.8" y2="2.8"></line>
+                <line x1="-2.8" y1="2.8" x2="2.8" y2="-2.8"></line>
+              </g>
+            </g>
+
+            <!-- 🟢 EVACUATION PATH (GREEN LINES) -->
+            <g *ngFor="let seg of evacuationPathSegmentsForCurrentFloor">
+              <line
+                class="evacuation-line"
+                [attr.x1]="seg.from.x"
+                [attr.y1]="seg.from.y"
+                [attr.x2]="seg.to.x"
+                [attr.y2]="seg.to.y"
+              ></line>
+            </g>
+
+          </svg>
+
+          <!-- 🟢 MY POSITION -->
+          <div class="self-marker" [ngStyle]="getSelectedPositionStyle()">
+            <div class="self-dot"></div>
+            <div class="self-label">Me</div>
+          </div>
+
+          <!-- 🔵 OTHER USERS -->
+          <div
+            class="user-marker"
+            *ngFor="let u of utentiAttivi"
+            [ngStyle]="getUserStyle(u.nodeId)"
+          >
+            <div class="user-pulse"></div>
+            <div class="user-label">{{ u.userId }}</div>
+          </div>
+
+        </div>
       </div>
 
-
-      <!-- ================= CARD EMERGENZA ================= -->
+      <!-- EMERGENCY PANEL -->
       <div class="emergency-card">
-
         <h2>Emergency</h2>
 
-
-        <!-- SELEZIONE POSIZIONE -->
         <div class="emergency-row">
+          <label for="pos">Where are you?</label>
 
-          <label for="pos">Where are you located?</label>
-
-
-          <!-- Lista stanze -->
-          <select id="pos" [(ngModel)]="selectedPosition">
-
-            <option value="">-- Select --</option>
+          <!-- ✅ Stable select: model = selectedNodeId (technical id) -->
+          <select
+            id="pos"
+            [(ngModel)]="selectedNodeId"
+            (ngModelChange)="onSelectedPositionChange($event)"
+          >
+            <option [ngValue]="''">-- Select --</option>
 
             <option
-              *ngFor="let r of getCurrentRooms()"
-              [value]="r">
-
-              {{ r }}
-
+              *ngFor="let r of currentRooms; trackBy: trackByRoomId"
+              [ngValue]="r.id"
+            >
+              {{ r.name }}
             </option>
-
           </select>
 
-
-          <!-- Pulsante calcolo evacuazione -->
           <button
             class="primary-btn"
             (click)="calculateEvacuation()"
-            [disabled]="!selectedPosition">
-
+            [disabled]="!selectedNodeId"
+          >
             Calculate evacuation
-
           </button>
-
         </div>
 
-
-        <!-- USCITE DISPONIBILI -->
         <div class="emergency-hint">
-
           <strong>Available exits on this floor:</strong>
-
           <span class="exits">
-
-            {{ getCurrentExits().join(' • ') }}
-
+            {{ currentExits.length ? currentExits.join(' • ') : '—' }}
           </span>
-
         </div>
 
+        <div class="result" *ngIf="selectedNodeId">
+          <ng-container *ngIf="evacuationPathNodes.length > 0; else noPath">
+            <p class="result-title">Result</p>
 
-        <!-- ================= RISULTATO ================= -->
-        <div class="result" *ngIf="evacuationResult">
+            <div class="instructions" *ngIf="evacuationInstructions.length > 0">
+              <h4>Evacuation instructions</h4>
+              <ul>
+                <li *ngFor="let step of evacuationInstructions">
+                  {{ step }}
+                </li>
+              </ul>
+            </div>
 
-          <p class="result-title">Result</p>
+            <p><strong>Start:</strong> {{ nodeDisplayName(selectedNodeId) }}</p>
+            <p><strong>Recommended exit:</strong> {{ recommendedExitLabel || '—' }}</p>
+            <p class="result-msg">{{ evacuationMessage }}</p>
 
+            <ol class="steps" *ngIf="evacuationPathNodes.length > 1">
+              <li>Stay calm and check the corridor.</li>
+              <li>Follow the highlighted green path.</li>
+              <li>Use emergency stairs if required.</li>
+              <li>Reach the assembly point outside the building.</li>
+            </ol>
+          </ng-container>
 
-          <!-- ISTRUZIONI DINAMICHE -->
-          <div class="instructions" *ngIf="nearestExit">
-
-            <h4>Evacuation Instructions</h4>
-
-            <ul>
-
-              <li *ngFor="let step of getEvacuationInstructions()">
-                {{ step }}
-              </li>
-
-            </ul>
-
-          </div>
-
-
-          <!-- DATI RISULTATO -->
-          <p><strong>Starting point:</strong> {{ evacuationResult.from }}</p>
-
-          <p><strong>Recommended exit:</strong> {{ evacuationResult.exitId }}</p>
-
-          <p class="result-msg">{{ evacuationResult.message }}</p>
-
-
-          <!-- ISTRUZIONI STANDARD -->
-          <ol class="steps">
-
-            <li>Stay calm and check the corridor.</li>
-
-            <li>
-              Follow the signs toward
-              <strong>{{ evacuationResult.exitId }}</strong>.
-            </li>
-
-            <li>
-              Go down the stairs / exit the door and reach the meeting point.
-            </li>
-
-          </ol>
-
+          <ng-template #noPath>
+            <p class="muted">
+              No evacuation path calculated yet (or no path available).
+            </p>
+          </ng-template>
         </div>
-
       </div>
-
     </div>
 
-
-    <!-- ================= PANNELLO INFO ================= -->
+    <!-- SIDE PANEL -->
     <div class="side-panel">
-
-      <h3>Floor Information</h3>
-
+      <h3>Live info</h3>
       <p><strong>Floor:</strong> {{ selectedFloor | titlecase }}</p>
-
       <p><strong>Building:</strong> {{ building }}</p>
+      <p><strong>Users on floor:</strong> {{ utentiAttivi.length }}</p>
+      <p><strong>Blocked corridors on this view:</strong> {{ getBlockedCorridorsCount() }}</p>
 
-      <p class="muted">
-
-        Select your position and calculate the nearest exit.
-
+      <p *ngIf="selectedNodeId">
+        <strong>Selected room:</strong> {{ nodeDisplayName(selectedNodeId) }}
       </p>
 
+      <p *ngIf="evacuationPathNodes.length > 0"><strong>Path nodes:</strong> {{ evacuationPathNodes.length }}</p>
+      <p *ngIf="evacuationInstructions.length > 0"><strong>Instructions:</strong> {{ evacuationInstructions.length }}</p>
     </div>
-
   </div>
-
 </div>

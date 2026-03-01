@@ -142,7 +142,7 @@ public class MapService {
         log.debug("Recupero mappa completa");
 
         List<NodeDTO> nodes = nodeRepository.findAll().stream()
-                .map(n -> new NodeDTO(n.getLabel()))
+                .map(n -> new NodeDTO(n.getLabel(), n.getDisplayName()))
                 .toList();
 
         List<CorridorDTO> corridors = corridorRepository.findAll().stream()
@@ -157,7 +157,11 @@ public class MapService {
 
         return new MapDTO(nodes, corridors);
     }
-
+    public List<NodeDTO> getAllNodes() {
+        return nodeRepository.findAll().stream()
+                .map(n -> new NodeDTO(n.getLabel(), n.getDisplayName()))
+                .toList();
+    }
     // =========================
     // ✅ EVACUATION (Strategy)
     // =========================

@@ -2,11 +2,18 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+
 import { CorridorsService } from '../../../../core/services/corridors.service';
 import { Corridor } from '../../../../core/models/corridor.model';
 
 type Building = 'A' | 'B' | 'D';
 type FloorCode = 'T' | '1' | '2' | 'I' | 'R' | 'P';
+
+interface NodeApiDto {
+  label: string;
+  displayName: string;
+}
 
 @Component({
   selector: 'app-corridors',
@@ -19,72 +26,105 @@ export class CorridorsComponent implements OnInit {
   corridoi: Corridor[] = [];
   corridoiFiltrati: Corridor[] = [];
 
-  // ✅ cohérent avec tes nodes DB (A_T_..., B_I_..., B_P_..., etc.)
   edificioSelezionato: Building = 'A';
   pianoSelezionato: FloorCode = 'T';
-
   searchTerm: string = '';
 
   caricamento = true;
   errore: string | null = null;
 
+  // ✅ Mapping: technical label -> display name (from DB)
+  nodeNameById: Record<string, string> = {};
+  private nodesLoaded = false;
+
   constructor(
     private corridorsService: CorridorsService,
+    private http: HttpClient,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    // ✅ au démarrage : s’assurer que le piano correspond au building
     this.setDefaultFloorForBuilding(this.edificioSelezionato);
-    this.loadCorridors();
+
+    // ✅ Load nodes first (display names), then corridors
+    this.loadNodes().then(() => {
+      this.loadCorridors();
+    });
   }
 
   // =========================
-  // LOAD
+  // NODES (label -> displayName)
+  // =========================
+  private async loadNodes(): Promise<void> {
+    return new Promise((resolve) => {
+      this.http.get<NodeApiDto[]>('/api/map/nodes').subscribe({
+        next: (nodes) => {
+          this.nodeNameById = {};
+          (nodes || []).forEach((n) => {
+            this.nodeNameById[n.label] = n.displayName || n.label;
+          });
+          this.nodesLoaded = true;
+          resolve();
+        },
+        error: (err) => {
+          console.error('Error loading nodes', err);
+          this.nodeNameById = {};
+          this.nodesLoaded = true; // allow UI to work with fallback
+          resolve();
+        },
+      });
+    });
+  }
+
+  // ✅ Used by HTML to show friendly labels
+  nodeDisplayName(id: string): string {
+    return this.nodeNameById[id] ?? id;
+  }
+
+  // =========================
+  // LOAD CORRIDORS
   // =========================
   loadCorridors(): void {
     this.caricamento = true;
     this.errore = null;
 
-    this.corridorsService.getCorridors()
-      .pipe(finalize(() => {
-        this.caricamento = false;
-        this.cdr.detectChanges();
-      }))
+    this.corridorsService
+      .getCorridors()
+      .pipe(
+        finalize(() => {
+          this.caricamento = false;
+          this.cdr.detectChanges();
+        })
+      )
       .subscribe({
         next: (data) => {
           this.corridoi = data ?? [];
           this.applyFilters();
         },
         error: (err) => {
-          this.errore = 'Errore di caricamento dal server';
+          this.errore = 'Server loading error';
           console.error(err);
           this.corridoi = [];
           this.corridoiFiltrati = [];
-        }
+        },
       });
   }
 
   // =========================
-  // UI EVENTS (à appeler depuis le HTML)
+  // UI EVENTS
   // =========================
-
-  /** Appelé quand tu cliques Edificio A/B/D */
   onBuildingChange(b: Building) {
     this.edificioSelezionato = b;
     this.setDefaultFloorForBuilding(b);
     this.applyFilters();
   }
 
-  /** Appelé quand tu changes le select du piano */
   onFloorChange(value: string) {
-    // accepte soit "T/I/R/P/1/2" soit "terra/interrato/rialzato/primo/secondo"
     const mapped = this.normalizeFloorValue(value);
     if (mapped) this.pianoSelezionato = mapped;
     this.applyFilters();
   }
 
-  /** Appelé quand tu changes la recherche */
   onSearchChange() {
     this.applyFilters();
   }
@@ -95,10 +135,9 @@ export class CorridorsComponent implements OnInit {
   applyFilters(): void {
     const term = this.searchTerm.toLowerCase().trim();
 
-    this.corridoiFiltrati = (this.corridoi || []).filter(c => {
+    this.corridoiFiltrati = (this.corridoi || []).filter((c) => {
       const from = (c.fromNode || '').trim();
       const to = (c.toNode || '').trim();
-
       if (!from) return false;
 
       const parts = from.split('_');
@@ -111,21 +150,24 @@ export class CorridorsComponent implements OnInit {
       let matchesFloor = true;
 
       if (this.edificioSelezionato !== 'D') {
-        // attendu: A_T_..., A_1_..., B_I_..., B_P_...
         if (parts.length < 2) return false;
-
         const flr = parts[1] as FloorCode;
-        matchesFloor = (flr === this.pianoSelezionato);
+        matchesFloor = flr === this.pianoSelezionato;
       }
 
       if (!matchesFloor) return false;
 
-      // 3) search
+      // 3) search (search in technical + friendly names)
       if (!term) return true;
+
+      const fromFriendly = this.nodeDisplayName(from).toLowerCase();
+      const toFriendly = this.nodeDisplayName(to).toLowerCase();
 
       return (
         from.toLowerCase().includes(term) ||
         to.toLowerCase().includes(term) ||
+        fromFriendly.includes(term) ||
+        toFriendly.includes(term) ||
         String(c.id ?? '').includes(term)
       );
     });
@@ -137,56 +179,50 @@ export class CorridorsComponent implements OnInit {
   // TOGGLE BLOCK/UNBLOCK
   // =========================
   toggleCorridor(c: Corridor): void {
-  const old = c.blocked;
-  c.blocked = !c.blocked;           // ✅ update immédiat UI
-  this.applyFilters();
+    const old = c.blocked;
+    c.blocked = !c.blocked; // ✅ update immediate UI
+    this.applyFilters();
 
-  const req = old
-    ? this.corridorsService.unblockCorridor(c.id)
-    : this.corridorsService.blockCorridor(c.id);
+    const req = old
+      ? this.corridorsService.unblockCorridor(c.id)
+      : this.corridorsService.blockCorridor(c.id);
 
-  req.subscribe({
-    next: () => this.loadCorridors(),  // ✅ sync vrai état
-    error: (e) => {
-      console.error(e);
-      c.blocked = old;                // rollback
-      this.applyFilters();
-    }
-  });
-}
+    req.subscribe({
+      next: () => this.loadCorridors(), // ✅ sync true state
+      error: (e) => {
+        console.error(e);
+        c.blocked = old; // rollback
+        this.applyFilters();
+      },
+    });
+  }
 
   // =========================
   // HELPERS
   // =========================
   private setDefaultFloorForBuilding(b: Building) {
-    // ✅ IMPORTANT: B doit démarrer à I sinon la liste est vide
+    // ✅ IMPORTANT: B should start at I
     if (b === 'A') this.pianoSelezionato = 'T';
     if (b === 'B') this.pianoSelezionato = 'I';
-    if (b === 'D') this.pianoSelezionato = 'T'; // valeur sans importance, car D ignore le piano
+    if (b === 'D') this.pianoSelezionato = 'T'; // not used for D
   }
 
   private normalizeFloorValue(v: string): FloorCode | null {
     const s = (v || '').trim();
 
-    // déjà un code DB
     if (s === 'T' || s === '1' || s === '2' || s === 'I' || s === 'R' || s === 'P') {
       return s;
     }
 
-    // sinon mapping depuis libellé UI
     const lower = s.toLowerCase();
     const map: Record<string, FloorCode> = {
       terra: 'T',
-      primo: '1',      // ⚠️ pour A
       secondo: '2',
       interrato: 'I',
       rialzato: 'R',
-      // ⚠️ pour B, le "primo" est souvent P en DB
       p: 'P',
     };
 
-    // si ton UI envoie "primo" pour B, on ne sait pas si c’est A(1) ou B(P)
-    // => on décide selon edificioSelezionato
     if (lower === 'primo') {
       return this.edificioSelezionato === 'B' ? 'P' : '1';
     }

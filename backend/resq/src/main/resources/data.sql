@@ -368,3 +368,55 @@ DELETE FROM nodes WHERE label IN (
     );
 
 COMMIT;
+INSERT INTO nodes(label) VALUES
+                             ('B_R_AULA_19'),
+                             ('B_R_AULA_20'),
+                             ('B_R_AULA_21'),
+                             ('B_R_EXIT')
+    ON CONFLICT (label) DO NOTHING;
+INSERT INTO corridors (id, from_node, to_node, weight, blocked) VALUES
+                                                                    (302, 'B_R_AULA_18', 'B_R_AULA_19', 1.0, false),
+                                                                    (303, 'B_R_AULA_19', 'B_R_AULA_20', 1.0, false),
+                                                                    (304, 'B_R_AULA_20', 'B_R_AULA_21', 1.0, false),
+                                                                    (305, 'B_R_AULA_21', 'B_R_EXIT',    1.0, false)
+    ON CONFLICT (id) DO NOTHING;
+-- Fix corridor 453 to point to the new label
+UPDATE corridors
+SET to_node = 'B_R_AULA_17'
+WHERE id = 453;
+
+
+UPDATE corridors
+SET from_node = 'B_R_AULA_17'
+WHERE id = 453 AND from_node = 'B_R_17';
+INSERT INTO corridors (id, from_node, to_node, weight, blocked) VALUES
+                                                                    (302, 'B_R_AULA_18', 'B_R_AULA_19', 1.0, false),
+                                                                    (303, 'B_R_AULA_19', 'B_R_AULA_20', 1.0, false),
+                                                                    (304, 'B_R_AULA_20', 'B_R_AULA_21', 1.0, false),
+                                                                    (305, 'B_R_AULA_21', 'B_R_EXIT',    1.0, false)
+    ON CONFLICT (id) DO NOTHING;
+BEGIN;
+
+
+INSERT INTO nodes(label) VALUES
+                             ('B_R_AULA_19'),
+                             ('B_R_AULA_20'),
+                             ('B_R_AULA_21'),
+                             ('B_R_EXIT')
+    ON CONFLICT (label) DO NOTHING;
+
+
+INSERT INTO corridors (id, from_node, to_node, weight, blocked) VALUES
+                                                                    (302, 'B_R_AULA_18', 'B_R_AULA_19', 1.0, false),
+                                                                    (303, 'B_R_AULA_19', 'B_R_AULA_20', 1.0, false),
+                                                                    (304, 'B_R_AULA_20', 'B_R_AULA_21', 1.0, false),
+                                                                    (305, 'B_R_AULA_21', 'B_R_EXIT',    1.0, false)
+    ON CONFLICT (id) DO NOTHING;
+
+COMMIT;
+INSERT INTO public.nodes(label) VALUES
+                                    ('B_R_AULA_19'),
+                                    ('B_R_AULA_20'),
+                                    ('B_R_AULA_21'),
+                                    ('B_R_EXIT')
+    ON CONFLICT (label) DO NOTHING;

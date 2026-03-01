@@ -65,7 +65,9 @@ public class EvacuationPathService {
         List<GraphNode> exits = nodes.values().stream()
                 .filter(n ->
                         n.getId().contains("EXIT") ||
+                                n.getId().contains("EM_EXIT") ||
                                 n.getId().endsWith("_ENTRANCE")
+
                 )
                 .toList();
 

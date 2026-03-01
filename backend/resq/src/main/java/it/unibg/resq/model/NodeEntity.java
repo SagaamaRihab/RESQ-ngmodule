@@ -17,4 +17,7 @@ public class NodeEntity {
 
     @Column(nullable = false, unique = true)
     private String label;
+
+    @Column(name = "display_name")
+    private String displayName;
 }

@@ -1,3 +1,4 @@
+// admin-building.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,7 +9,7 @@ import { Subscription } from 'rxjs';
 type Floor = 'terra' | 'primo' | 'secondo' | 'interrato' | 'rialzato';
 type Point = { x: number; y: number };
 
-type CorridorEdge = { fromRoom: string; toRoom: string; blocked: boolean };
+type CorridorEdge = { fromNode: string; toNode: string; blocked: boolean };
 type PathSegment = { from: Point; to: Point };
 
 interface UserPositionDto {
@@ -25,34 +26,47 @@ interface CorridorApiDto {
   blocked: boolean;
 }
 
-/** Used to generate human instructions from node ids */
-type StepInfo = { building: string; floor: Floor; room: string; raw: string };
+interface NodeApiDto {
+  label: string;        // technical id: A_T_BIBLIOTECA
+  displayName: string;  // user label: Library
+}
+
+type StepInfo = { building: string; floor: Floor; nodeId: string; name: string };
 
 @Component({
   selector: 'app-admin-building',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-building.component.html',
-  styleUrls: ['./admin-building.component.css']
+  styleUrls: ['./admin-building.component.css'],
 })
 export class AdminBuildingComponent implements OnInit, OnDestroy {
-
   building!: string;
   selectedFloor: Floor = 'terra';
-  selectedPosition: string = '';
+
+  /** Selected start node = technical id (safe + unique) */
+  selectedNodeId: string = '';
+
+  // ✅ Cached dropdown/exits lists (avoid calling functions in template)
+  currentRooms: { id: string; name: string }[] = [];
+  currentExits: string[] = [];
 
   // Live
   utentiAttivi: UserPositionDto[] = [];
   displayedEdges: CorridorEdge[] = [];
 
-  // Dijkstra path (nodes + green segments on current floor)
+  // Path (technical node ids)
   evacuationPathNodes: string[] = [];
   evacuationPathSegmentsForCurrentFloor: PathSegment[] = [];
 
-  // Result like user
-  recommendedExitId: string | null = null;
+  // Result (display name)
+  recommendedExitLabel: string | null = null;
   evacuationMessage: string = '';
   evacuationInstructions: string[] = [];
+
+  // Nodes mapping: id -> displayName
+  private nodeLabelById: Record<string, string> = {};
+  private nodesLoaded = false;
 
   private pollingInterval: any;
   private routeSub?: Subscription;
@@ -60,86 +74,131 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   private hasComputedEvacuation = false;
 
   // =============================
-  // ROOMS (coords in %)
+  // ROOMS COORDS (coords in %)
   // =============================
   ROOMS: Record<string, Record<string, Record<string, Point>>> = {
     A: {
       terra: {
-        Entrance: { x: 50, y: 85 },
-        Hall: { x: 50, y: 60 },
-        Stairs: { x: 15, y: 70 },
-        Biblioteca: { x: 25, y: 22 },
-        'Sala Studio': { x: 62, y: 58 },
+        A_T_ENTRANCE: { x: 85, y: 60 },
+        A_T_HALL: { x: 50, y: 60 },
+        A_T_STAIRS: { x: 15, y: 70 },
+        A_T_BIBLIOTECA: { x: 25, y: 40 },
+        A_T_SALA_STUDIO: { x: 60, y: 75 },
+
+        A_T_EXIT_EAST: { x: 92, y: 62 },
+        A_T_EXIT_WEST: { x: 8, y: 70 },
+
+        A_T_EM_EXIT_BIBLIOTECA: { x: 23, y: 35 },
+        A_T_EM_EXIT_SALA_STUDIO: { x: 62, y: 82 },
+        A_T_EM_STAIRS_WEST: { x: 10, y: 68 },
+        A_T_EM_STAIRS_EAST: { x: 90, y: 60 },
       },
       primo: {
-        Hall: { x: 50, y: 60 },
-        Stairs: { x: 15, y: 70 },
-        'Aula 3': { x: 52, y: 46 },
-        'Aula 4': { x: 60, y: 50 },
+        A_1_HALL: { x: 50, y: 60 },
+        A_1_STAIRS: { x: 15, y: 70 },
+        A_1_AULA_3: { x: 60, y: 75 },
+        A_1_AULA_4: { x: 70, y: 75 },
+
+        A_1_EM_STAIRS_WEST: { x: 10, y: 70 },
+        A_1_EM_STAIRS_EAST: { x: 90, y: 60 },
       },
       secondo: {
-        Hall: { x: 50, y: 60 },
-        Stairs: { x: 15, y: 70 },
-        'Aula 7': { x: 28, y: 35 },
-        'Aula 8': { x: 36, y: 38 },
-        'Aula 9': { x: 55, y: 48 },
-        'Aula 10': { x: 65, y: 32 },
-      }
+        A_2_HALL: { x: 50, y: 60 },
+        A_2_STAIRS: { x: 60, y: 75 },
+        A_2_AULA_7: { x: 60, y: 75 },
+        A_2_AULA_8: { x: 50, y: 75 },
+        A_2_AULA_9: { x: 40, y: 35 },
+        A_2_AULA_10: { x: 60, y: 35 },
+
+        A_2_EM_STAIRS_WEST: { x: 10, y: 70 },
+        A_2_EM_STAIRS_EAST: { x: 90, y: 35 },
+      },
     },
 
     B: {
       interrato: {
-        Entrance: { x: 22, y: 30 },
-        'Aula 12': { x: 30, y: 40 },
-        'Aula 13': { x: 40, y: 40 },
-        'Aula 14': { x: 50, y: 40 },
-        'Bagno Femminile': { x: 20, y: 25 }
+        B_I_ENTRANCE: { x: 22, y: 30 },
+        B_I_AULA_12: { x: 55, y: 50 },
+        B_I_AULA_13: { x: 65, y: 50 },
+        B_I_AULA_14: { x: 75, y: 50 },
+
+        B_I_EXIT_EAST: { x: 92, y: 50 },
+        B_I_EXIT_WEST: { x: 8, y: 30 },
+
+        B_I_EM_STAIRS_WEST: { x: 12, y: 28 },
+        B_I_EM_STAIRS_EAST: { x: 88, y: 48 },
       },
       rialzato: {
-        Entrance: { x: 22, y: 30 },
-        'Aula 17': { x: 30, y: 40 },
-        'Aula 18': { x: 45, y: 40 },
-        'Aula 19': { x: 55, y: 40 },
-        'Aula 20': { x: 65, y: 40 },
-        'Aula 21': { x: 70, y: 35 },
-        Exit: { x: 75, y: 28 },
+        B_R_ENTRANCE: { x: 22, y: 30 },
+        B_R_AULA_17: { x: 45, y: 40 },
+        B_R_AULA_18: { x: 55, y: 40 },
+        B_R_AULA_19: { x: 65, y: 40 },
+        B_R_AULA_20: { x: 85, y: 22 },
+        B_R_AULA_21: { x: 85, y: 52 },
+
+        B_R_EXIT_EAST: { x: 92, y: 40 },
+        B_R_EXIT_WEST: { x: 8, y: 30 },
+
+        B_R_EM_EXIT_AULA_20: { x: 95, y: 20 },
+        B_R_EM_EXIT_AULA_21: { x: 95, y: 55 },
+
+        B_R_EM_STAIRS_WEST: { x: 12, y: 28 },
+        B_R_EM_STAIRS_EAST: { x: 88, y: 30 },
       },
       primo: {
-        Ingresso: { x: 22, y: 30 },
-        Entrance: { x: 22, y: 30 },
-        'Aula 22': { x: 30, y: 45 },
-        'Aula 23': { x: 40, y: 45 },
-        'Aula 24': { x: 50, y: 45 },
-        'Aula 25': { x: 60, y: 45 },
-        Exit: { x: 75, y: 28 },
-      }
+        B_P_ENTRANCE: { x: 22, y: 30 },
+        B_P_AULA_22: { x: 40, y: 40 },
+        B_P_AULA_23: { x: 45, y: 40 },
+        B_P_AULA_24: { x: 60, y: 40 },
+        B_P_AULA_25: { x: 70, y: 40 },
+
+        B_P_EXIT_EAST: { x: 92, y: 40 },
+        B_P_EXIT_WEST: { x: 8, y: 30 },
+
+        B_P_EM_STAIRS_WEST: { x: 12, y: 28 },
+        B_P_EM_STAIRS_EAST: { x: 88, y: 40 },
+      },
     },
 
     D: {
       terra: {
-        Entrance: { x: 48, y: 70 },
-        Portineria: { x: 45, y: 55 },
-        'Aula Magna': { x: 35, y: 40 },
-        'Aula Minore': { x: 70, y: 38 },
-        'Exit East': { x: 80, y: 30 },
-        'Exit South': { x: 48, y: 70 },
-      }
-    }
+        D_T_INGRESSO_PRINCIPALE: { x: 48, y: 70 },
+        D_T_PORTINERIA: { x: 45, y: 55 },
+        D_T_AULA_MAGNA: { x: 35, y: 40 },
+        D_T_AULA_MINORE: { x: 70, y: 38 },
+
+        D_T_EXIT_EAST: { x: 80, y: 30 },
+        D_T_EXIT_SOUTH: { x: 48, y: 70 },
+
+        D_T_EM_EXIT_AULA_MAGNA: { x: 30, y: 45 },
+        D_T_EM_EXIT_AULA_MINORE: { x: 72, y: 45 },
+        D_T_EM_STAIRS: { x: 50, y: 82 },
+      },
+    },
   };
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.routeSub = this.route.paramMap.subscribe(pm => {
+    this.routeSub = this.route.paramMap.subscribe((pm) => {
       const b = pm.get('building') ?? 'A';
       this.building = b;
       this.selectedFloor = this.getDefaultFloorForBuilding(b);
 
       this.resetPath();
+      this.selectedNodeId = '';
       this.hasComputedEvacuation = false;
       this.lastCorridorsSignatureByBuilding = '';
 
-      this.refreshAll();
+      this.nodesLoaded = false;
+      this.currentRooms = [];
+      this.currentExits = [];
+
+      this.fetchNodes().then(() => {
+        // ✅ compute dropdown options once nodes are loaded
+        this.recomputeViewLists();
+        this.refreshAll();
+      });
     });
 
     this.pollingInterval = setInterval(() => this.refreshAll(), 3000);
@@ -158,8 +217,35 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   }
 
   private refreshAll() {
+    if (!this.nodesLoaded) return;
     this.fetchUserLocations();
     this.fetchCorridorsLive();
+  }
+
+  // =============================
+  // NODES (display names)
+  // =============================
+  private async fetchNodes(): Promise<void> {
+    return new Promise((resolve) => {
+      this.http.get<NodeApiDto[]>('/api/map/nodes').subscribe({
+        next: (nodes) => {
+          this.nodeLabelById = {};
+          (nodes || []).forEach((n) => {
+            this.nodeLabelById[n.label] = n.displayName || n.label;
+          });
+          this.nodesLoaded = true;
+          resolve();
+        },
+        error: () => {
+          this.nodesLoaded = true;
+          resolve();
+        },
+      });
+    });
+  }
+
+  nodeDisplayName(nodeId: string): string {
+    return this.nodeLabelById[nodeId] ?? nodeId;
   }
 
   // =============================
@@ -167,6 +253,17 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   // =============================
   selectFloor(floor: Floor) {
     this.selectedFloor = floor;
+
+    // ✅ recompute lists once (no template functions)
+    this.recomputeViewLists();
+
+    // ✅ if selected room not available on this floor, reset selection
+    if (this.selectedNodeId && !this.currentRooms.some((r) => r.id === this.selectedNodeId)) {
+      this.selectedNodeId = '';
+      this.onSelectedPositionChange('');
+    }
+
+    // refresh live
     this.fetchUserLocations();
     this.fetchCorridorsLive();
 
@@ -177,17 +274,26 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
     }
   }
 
+  private recomputeViewLists() {
+    // ✅ build cached arrays used by template
+    this.currentRooms = this.getCurrentRooms();
+    this.currentExits = this.getCurrentExits();
+  }
+
+  trackByRoomId(index: number, r: { id: string; name: string }) {
+    return r.id;
+  }
+
   // =============================
   // LIVE USERS
   // =============================
   fetchUserLocations() {
-    this.http.get<UserPositionDto[]>('api/user/active-locations')
-      .subscribe({
-        next: (data) => {
-          this.utentiAttivi = (data || []).filter(u => this.isUserOnCurrentView(u.nodeId));
-        },
-        error: () => this.utentiAttivi = []
-      });
+    this.http.get<UserPositionDto[]>('api/user/active-locations').subscribe({
+      next: (data) => {
+        this.utentiAttivi = (data || []).filter((u) => this.isUserOnCurrentView(u.nodeId));
+      },
+      error: () => (this.utentiAttivi = []),
+    });
   }
 
   private isUserOnCurrentView(nodeId: string): boolean {
@@ -197,8 +303,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   }
 
   getUserStyle(nodeId: string) {
-    const roomName = this.nodeToRoomName(nodeId);
-    const p = this.getRoomPoint(roomName);
+    const p = this.getNodePoint(nodeId);
     if (!p) return { display: 'none' };
     return { left: p.x + '%', top: p.y + '%' };
   }
@@ -209,36 +314,35 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   fetchCorridorsLive() {
     this.http.get<CorridorApiDto[]>('/api/map/corridors').subscribe({
       next: (corridors) => {
-        const allForBuilding = (corridors || []).filter(c =>
-          c.fromNode?.startsWith(this.building + '_') && c.toNode?.startsWith(this.building + '_')
+        const allForBuilding = (corridors || []).filter(
+          (c) => c.fromNode?.startsWith(this.building + '_') && c.toNode?.startsWith(this.building + '_')
         );
 
         const signature = allForBuilding
-          .map(c => `${c.id}:${c.blocked ? 1 : 0}`)
+          .map((c) => `${c.id}:${c.blocked ? 1 : 0}`)
           .sort()
           .join('|');
 
         const changed = signature !== this.lastCorridorsSignatureByBuilding;
         this.lastCorridorsSignatureByBuilding = signature;
 
-        const filtered = allForBuilding.filter(c => this.isCorridorOnCurrentView(c.fromNode, c.toNode));
+        const filtered = allForBuilding.filter((c) => this.isCorridorOnCurrentView(c.fromNode, c.toNode));
 
         this.displayedEdges = filtered
-          .map(c => ({
-            fromRoom: this.nodeToRoomName(c.fromNode),
-            toRoom: this.nodeToRoomName(c.toNode),
-            blocked: c.blocked
+          .map((c) => ({
+            fromNode: c.fromNode,
+            toNode: c.toNode,
+            blocked: c.blocked,
           }))
-          .filter(e => this.getRoomPoint(e.fromRoom) && this.getRoomPoint(e.toRoom));
+          .filter((e) => this.getNodePoint(e.fromNode) && this.getNodePoint(e.toNode));
 
-        // auto-recalc only if already computed once
-        if (changed && this.hasComputedEvacuation && this.selectedPosition) {
+        if (changed && this.hasComputedEvacuation && this.selectedNodeId) {
           this.calculateEvacuation(true);
         }
       },
       error: () => {
         this.displayedEdges = [];
-      }
+      },
     });
   }
 
@@ -255,43 +359,70 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   // MIDPOINT (for red X)
   // =============================
   midX(e: CorridorEdge): number {
-    const a = this.getRoomPoint(e.fromRoom);
-    const b = this.getRoomPoint(e.toRoom);
+    const a = this.getNodePoint(e.fromNode);
+    const b = this.getNodePoint(e.toNode);
     if (!a || !b) return 0;
     return (a.x + b.x) / 2;
   }
 
   midY(e: CorridorEdge): number {
-    const a = this.getRoomPoint(e.fromRoom);
-    const b = this.getRoomPoint(e.toRoom);
+    const a = this.getNodePoint(e.fromNode);
+    const b = this.getNodePoint(e.toNode);
     if (!a || !b) return 0;
     return (a.y + b.y) / 2;
   }
 
   getBlockedCorridorsCount(): number {
-    return (this.displayedEdges || []).filter(e => e.blocked).length;
+    return (this.displayedEdges || []).filter((e) => e.blocked).length;
   }
 
   // =============================
   // POSITION SELECT
   // =============================
   getSelectedPositionStyle() {
-    if (!this.selectedPosition) return { display: 'none' };
-    const p = this.getRoomPoint(this.selectedPosition);
+    if (!this.selectedNodeId) return { display: 'none' };
+    const p = this.getNodePoint(this.selectedNodeId);
     if (!p) return { display: 'none' };
     return { left: p.x + '%', top: p.y + '%' };
   }
 
-  getCurrentRooms(): string[] {
-    return Object.keys(this.ROOMS[this.building]?.[this.selectedFloor] || {});
+  /** Nodes available on current view (building+floor) */
+  private getNodesOnCurrentView(): string[] {
+    const ids = Object.keys(this.nodeLabelById || {});
+    return ids.filter((id) => this.isUserOnCurrentView(id));
+  }
+
+  /** Hide exits/emergency from start selection */
+  private isSelectableStartNode(nodeId: string): boolean {
+    const up = (nodeId || '').toUpperCase();
+    if (up.includes('_EM_EXIT')) return false;
+    if (up.includes('_EM_STAIRS')) return false;
+    if (up.includes('_EXIT')) return false;
+    return true;
+  }
+
+  /** Dropdown options */
+  getCurrentRooms(): { id: string; name: string }[] {
+    const nodes = this.getNodesOnCurrentView()
+      .filter((id) => this.isSelectableStartNode(id))
+      .map((id) => ({ id, name: this.nodeDisplayName(id) }));
+
+    return nodes.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   getCurrentExits(): string[] {
-    const rooms = this.getCurrentRooms();
-    return rooms.filter(r => /exit/i.test(r));
+    const nodes = this.getNodesOnCurrentView()
+      .filter((id) => {
+        const up = (id || '').toUpperCase();
+        return up.includes('_EXIT') || up.includes('_EM_EXIT');
+      })
+      .map((id) => this.nodeDisplayName(id));
+
+    return Array.from(new Set(nodes)).sort((a, b) => a.localeCompare(b));
   }
 
-  onSelectedPositionChange() {
+  // ✅ now accepts nodeId (event from ngModelChange)
+  onSelectedPositionChange(_nodeId: string) {
     this.resetPath();
     this.hasComputedEvacuation = false;
   }
@@ -299,7 +430,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   private resetPath() {
     this.evacuationPathNodes = [];
     this.evacuationPathSegmentsForCurrentFloor = [];
-    this.recommendedExitId = null;
+    this.recommendedExitLabel = null;
     this.evacuationMessage = '';
     this.evacuationInstructions = [];
   }
@@ -308,97 +439,82 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   // EVACUATION API
   // =============================
   calculateEvacuation(silent = false) {
-  if (!this.selectedPosition) return;
+    if (!this.selectedNodeId) return;
 
-  const startNodeId = this.selectedPositionToNodeId();
-  if (!startNodeId) return;
+    const url = `/api/evacuation/from/${encodeURIComponent(this.selectedNodeId)}`;
 
-  const url = `/api/evacuation/from/${encodeURIComponent(startNodeId)}`;
+    this.http.get<{ path?: string[]; message?: string }>(url).subscribe({
+      next: (res) => {
+        this.hasComputedEvacuation = true;
 
-    this.http.get<{ path?: string[]; message?: string; instructions?: string[] }>(url).subscribe({
-    next: (res) => {
-      this.hasComputedEvacuation = true;
+        this.evacuationPathNodes = res.path ?? [];
 
-      this.evacuationPathNodes = res.path ?? [];
-      this.evacuationInstructions = res.instructions ?? [];
-      if (this.evacuationPathNodes.length > 1) {
-        this.buildGreenSegmentsForCurrentFloor(this.evacuationPathNodes);
-      } else {
-        this.evacuationPathSegmentsForCurrentFloor = [];
-;
-      }
+        if (this.evacuationPathNodes.length > 1) {
+          this.buildGreenSegmentsForCurrentFloor(this.evacuationPathNodes);
+        } else {
+          this.evacuationPathSegmentsForCurrentFloor = [];
+        }
 
-      const lastNode = this.evacuationPathNodes.at(-1) ?? null;
-      this.recommendedExitId = lastNode ? this.nodeToRoomName(lastNode) : null;
+        const lastNode = this.evacuationPathNodes.at(-1) ?? null;
+        this.recommendedExitLabel = lastNode ? this.nodeDisplayName(lastNode) : null;
 
-      if (!silent) {
-        this.evacuationMessage =
-          res.message ??
-          (this.recommendedExitId
-            ? `Follow the highlighted route to ${this.recommendedExitId}.`
-            : 'No evacuation path available.');
-      }
-    },
-    error: (err) => {
-      console.error(err);
-      this.resetPath();
-      if (!silent) this.evacuationMessage = 'No evacuation path available.';
-    },
-  });
-}
+        this.evacuationInstructions = this.getEvacuationInstructionsAdmin();
 
+        if (!silent) {
+          this.evacuationMessage =
+            this.recommendedExitLabel
+        
+              ? `Follow the highlighted route to ${this.recommendedExitLabel}.`
+              : 'No evacuation path available.';
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.resetPath();
+        if (!silent) this.evacuationMessage = 'No evacuation path available.';
+      },
+    });
+  }
 
-
-  /**
-   * Human instructions:
-   * - Mentions start floor
-   * - Says go left/right based on coordinates (approx.)
-   * - Says go up/down when changing floors (stairs)
-   * - Works also when starting from 2nd floor
-   */
+  /** English instructions + left/right/straight */
   getEvacuationInstructionsAdmin(): string[] {
     if (!this.evacuationPathNodes || this.evacuationPathNodes.length < 2) return [];
 
-    const steps = this.evacuationPathNodes
-      .map(n => this.parseNodeId(n))
-      .filter(Boolean) as StepInfo[];
-
+    const steps = this.evacuationPathNodes.map((id) => this.parseNodeId(id)).filter(Boolean) as StepInfo[];
     if (steps.length < 2) return [];
 
     const out: string[] = [];
-
     const start = steps[0];
-    out.push(`Exit from ${start.room}.`);
-    out.push(`You are on ${this.floorLabel(start.floor)} (Building ${start.building}).`);
+
+    out.push(`Start from: ${start.name}.`);
+    out.push(`You are on the ${this.floorLabel(start.floor)} (Building ${start.building}).`);
 
     for (let i = 0; i < steps.length - 1; i++) {
       const curr = steps[i];
       const next = steps[i + 1];
 
-      // floor change => stairs instruction (up/down)
       if (curr.floor !== next.floor) {
         const move = this.verticalMove(curr.floor, next.floor);
-        out.push(`${move} using the stairs (${curr.room}) to reach ${this.floorLabel(next.floor)}.`);
+        out.push(`${move} using the stairs to reach the ${this.floorLabel(next.floor)}.`);
         continue;
       }
 
-      // same floor => left/right/straight based on coordinates (rough)
       const turn = this.turnDirection(curr, next);
-      if (turn === 'left') out.push(`Go left towards ${next.room}.`);
-      else if (turn === 'right') out.push(`Go right towards ${next.room}.`);
-      else out.push(`Go straight towards ${next.room}.`);
+      if (turn === 'left') out.push(`Turn left towards ${next.name}.`);
+      else if (turn === 'right') out.push(`Turn right towards ${next.name}.`);
+      else out.push(`Go straight towards ${next.name}.`);
     }
 
-    const exitRoom = this.recommendedExitId ?? steps[steps.length - 1].room;
-    out.push(`Reach the recommended exit: ${exitRoom}.`);
-    out.push('Do not use elevators. Use stairs if needed.');
-    out.push('Once outside, reach the assembly point.');
+    const exitName = this.recommendedExitLabel ?? steps[steps.length - 1].name;
+    out.push(`Reach the recommended exit: ${exitName}.`);
+    out.push('Do not use elevators.');
+    out.push('Once outside, go to the assembly point.');
 
     return out;
   }
 
   // =============================
-  // Build green segments for CURRENT floor only (optional)
+  // Build green segments for CURRENT floor only
   // =============================
   private buildGreenSegmentsForCurrentFloor(pathNodes: string[]) {
     this.evacuationPathSegmentsForCurrentFloor = [];
@@ -414,11 +530,8 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
       const floorB = this.nodeIdToFloor(b);
       if (floorA !== this.selectedFloor || floorB !== this.selectedFloor) continue;
 
-      const roomA = this.nodeToRoomName(a);
-      const roomB = this.nodeToRoomName(b);
-
-      const pA = this.ROOMS[this.building]?.[this.selectedFloor]?.[roomA];
-      const pB = this.ROOMS[this.building]?.[this.selectedFloor]?.[roomB];
+      const pA = this.getNodePoint(a);
+      const pB = this.getNodePoint(b);
       if (!pA || !pB) continue;
 
       segments.push({ from: pA, to: pB });
@@ -444,13 +557,13 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
       },
       D: {
         terra: '/assets/maps/D/Edificio-D.png',
-      }
+      },
     };
     return MAPS[this.building]?.[this.selectedFloor] ?? '';
   }
 
   // =============================
-  // Parsing / Helpers
+  // Helpers
   // =============================
   private parseNodeId(nodeId: string): StepInfo | null {
     if (!nodeId) return null;
@@ -459,23 +572,15 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
     if (parts.length < 2) return null;
 
     const building = parts[0];
-
-    // expected:
-    // A_T_HALL
-    // A_2_AULA_7
-    // B_I_AULA_12
-    // D_T_EXIT_SOUTH (you said you now use D_T_*)
     const floorCode = parts[1];
     const floor = this.floorCodeToFloor(floorCode);
 
-    // room token starts after floorCode
-    const rest = parts.slice(2).join('_');
-    if (!rest) return null;
-
-    // normalize to UI room label
-    const room = this.nodeToRoomName(`${building}_${floorCode}_${rest}`);
-
-    return { building, floor, room, raw: nodeId };
+    return {
+      building,
+      floor,
+      nodeId,
+      name: this.nodeDisplayName(nodeId),
+    };
   }
 
   private floorCodeToFloor(code: string): Floor {
@@ -495,111 +600,24 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
     return parsed?.floor ?? this.selectedFloor;
   }
 
-  private nodeToRoomName(nodeId: string): string {
-    const parts = nodeId.split('_');
-    if (parts.length < 2) return nodeId;
-
-    // remove building
-    let rest = parts.slice(1);
-
-    // remove floor code if present
-    const known = new Set(['T', '1', '2', 'I', 'R', 'P']);
-    if (rest.length && known.has(rest[0])) rest = rest.slice(1);
-
-    if (!rest.length) return nodeId;
-
-    // AULA patterns
-    if (rest[0].toUpperCase() === 'AULA' && rest[1]) return `Aula ${rest[1]}`;
-    if (rest.length === 1 && /^\d+$/.test(rest[0])) return `Aula ${rest[0]}`;
-
-    const joined = rest.join('_').toUpperCase();
-
-    if (joined === 'HALL') return 'Hall';
-    if (joined === 'STAIRS') return 'Stairs';
-    if (joined === 'ENTRANCE') return 'Entrance';
-    if (joined === 'INGRESSO') return 'Ingresso';
-    if (joined === 'PORTINERIA') return 'Portineria';
-    if (joined === 'EXIT') return 'Exit';
-    if (joined === 'EXIT_EAST') return 'Exit East';
-    if (joined === 'EXIT_SOUTH') return 'Exit South';
-
-    return rest.join(' ')
-      .replace(/_/g, ' ')
-      .toLowerCase()
-      .replace(/\b\w/g, c => c.toUpperCase())
-      .trim();
+  private getNodePoint(nodeId: string): Point | null {
+    return this.ROOMS[this.building]?.[this.selectedFloor]?.[nodeId] ?? null;
   }
 
-  private getRoomPoint(roomName: string): Point | null {
-    return this.ROOMS[this.building]?.[this.selectedFloor]?.[roomName] ?? null;
-  }
-
-  private selectedPositionToNodeId(): string {
-    const building = this.building;
-
-    // IMPORTANT: keep consistent with DB node ids
-    // Your latest: D_T_{token}
-    if (building === 'D') {
-      const token = this.normalizeToDbToken(this.selectedPosition);
-      return `D_T_${token}`;
-    }
-
-    const floorCode = this.floorToDbCode(building, this.selectedFloor);
-
-    const aulaMatch = this.selectedPosition.match(/^Aula\s+(\d+)$/i);
-    if (aulaMatch) {
-      // IMPORTANT: if your DB uses A_2_AULA_7, keep this:
-      return `${building}_${floorCode}_AULA_${aulaMatch[1]}`;
-    }
-
-    const token = this.normalizeToDbToken(this.selectedPosition);
-    return `${building}_${floorCode}_${token}`;
-  }
-
-  private floorToDbCode(building: string, floor: Floor): string {
-    if (building === 'B') {
-      const mapB: Record<Floor, string> = {
-        interrato: 'I',
-        rialzato: 'R',
-        primo: 'P',
-        terra: 'T',
-        secondo: '2'
-      };
-      return (mapB[floor] ?? 'I');
-    }
-
-    const mapA: Record<Floor, string> = {
-      terra: 'T',
-      primo: '1',
-      secondo: '2',
-      interrato: 'I',
-      rialzato: 'R'
-    };
-    return mapA[floor] ?? 'T';
-  }
-
-  private normalizeToDbToken(label: string): string {
-    return label
-      .trim()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .toUpperCase()
-      .replace(/\s+/g, '_')
-      .replace(/[^A-Z0-9_]/g, '_')
-      .replace(/_+/g, '_')
-      .replace(/^_+|_+$/g, '');
-  }
-
-  // =============================
-  // Instruction helpers (NEW)
-  // =============================
   private floorLabel(f: Floor): string {
     switch (f) {
-      case 'interrato': return 'Basement';
-      case 'rialzato': return 'Raised floor';
-      case 'terra': return 'Ground floor';
-      case 'primo': return 'First floor';
-      case 'secondo': return 'Second floor';
-      default: return f;
+      case 'interrato':
+        return 'Basement';
+      case 'rialzato':
+        return 'Raised Floor';
+      case 'terra':
+        return 'Ground Floor';
+      case 'primo':
+        return 'First Floor';
+      case 'secondo':
+        return 'Second Floor';
+      default:
+        return f;
     }
   }
 
@@ -619,18 +637,15 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   }
 
   private turnDirection(curr: StepInfo, next: StepInfo): 'left' | 'right' | 'straight' {
-    // We approximate direction with map coordinates (%)
-    // If we cannot find points => "straight"
-    const pA = this.ROOMS[curr.building]?.[curr.floor]?.[curr.room];
-    const pB = this.ROOMS[next.building]?.[next.floor]?.[next.room];
+    const pA = this.getNodePoint(curr.nodeId);
+    const pB = this.getNodePoint(next.nodeId);
     if (!pA || !pB) return 'straight';
 
     const dx = pB.x - pA.x;
     const dy = pB.y - pA.y;
 
-    // If mostly vertical movement => straight
+    // very simple heuristic: if horizontal dominates -> left/right; else straight
     if (Math.abs(dx) < 4 || Math.abs(dy) > Math.abs(dx)) return 'straight';
-
     return dx < 0 ? 'left' : 'right';
   }
 }

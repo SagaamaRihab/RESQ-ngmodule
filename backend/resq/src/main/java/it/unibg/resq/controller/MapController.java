@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import it.unibg.resq.dto.NodeDTO;
 
 import java.util.List;
 
@@ -83,5 +84,9 @@ public class MapController {
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    @GetMapping("/nodes")
+    public List<NodeDTO> getNodes() {
+        return mapService.getAllNodes();
     }
 }
