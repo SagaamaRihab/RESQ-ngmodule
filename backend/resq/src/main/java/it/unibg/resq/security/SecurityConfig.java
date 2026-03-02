@@ -3,7 +3,7 @@ package it.unibg.resq.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,15 +35,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-
-                        //  AUTH LIBERO
                         .requestMatchers("/api/auth/**").permitAll()
-
-                        //  TUTTO IL RESTO PROTETTO
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/topic/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
-                //  USA IL TUO AuthEntryPoint
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authEntryPoint)
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
@@ -51,13 +48,11 @@ public class SecurityConfig {
                         })
                 )
 
-
                 .sessionManagement(sess -> sess
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }

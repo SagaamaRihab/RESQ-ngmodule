@@ -47,7 +47,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   /** Selected start node = technical id (safe + unique) */
   selectedNodeId: string = '';
 
-  // ✅ Cached dropdown/exits lists (avoid calling functions in template)
+  //  Cached dropdown/exits lists (avoid calling functions in template)
   currentRooms: { id: string; name: string }[] = [];
   currentExits: string[] = [];
 

@@ -1,75 +1,75 @@
-CREATE TABLE utente (
-  id_utente SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  ruolo VARCHAR(20) NOT NULL
-);
+-- =====================================================
+-- USERS
+-- =====================================================
 
-CREATE TABLE mappa (
-  id_mappa SERIAL PRIMARY KEY,
-  nome VARCHAR(100)
-);
-
-
-CREATE TABLE nodo (
-  id_nodo SERIAL PRIMARY KEY,
-  x DOUBLE PRECISION NOT NULL,
-  y DOUBLE PRECISION NOT NULL,
-  id_mappa INTEGER NOT NULL,
-  CONSTRAINT fk_nodo_mappa
-    FOREIGN KEY (id_mappa)
-    REFERENCES mappa(id_mappa)
-    ON DELETE CASCADE
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL
 );
 
 
-CREATE TABLE arco (
-  id_arco SERIAL PRIMARY KEY,
-  accessibile BOOLEAN NOT NULL,
-  id_mappa INTEGER NOT NULL,
-  nodo_inizio INTEGER NOT NULL,
-  nodo_fine INTEGER NOT NULL,
-  CONSTRAINT fk_arco_mappa
-    FOREIGN KEY (id_mappa)
-    REFERENCES mappa(id_mappa)
-    ON DELETE CASCADE,
-  CONSTRAINT fk_arco_nodo_inizio
-    FOREIGN KEY (nodo_inizio)
-    REFERENCES nodo(id_nodo),
-  CONSTRAINT fk_arco_nodo_fine
-    FOREIGN KEY (nodo_fine)
-    REFERENCES nodo(id_nodo)
+-- =====================================================
+-- MAPS
+-- =====================================================
+
+CREATE TABLE maps (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    json_data TEXT
 );
 
-CREATE TABLE posizione (
-  id_posizione SERIAL PRIMARY KEY,
-  id_utente INTEGER NOT NULL,
-  id_nodo INTEGER NOT NULL,
-  timestamp TIMESTAMP NOT NULL,
-  CONSTRAINT fk_posizione_utente
-    FOREIGN KEY (id_utente)
-    REFERENCES utente(id_utente)
-    ON DELETE CASCADE,
-  CONSTRAINT fk_posizione_nodo
-    FOREIGN KEY (id_nodo)
-    REFERENCES nodo(id_nodo)
+
+-- =====================================================
+-- NODES
+-- =====================================================
+
+CREATE TABLE nodes (
+    id BIGSERIAL PRIMARY KEY,
+    display_name VARCHAR(255),
+    label VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE sessione (
-  id_sessione SERIAL PRIMARY KEY,
-  id_utente INTEGER NOT NULL,
-  scadenza TIMESTAMP NOT NULL,
-  CONSTRAINT fk_sessione_utente
-    FOREIGN KEY (id_utente)
-    REFERENCES utente(id_utente)
-    ON DELETE CASCADE
+
+-- =====================================================
+-- CORRIDORS
+-- =====================================================
+
+CREATE TABLE corridors (
+    id BIGINT PRIMARY KEY,
+    from_node VARCHAR(255) NOT NULL,
+    to_node VARCHAR(255) NOT NULL,
+    weight DOUBLE PRECISION NOT NULL,
+    blocked BOOLEAN NOT NULL DEFAULT FALSE,
+    building VARCHAR(10) NOT NULL,
+
+    CONSTRAINT fk_corridor_from
+        FOREIGN KEY (from_node)
+        REFERENCES nodes(label)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_corridor_to
+        FOREIGN KEY (to_node)
+        REFERENCES nodes(label)
+        ON DELETE CASCADE
 );
 
-CREATE TABLE percorso (
-  id_percorso SERIAL PRIMARY KEY,
-  id_utente INTEGER NOT NULL,
-  lunghezza_totale DOUBLE PRECISION,
-  timestamp TIMESTAMP NOT NULL,
-  CONSTRAINT fk_percorso_utente
-    FOREIGN KEY (id_utente)
-    REFERENCES utente(id_utente)
+
+-- =====================================================
+-- ROUTES (salvataggio percorsi calcolati)
+-- =====================================================
+
+CREATE TABLE routes (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT,
+    start_node VARCHAR(255),
+    end_node VARCHAR(255),
+    total_weight DOUBLE PRECISION,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_route_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+);

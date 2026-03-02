@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 import { EvacuationService } from '../../../../core/services/evacuation.service';
 import { EvacuationResponse } from '../../../../core/models/evacuation-response.model';
 import { PathViewerComponent } from '../../../../shared/components/path-viewer/path-viewer.component';
+
+interface NodeApiDto {
+  label: string;
+  displayName: string;
+}
 
 @Component({
   selector: 'app-admin-evacuation',
@@ -15,7 +21,12 @@ import { PathViewerComponent } from '../../../../shared/components/path-viewer/p
 })
 export class AdminEvacuationComponent implements OnInit {
 
+  // Lista nodi caricati dal backend
+  nodes: NodeApiDto[] = [];
+
+  // Questo ora conterrà SEMPRE la LABEL (es: A_T_BIBLIOTECA)
   startNode = '';
+
   path: string[] = [];
   blockedCorridors: string[] = [];
 
@@ -24,25 +35,48 @@ export class AdminEvacuationComponent implements OnInit {
   response: EvacuationResponse | null = null;
 
   constructor(
-    private evacuationService: EvacuationService
+    private evacuationService: EvacuationService,
+    private http: HttpClient
   ) {}
+
+  ngOnInit(): void {
+
+    // Carico tutti i nodi dal backend
+    this.http.get<NodeApiDto[]>('/api/map/nodes').subscribe({
+      next: (data) => {
+        this.nodes = data ?? [];
+
+        // Se avevo già salvato una label in localStorage
+        const saved = localStorage.getItem('startNode');
+        if (saved) {
+          this.startNode = saved; // deve essere una LABEL
+          this.calculate();
+        }
+      },
+      error: (err) => {
+        console.error('Errore caricamento nodi', err);
+        this.nodes = [];
+      }
+    });
+  }
 
   calculate(): void {
 
     console.log('CLICK CALCOLA');
+    console.log('LABEL INVIATA AL BACKEND:', this.startNode);
 
     this.error = null;
     this.response = null;
     this.loading = true;
 
     if (!this.startNode.trim()) {
-      this.error = 'Inserisci un nodo di partenza';
+      this.error = 'Seleziona un nodo di partenza';
       this.loading = false;
       return;
     }
 
     this.evacuationService
-      .calculateEvacuation(this.startNode.trim())
+      .calculateEvacuation(this.startNode.trim()) // <-- ORA PASSA LABEL
       .subscribe({
 
         next: (res: EvacuationResponse) => {
@@ -52,6 +86,7 @@ export class AdminEvacuationComponent implements OnInit {
           this.path = res?.path ?? [];
           this.blockedCorridors = [];
 
+          // Salvo la LABEL
           localStorage.setItem('startNode', this.startNode);
         },
 
@@ -68,17 +103,4 @@ export class AdminEvacuationComponent implements OnInit {
         }
       });
   }
-
-
-  ngOnInit(): void {
-
-    const saved = localStorage.getItem('startNode');
-
-    if (saved) {
-      this.startNode = saved;
-      this.calculate();
-    }
-
-  }
-
 }

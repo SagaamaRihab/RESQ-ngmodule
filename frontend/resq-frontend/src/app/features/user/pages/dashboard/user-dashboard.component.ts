@@ -1,69 +1,68 @@
 // ================= IMPORT =================
 
-// Component base Angular
-import { Component, OnInit } from '@angular/core';
-
-// Moduli comuni
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-// Direttiva per usare routerLink nel template
 import { RouterLink } from '@angular/router';
-
-// Service per autenticazione (login/logout)
 import { AuthService } from '../../../../core/services/auth.service';
+
+import { NotificationSocketService } from '../../../../core/services/notification-socket.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 
 // ================= COMPONENT =================
 
 @Component({
   selector: 'app-user-dashboard',
-
-  // Standalone component
   standalone: true,
-
-  // Moduli utilizzati dal componente
-  imports: [CommonModule, RouterLink],
-
-  // Template HTML associato
+  imports: [CommonModule, RouterLink, MatSnackBarModule],
   templateUrl: './user-dashboard.component.html',
-
-  // File CSS associato
   styleUrls: ['./user-dashboard.component.css']
 })
 
-export class UserDashboardComponent implements OnInit {
+export class UserDashboardComponent implements OnInit, OnDestroy {
 
-
-  // =================================================
-  // ============ DATI UTENTE ========================
-  // =================================================
-
-  // Username mostrato nella dashboard
   username: string | null = null;
-
-
-  // =================================================
-  // ============ COSTRUTTORE ========================
-  // =================================================
+  private notificationSub!: Subscription;
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private socketService: NotificationSocketService,
+    private snackBar: MatSnackBar
   ) {}
-
-
-  // =================================================
-  // ============ INIZIALIZZAZIONE ===================
-  // =================================================
 
   ngOnInit(): void {
 
-    // Recupera username salvato al login
     const stored = localStorage.getItem('username');
-
-    console.log('STORED USERNAME =', stored);
-
-    // Assegna valore alla variabile
     this.username = stored;
+
+    const building = localStorage.getItem('building');
+
+    if (building) {
+
+      this.socketService.connect(building);
+
+      this.notificationSub = this.socketService.notification$
+        .subscribe(notification => {
+
+          if (notification) {
+
+            this.snackBar.open(
+              `🚨 Corridoio bloccato: ${notification.fromNode} → ${notification.toNode}`,
+              'OK',
+              { duration: 5000 }
+            );
+
+          }
+        });
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.notificationSub) {
+      this.notificationSub.unsubscribe();
+    }
+    this.socketService.disconnect();
   }
 
 }
