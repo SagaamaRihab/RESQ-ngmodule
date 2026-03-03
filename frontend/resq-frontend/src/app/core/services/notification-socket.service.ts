@@ -8,23 +8,22 @@ import { BehaviorSubject } from 'rxjs';
 export class NotificationSocketService {
 
   private stompClient!: Client;
-
   private notificationSubject = new BehaviorSubject<any>(null);
   public notification$ = this.notificationSubject.asObservable();
 
   connect(building: string) {
 
+    if (this.stompClient?.active) return;
+
     this.stompClient = new Client({
-      brokerURL: 'ws://localhost:8080/ws',   // ✅ WebSocket puro
+      brokerURL: 'ws://localhost:8080/ws',
       reconnectDelay: 5000,
-      debug: (str) => {
-        console.log(str);
-      }
+      debug: (str) => console.log(str)
     });
 
     this.stompClient.onConnect = () => {
 
-      console.log('Connected to WebSocket');
+      console.log('✅ Connected to WebSocket');
 
       this.stompClient.subscribe(
         `/topic/building/${building}`,
@@ -35,12 +34,17 @@ export class NotificationSocketService {
       );
     };
 
+    this.stompClient.onStompError = (frame) => {
+      console.error('Broker error:', frame);
+    };
+
     this.stompClient.activate();
   }
 
   disconnect() {
-    if (this.stompClient) {
+    if (this.stompClient?.active) {
       this.stompClient.deactivate();
+      console.log('🔌 WebSocket disconnected');
     }
   }
 }

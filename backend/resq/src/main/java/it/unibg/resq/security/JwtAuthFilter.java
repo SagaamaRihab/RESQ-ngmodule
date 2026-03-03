@@ -70,13 +70,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 user.getEmail(),
                                 null,
-                                List.of(() -> "ROLE_" + user.getRole().name())
+                                List.of(
+                                        new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                                                "ROLE_" + user.getRole().name()
+                                        )
+                                )
                         );
-
-                authentication.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
-                );
 
                 SecurityContextHolder
                         .getContext()

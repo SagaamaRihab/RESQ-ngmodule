@@ -5,6 +5,16 @@
     <p>Select the floor you are on</p>
   </header>
 
+    
+  <div
+    *ngIf="topNotificationMessage"
+    class="top-notification"
+    [class.blocked]="notificationType === 'blocked'"
+    [class.unblocked]="notificationType === 'unblocked'"
+  >
+    {{ topNotificationMessage }}
+  </div>
+
   <div class="floor-buttons">
     <ng-container *ngIf="building === 'A'">
       <button [class.active]="selectedFloor === 'terra'" (click)="selectFloor('terra')">Ground Floor</button>

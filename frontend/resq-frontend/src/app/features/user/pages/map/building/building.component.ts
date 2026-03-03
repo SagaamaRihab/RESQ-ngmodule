@@ -1,10 +1,13 @@
 // admin-building.component.ts
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { NotificationSocketService } from '../../../../../core/services/notification-socket.service';
+
+
 
 type Floor = 'terra' | 'primo' | 'secondo' | 'interrato' | 'rialzato';
 type Point = { x: number; y: number };
@@ -33,6 +36,7 @@ interface NodeApiDto {
 
 type StepInfo = { building: string; floor: Floor; nodeId: string; name: string };
 
+
 @Component({
   selector: 'app-admin-building',
   standalone: true,
@@ -43,6 +47,11 @@ type StepInfo = { building: string; floor: Floor; nodeId: string; name: string }
 export class BuildingComponent implements OnInit, OnDestroy {
   building!: string;
   selectedFloor: Floor = 'terra';
+  private notificationSub?: Subscription;
+
+  topNotificationMessage: string = '';
+  notificationType: 'blocked' | 'unblocked' | null = null;
+  private notificationTimeout: any;
 
   /** Selected start node = technical id (safe + unique) */
   selectedNodeId: string = '';
@@ -177,38 +186,102 @@ export class BuildingComponent implements OnInit, OnDestroy {
     },
   };
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(
+  private route: ActivatedRoute,
+  private http: HttpClient,
+  private zone: NgZone,
+  private cdr: ChangeDetectorRef,
+  private notificationSocket: NotificationSocketService
+) {}
+
+private showTopNotification(statusRaw: string, fromNode: string, toNode: string) {
+  const status = (statusRaw || '').trim().toUpperCase();
+  const from = this.nodeDisplayName(fromNode);
+  const to = this.nodeDisplayName(toNode);
+
+  // pulisci timeout precedente
+  if (this.notificationTimeout) clearTimeout(this.notificationTimeout);
+
+  if (status === 'BLOCKED') {
+    this.notificationType = 'blocked';
+    this.topNotificationMessage = `🚫 Corridor blocked: ${from} → ${to}. Routes updated.`;
+  } else if (status === 'UNBLOCKED') {
+    this.notificationType = 'unblocked';
+    this.topNotificationMessage = `✅ Corridor reopened: ${from} → ${to}. Now accessible.`;
+  } else {
+    return;
+  }
+
+  // forza refresh template
+  this.cdr.detectChanges();
+
+  this.notificationTimeout = setTimeout(() => {
+    this.topNotificationMessage = '';
+    this.notificationType = null;
+    this.cdr.detectChanges();
+  }, 4000);
+}
 
   ngOnInit(): void {
-    this.routeSub = this.route.paramMap.subscribe((pm) => {
-      const b = pm.get('building') ?? 'A';
-      this.building = b;
-      this.selectedFloor = this.getDefaultFloorForBuilding(b);
+   
 
-      this.resetPath();
-      this.selectedNodeId = '';
-      this.hasComputedEvacuation = false;
-      this.lastCorridorsSignatureByBuilding = '';
+  this.routeSub = this.route.paramMap.subscribe((pm) => {
 
-      this.nodesLoaded = false;
-      this.currentRooms = [];
-      this.currentExits = [];
+    const b = pm.get('building') ?? 'A';
+    this.building = b;
 
-      this.fetchNodes().then(() => {
-        // ✅ compute dropdown options once nodes are loaded
-        this.recomputeViewLists();
-        this.refreshAll();
+    this.selectedFloor = this.getDefaultFloorForBuilding(b);
+
+    this.resetPath();
+    this.selectedNodeId = '';
+    this.hasComputedEvacuation = false;
+    this.lastCorridorsSignatureByBuilding = '';
+
+    this.nodesLoaded = false;
+    this.currentRooms = [];
+    this.currentExits = [];
+
+    //  CONNECT WEBSOCKET QUI
+    this.notificationSocket.connect(this.building);
+
+    
+    // chiudi eventuale vecchia subscription
+      this.notificationSub?.unsubscribe();
+
+     this.notificationSub = this.notificationSocket.notification$.subscribe(notification => {
+        if (!notification) return;
+
+        this.zone.run(() => {
+          // (opzionale ma utile)
+          console.log('Realtime corridor update FULL:', notification);
+
+          // aggiorna corridoi e ricalcolo se già attivo
+          this.fetchCorridorsLive();
+          if (this.hasComputedEvacuation && this.selectedNodeId) {
+            this.calculateEvacuation(true);
+          }
+
+          // mostra banner
+          this.showTopNotification(notification.status, notification.fromNode, notification.toNode);
+        });
       });
+    this.fetchNodes().then(() => {
+      this.recomputeViewLists();
+      this.refreshAll();
     });
 
-    this.pollingInterval = setInterval(() => this.refreshAll(), 3000);
-  }
+  });
+
+  // puoi lasciarlo per ora
+  this.pollingInterval = setInterval(() => this.refreshAll(), 3000);
+}
 
   ngOnDestroy(): void {
-    if (this.pollingInterval) clearInterval(this.pollingInterval);
-    this.routeSub?.unsubscribe();
-  }
-
+  if (this.pollingInterval) clearInterval(this.pollingInterval);
+  this.routeSub?.unsubscribe();
+  this.notificationSub?.unsubscribe(); 
+  this.notificationSocket.disconnect();
+}
   private getDefaultFloorForBuilding(b: string): Floor {
     if (b === 'A') return 'terra';
     if (b === 'B') return 'interrato';
@@ -441,7 +514,7 @@ export class BuildingComponent implements OnInit, OnDestroy {
   calculateEvacuation(silent = false) {
     if (!this.selectedNodeId) return;
 
-    const url = `/api/evacuation/from/${encodeURIComponent(this.selectedNodeId)}`;
+    const url = `http://localhost:8080/api/evacuation/from/${encodeURIComponent(this.selectedNodeId)}`;
 
     this.http.get<{ path?: string[]; message?: string }>(url).subscribe({
       next: (res) => {

@@ -356,3 +356,40 @@
   transform: translateY(-1px);
   background: rgba(15, 23, 42, 0.85);
 }
+
+.top-notification {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  z-index: 99999;
+  min-width: 320px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  animation: slideDown 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+  /* ✅ base background (se per caso manca blocked/unblocked) */
+  background: rgba(15, 23, 42, 0.85);
+
+  /* non blocca click sotto */
+  pointer-events: none;
+}
+
+.top-notification.blocked {
+  background: linear-gradient(135deg, #ff4d4f, #c1121f);
+}
+
+.top-notification.unblocked {
+  background: linear-gradient(135deg, #2ecc71, #1b9c5a);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -18px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}

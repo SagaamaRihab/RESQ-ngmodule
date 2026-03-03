@@ -5,22 +5,20 @@ import { Corridor} from '../models/corridor.model';
 
 @Injectable({ providedIn: 'root' })
 export class CorridorsService {
-  private baseUrl = '/api/map';
+
+  private baseUrl = 'http://localhost:8080/api/admin/corridors';
 
   constructor(private http: HttpClient) {}
 
-  // lista corridoi
   getCorridors(): Observable<Corridor[]> {
-    return this.http.get<Corridor[]>(`${this.baseUrl}/corridors`);
+    return this.http.get<Corridor[]>(`${this.baseUrl}`);
   }
 
-  //  blocca corridoio
   blockCorridor(id: number): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/corridor/${id}/block`, {});
+    return this.http.put<void>(`${this.baseUrl}/${id}/block`, {});
   }
 
-  // sblocca corridoio
   unblockCorridor(id: number): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/corridor/${id}/unblock`, {});
+    return this.http.put<void>(`${this.baseUrl}/${id}/unblock`, {});
   }
 }
