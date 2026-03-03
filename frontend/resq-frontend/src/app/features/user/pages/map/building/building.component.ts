@@ -223,59 +223,57 @@ private showTopNotification(statusRaw: string, fromNode: string, toNode: string)
 }
 
   ngOnInit(): void {
-   
 
-  this.routeSub = this.route.paramMap.subscribe((pm) => {
+    //  continua a leggere il building
+    this.routeSub = this.route.paramMap.subscribe((pm) => {
 
-    const b = pm.get('building') ?? 'A';
-    this.building = b;
+      const b = pm.get('building') ?? 'A';
+      this.building = b;
 
-    this.selectedFloor = this.getDefaultFloorForBuilding(b);
+      this.selectedFloor = this.getDefaultFloorForBuilding(b);
 
-    this.resetPath();
-    this.selectedNodeId = '';
-    this.hasComputedEvacuation = false;
-    this.lastCorridorsSignatureByBuilding = '';
+      this.resetPath();
+      this.selectedNodeId = '';
+      this.hasComputedEvacuation = false;
+      this.lastCorridorsSignatureByBuilding = '';
 
-    this.nodesLoaded = false;
-    this.currentRooms = [];
-    this.currentExits = [];
+      this.nodesLoaded = false;
+      this.currentRooms = [];
+      this.currentExits = [];
 
-    //  CONNECT WEBSOCKET QUI
-    this.notificationSocket.connect(this.building);
+     this.fetchNodes().then(() => {
 
-    
-    // chiudi eventuale vecchia subscription
-      this.notificationSub?.unsubscribe();
+    this.recomputeViewLists();
+    this.refreshAll();
 
-     this.notificationSub = this.notificationSocket.notification$.subscribe(notification => {
-        if (!notification) return;
+    //  LEGGI IL QUERY PARAM DOPO CHE I NODI SONO CARICATI
+    this.route.queryParams.subscribe(params => {
 
-        this.zone.run(() => {
-          // (opzionale ma utile)
-          console.log('Realtime corridor update FULL:', notification);
+      const startDisplayName = params['start'];
 
-          // aggiorna corridoi e ricalcolo se già attivo
-          this.fetchCorridorsLive();
-          if (this.hasComputedEvacuation && this.selectedNodeId) {
-            this.calculateEvacuation(true);
-          }
+      if (startDisplayName) {
+        this.selectStartFromDisplayName(startDisplayName);
+      }
 
-          // mostra banner
-          this.showTopNotification(notification.status, notification.fromNode, notification.toNode);
-        });
-      });
-    this.fetchNodes().then(() => {
-      this.recomputeViewLists();
-      this.refreshAll();
     });
 
   });
+    });
 
-  // puoi lasciarlo per ora
-  this.pollingInterval = setInterval(() => this.refreshAll(), 3000);
-}
+    //  QUESTA È LA PARTE IMPORTANTE
+    this.route.queryParams.subscribe(params => {
 
+      const startDisplayName = params['start'];
+
+      if (startDisplayName && this.nodesLoaded) {
+
+        this.selectStartFromDisplayName(startDisplayName);
+
+      }
+
+    });
+
+  }
   ngOnDestroy(): void {
   if (this.pollingInterval) clearInterval(this.pollingInterval);
   this.routeSub?.unsubscribe();
@@ -654,6 +652,32 @@ private showTopNotification(statusRaw: string, fromNode: string, toNode: string)
       name: this.nodeDisplayName(nodeId),
     };
   }
+
+  private selectStartFromDisplayName(displayName: string) {
+
+  const foundNodeId = Object.keys(this.nodeLabelById).find(
+    id => this.nodeLabelById[id].toLowerCase() === displayName.toLowerCase()
+  );
+
+  if (!foundNodeId) {
+    console.warn('Node not found for:', displayName);
+    return;
+  }
+
+  this.selectedNodeId = foundNodeId;
+
+  const parsed = this.parseNodeId(foundNodeId);
+  if (parsed) {
+
+    // 🔥 FORZA CAMBIO PIANO COME SE CLICCASSI IL BOTTONE
+    this.selectFloor(parsed.floor);
+
+    // 🔥 Aspetta che la vista sia pronta
+    setTimeout(() => {
+      this.calculateEvacuation();
+    }, 0);
+  }
+}
 
   private floorCodeToFloor(code: string): Floor {
     const map: Record<string, Floor> = {

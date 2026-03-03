@@ -4,8 +4,10 @@ import it.unibg.resq.model.NodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface NodeRepository extends JpaRepository<NodeEntity, Long> {
 
     Optional<NodeEntity> findByLabel(String label);
+    List<NodeEntity> findByBuildingAndFloor(String building, String floor);
 }

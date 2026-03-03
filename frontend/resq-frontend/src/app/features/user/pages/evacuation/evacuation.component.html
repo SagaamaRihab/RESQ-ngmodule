@@ -1,125 +1,110 @@
-<!-- CONTENITORE PRINCIPALE PAGINA EVACUAZIONE -->
 <div class="evacuation-wrapper">
 
-  <!-- CARD CENTRALE CON ANIMAZIONE -->
   <div class="evacuation-card fade-in">
 
-
-    <!-- ================= HEADER ================= -->
+    <!-- HEADER -->
     <div class="card-header">
 
-      <!-- Icona decorativa -->
       <div class="header-icon">
         <i class="fa-solid fa-route"></i>
       </div>
 
-      <!-- Titolo pagina -->
       <h1>Evacuation Planning</h1>
 
-      <!-- Separatore grafico -->
       <div class="divider"></div>
 
-      <!-- Descrizione -->
       <p>
-
-        Enter your current node.
+        Select your current position.
         The system will calculate the safest evacuation route.
-
       </p>
 
     </div>
 
 
-    <!-- ================= FORM ================= -->
+    <!-- FORM -->
     <div class="form-section">
 
       <div class="form-group">
 
-        <!-- Etichetta input -->
-        <label for="startNode">Starting Node</label>
-
+        <!-- BUILDING -->
+        <label>Building</label>
 
         <div class="input-wrapper">
-
-          <!-- Icona posizione -->
-          <i class="fa-solid fa-location-dot"></i>
-
-          <!-- Campo input -->
-          <input
-            id="startNode"
-            type="text"
-            [(ngModel)]="startNode"
-            placeholder="e.g. A101"
-          />
-
+          <i class="fa-solid fa-building"></i>
+          <select
+            [(ngModel)]="selectedBuilding"
+            (change)="onBuildingChange()">
+            <option value="">-- Select Building --</option>
+            <option value="A">Building A</option>
+            <option value="B">Building B</option>
+            <option value="D">Building D</option>
+          </select>
         </div>
+
+
+        <!-- FLOOR -->
+        <label *ngIf="selectedBuilding">Floor</label>
+
+        <div class="input-wrapper" *ngIf="selectedBuilding">
+          <i class="fa-solid fa-layer-group"></i>
+          <select
+            [(ngModel)]="selectedFloor"
+            (change)="onFloorChange()">
+            <option value="">-- Select Floor --</option>
+            <option *ngFor="let floor of availableFloors"
+                    [value]="floor">
+              {{ floor }}
+            </option>
+          </select>
+        </div>
+
+
+        <!-- ROOM -->
+       
+        <div *ngIf="selectedFloor" class="room-select">
+
+  <label>Room</label>
+
+  <div class="custom-dropdown" (click)="toggleRoomDropdown()">
+
+    <div class="dropdown-selected">
+      {{ getSelectedRoomName() || '-- Select Room --' }}
+    </div>
+
+    <div class="dropdown-list" *ngIf="roomDropdownOpen">
+
+      <div class="dropdown-item"
+           *ngFor="let node of filteredNodes"
+           (click)="selectRoom(node, $event)">
+
+        {{ node.displayName }}
 
       </div>
 
+    </div>
 
-      <!-- Pulsante calcolo -->
+  </div>
+
+</div>
+        
+      </div>
+
+
+      <!-- BUTTON -->
       <button
         class="btn-submit"
-        (click)="calculate()"
-        [disabled]="loading">
+        (click)="calculate()">
 
-
-        <!-- Testo normale -->
-        <span *ngIf="!loading">Calculate Route</span>
-
-
-        <!-- Spinner caricamento -->
-        <span *ngIf="loading" class="spinner"></span>
+        Calculate Route
 
       </button>
 
     </div>
 
 
-    <!-- ================= STATO ================= -->
-
-    <!-- Messaggio errore -->
+    <!-- ERROR -->
     <div *ngIf="error" class="status status-error">
-
       {{ error }}
-
-    </div>
-
-
-    <!-- ================= RISULTATO ================= -->
-    
-    <!-- NOTIFICA BLOCCO -->
-    <div *ngIf="notification" class="notification-box">
-      ⚠️ {{ notification }}
-    </div>
-
-    
-    <div *ngIf="response" class="result-card">
-
-
-      <h3>Recommended Route</h3>
-
-
-      <p>{{ response.message }}</p>
-
-
-      <!-- Lista nodi percorso -->
-      <ul class="path-list">
-
-        <li *ngFor="let node of response.path">
-          {{ node }}
-        </li>
-
-      </ul>
-
-
-      <!-- Visualizzatore grafico percorso -->
-      <app-path-viewer
-        *ngIf="response.path.length"
-        [path]="response.path">
-
-      </app-path-viewer>
-
     </div>
 
   </div>

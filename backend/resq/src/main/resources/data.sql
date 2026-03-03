@@ -2,72 +2,61 @@
 -- NODES
 -- =====================================================
 
-INSERT INTO nodes (display_name, label) VALUES
+INSERT INTO nodes (display_name, label, building, floor) VALUES
 
--- =======================
--- EDIFICIO A
--- =======================
+-- BUILDING A - GROUND FLOOR
+('Main Entrance', 'A_T_ENTRANCE', 'A', 'GROUND'),
+('Hall', 'A_T_HALL', 'A', 'GROUND'),
+('Stairs (Ground)', 'A_T_STAIRS', 'A', 'GROUND'),
+('Library', 'A_T_BIBLIOTECA', 'A', 'GROUND'),
+('Study Room', 'A_T_SALA_STUDIO', 'A', 'GROUND'),
 
--- Piano Terra
-('Main Entrance', 'A_T_ENTRANCE'),
-('Hall', 'A_T_HALL'),
-('Stairs (Ground)', 'A_T_STAIRS'),
-('Library', 'A_T_BIBLIOTECA'),
-('Study Room', 'A_T_SALA_STUDIO'),
+-- BUILDING A - FIRST FLOOR
+('Stairs (First)', 'A_1_STAIRS', 'A', 'FIRST'),
+('Hall (First)', 'A_1_HALL', 'A', 'FIRST'),
+('Classroom 3', 'A_1_AULA_3', 'A', 'FIRST'),
+('Classroom 4', 'A_1_AULA_4', 'A', 'FIRST'),
 
--- Primo Piano
-('Stairs (First)', 'A_1_STAIRS'),
-('Hall (First)', 'A_1_HALL'),
-('Aula 3', 'A_1_AULA_3'),
-('Aula 4', 'A_1_AULA_4'),
+-- BUILDING A - SECOND FLOOR
+('Stairs (Second)', 'A_2_STAIRS', 'A', 'SECOND'),
+('Hall (Second)', 'A_2_HALL', 'A', 'SECOND'),
+('Classroom 7', 'A_2_AULA_7', 'A', 'SECOND'),
+('Classroom 8', 'A_2_AULA_8', 'A', 'SECOND'),
+('Classroom 9', 'A_2_AULA_9', 'A', 'SECOND'),
+('Classroom 10', 'A_2_AULA_10', 'A', 'SECOND'),
 
--- Secondo Piano
-('Stairs (Second)', 'A_2_STAIRS'),
-('Hall (Second)', 'A_2_HALL'),
-('Aula 7', 'A_2_AULA_7'),
-('Aula 8', 'A_2_AULA_8'),
-('Aula 9', 'A_2_AULA_9'),
-('Aula 10', 'A_2_AULA_10'),
+-- BUILDING B - BASEMENT
+('Entrance (Basement)', 'B_I_ENTRANCE', 'B', 'BASEMENT'),
+('Classroom 12', 'B_I_AULA_12', 'B', 'BASEMENT'),
+('Classroom 13', 'B_I_AULA_13', 'B', 'BASEMENT'),
+('Classroom 14', 'B_I_AULA_14', 'B', 'BASEMENT'),
+('Basement Exit', 'B_I_EXIT', 'B', 'BASEMENT'),
 
--- =======================
--- EDIFICIO B
--- =======================
+-- BUILDING B - RAISED FLOOR
+('Raised Floor Entrance', 'B_R_ENTRANCE', 'B', 'RAISED'),
+('Classroom 17', 'B_R_AULA_17', 'B', 'RAISED'),
+('Classroom 18', 'B_R_AULA_18', 'B', 'RAISED'),
+('Classroom 19', 'B_R_AULA_19', 'B', 'RAISED'),
+('Classroom 20', 'B_R_AULA_20', 'B', 'RAISED'),
+('Classroom 21', 'B_R_AULA_21', 'B', 'RAISED'),
+('Raised Floor Exit', 'B_R_EXIT', 'B', 'RAISED'),
 
--- Interrato
-('Entrance (Basement)', 'B_I_ENTRANCE'),
-('Aula 12', 'B_I_AULA_12'),
-('Aula 13', 'B_I_AULA_13'),
-('Aula 14', 'B_I_AULA_14'),
-('Basement Exit', 'B_I_EXIT'),
+-- BUILDING B - FIRST FLOOR
+('First Floor Entrance', 'B_P_INGRESSO', 'B', 'FIRST'),
+('Classroom 22', 'B_P_AULA_22', 'B', 'FIRST'),
+('Classroom 23', 'B_P_AULA_23', 'B', 'FIRST'),
+('Classroom 24', 'B_P_AULA_24', 'B', 'FIRST'),
+('Classroom 25', 'B_P_AULA_25', 'B', 'FIRST'),
+('First Floor Exit', 'B_P_EXIT', 'B', 'FIRST'),
 
--- Rialzato
-('Rialzato Entrance', 'B_R_ENTRANCE'),
-('Aula 17', 'B_R_AULA_17'),
-('Aula 18', 'B_R_AULA_18'),
-('Aula 19', 'B_R_AULA_19'),
-('Aula 20', 'B_R_AULA_20'),
-('Aula 21', 'B_R_AULA_21'),
-('Rialzato Exit', 'B_R_EXIT'),
-
--- Primo Piano
-('First Floor Entrance', 'B_P_INGRESSO'),
-('Aula 22', 'B_P_AULA_22'),
-('Aula 23', 'B_P_AULA_23'),
-('Aula 24', 'B_P_AULA_24'),
-('Aula 25', 'B_P_AULA_25'),
-('First Floor Exit', 'B_P_EXIT'),
-
--- =======================
--- EDIFICIO D
--- =======================
-
-('Ingresso Principale', 'D_T_INGRESSO_PRINCIPALE'),
-('Portineria', 'D_T_PORTINERIA'),
-('Aula Magna', 'D_T_AULA_MAGNA'),
-('Aula Minore', 'D_T_AULA_MINORE'),
-('Exit East', 'D_T_EXIT_EAST'),
-('Exit South', 'D_T_EXIT_SOUTH'),
-('Stairs D', 'D_T_STAIRS')
+-- BUILDING D - GROUND
+('Main Entrance', 'D_T_INGRESSO_PRINCIPALE', 'D', 'GROUND'),
+('Reception', 'D_T_PORTINERIA', 'D', 'GROUND'),
+('Main Hall', 'D_T_AULA_MAGNA', 'D', 'GROUND'),
+('Small Hall', 'D_T_AULA_MINORE', 'D', 'GROUND'),
+('Exit East', 'D_T_EXIT_EAST', 'D', 'GROUND'),
+('Exit South', 'D_T_EXIT_SOUTH', 'D', 'GROUND'),
+('Stairs D', 'D_T_STAIRS', 'D', 'GROUND')
 
 ON CONFLICT (label) DO NOTHING;
 

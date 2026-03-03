@@ -20,4 +20,10 @@ public class NodeEntity {
 
     @Column(name = "display_name")
     private String displayName;
+
+    @Column(nullable = false)
+    private String building;   // A, B, D
+
+    @Column(nullable = false)
+    private String floor;      // T, P, S, B, R
 }

@@ -33,10 +33,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String path = request.getServletPath();
+        String path = request.getRequestURI();
 
-        // ✅ NON controllare auth (login/signup)
-        if (path.startsWith("/api/auth/")) {
+        //  ROTTE PUBBLICHE (senza JWT)
+        if (path.startsWith("/api/auth") ||
+                path.startsWith("/api/nodes") ||
+                path.startsWith("/ws") ||
+                path.startsWith("/topic")) {
+
             filterChain.doFilter(request, response);
             return;
         }
