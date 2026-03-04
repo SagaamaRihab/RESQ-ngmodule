@@ -246,6 +246,16 @@ private showTopNotification(statusRaw: string, fromNode: string, toNode: string)
     this.recomputeViewLists();
     this.refreshAll();
 
+
+      //  CONNECT WEBSOCKET
+    this.notificationSocket.connect(this.building);
+
+    this.notificationSub = this.notificationSocket.notification$.subscribe((msg) => {
+      if (!msg) return;
+
+      this.showTopNotification(msg.status, msg.fromNode, msg.toNode);
+    });
+
     //  LEGGI IL QUERY PARAM DOPO CHE I NODI SONO CARICATI
     this.route.queryParams.subscribe(params => {
 

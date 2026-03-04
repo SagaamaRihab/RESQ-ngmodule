@@ -8,7 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 export class NotificationSocketService {
 
   private stompClient!: Client;
-  private notificationSubject = new BehaviorSubject<any>(null);
+  private notificationSubject = new BehaviorSubject<any | null>(null);
   public notification$ = this.notificationSubject.asObservable();
 
   connect(building: string) {
