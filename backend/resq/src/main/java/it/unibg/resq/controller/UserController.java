@@ -23,23 +23,11 @@ public class UserController {
     private final JwtService jwtService;
     private final UserService userService;
 
-    // 
-    // GESTIONE POSIZIONE (Per Mappa Admin)
-    // 
-
-    /**
-     *  Per l'Admin: Recupera le posizioni di tutti gli utenti per visualizzare i punti sulla mappa
-     * Nota: Questo metodo richiede che getActiveUserPositions() sia definito in UserService
-     */
     @GetMapping("/active-locations")
     public ResponseEntity<List<UserPositionDto>> getAllUserLocations() {
         return ResponseEntity.ok(userService.getActiveUserPositions());
     }
 
-    /**
-     *  Per l'Utente: Invia la propria posizione (nodeId) quando entra in una stanza
-     * Nota: Questo metodo richiede che updateUserLocation() sia definito in UserService
-     */
     @PostMapping("/me/location")
     public ResponseEntity<?> updateMyLocation(
             @RequestBody Map<String, String> locationRequest,
@@ -103,13 +91,6 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Account deleted"));
     }
 
-    // 
-    // UTILITY
-    // 
-
-    /**
-     * Estrae l'email dall'oggetto Authentication per evitare ripetizioni di codice
-     */
     private String getEmailFromAuthentication(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof User) {

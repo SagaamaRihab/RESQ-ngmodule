@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -19,6 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserActivityService userActivityService;
 
     //  chiave segreta per ADMIN
     private static final String ADMIN_SECRET = "RESQ_ADMIN_2026";
@@ -84,7 +86,10 @@ public class AuthService {
             );
         }
 
-        return user;
+        // SAVE LOGIN ACTIVITY
+                userActivityService.saveActivity(user.getId(), "login");
+
+                return user;
 
     }
 }

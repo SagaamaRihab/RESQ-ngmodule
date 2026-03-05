@@ -73,7 +73,16 @@ deleteMyAccount() {
   );
 }
 
+getStatistics(userId: number) {
+  return this.http.get<any>(`http://localhost:8080/api/user/statistics/${userId}`);
+}
 
+saveActivity(userId: number, action: string) {
+  return this.http.post('http://localhost:8080/api/user/activity', {
+    userId: userId,
+    action: action
+  });
+}
 
 
 }

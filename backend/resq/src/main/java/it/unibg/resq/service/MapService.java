@@ -60,20 +60,7 @@ public class MapService {
     // =========================
     // SOLO CORRIDOI (filtrati per building + floor)
     // =========================
-    /**
-     * Usato dal frontend per disegnare i corridoi del piano corrente.
-     *
-     * Esempio:
-     *  building = "B"
-     *  floor    = "interrato"
-     *
-     * Atteso ID nodo consigliato:
-     *  B_I_Aula_12
-     *  B_I_Bagno_Femminile
-     *
-     * Se nel DB hai ID senza floor (es. D_AULA_MAGNA),
-     * il filtro farà fallback solo su building (meno preciso).
-     */
+
     public List<CorridorDTO> getCorridorsByBuildingAndFloor(String building, String floor) {
         if (building == null || building.isBlank()) {
             return getAllCorridors();
@@ -116,14 +103,7 @@ public class MapService {
                 .toList();
     }
 
-    /**
-     * Converte i nomi piano del frontend in codice.
-     * terra -> T
-     * primo -> 1
-     * secondo -> 2
-     * interrato -> I
-     * rialzato -> R
-     */
+
     private String floorCode(String floor) {
         return switch (floor.toLowerCase()) {
             case "terra" -> "T";

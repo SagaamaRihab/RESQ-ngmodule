@@ -104,6 +104,17 @@ export class UserProfileComponent implements OnInit {
 
 
   // =================================================
+  // ============ USER STATISTICS ====================
+  // =================================================
+
+  statistics = {
+    logins: 0,
+    evacuationvisits: 0,
+    mapvisits: 0
+  };
+
+
+  // =================================================
   // ============ EDIT MODAL =========================
   // =================================================
 
@@ -206,6 +217,25 @@ private showToast(type: 'success' | 'error', message: string) {
 
     // Load updated profile from backend
     this.loadProfile();
+
+
+    // Load statistics
+    this.userService.getStatistics(this.userId).subscribe({
+      next: (data: any) => {
+
+        this.statistics = {
+          logins: data.logins || 0,
+          evacuationvisits: data.evacuationvisits || 0,
+          mapvisits: data.mapvisits || 0
+        };
+
+        // forza Angular a aggiornare la view
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Statistics error', err);
+      }
+    });
   }
 
 
@@ -310,13 +340,13 @@ private showToast(type: 'success' | 'error', message: string) {
       localStorage.setItem('username', updatedUser.username);
 
 
-      /* ✅ CHIUDI MODAL */
+      /*  CHIUDI MODAL */
       this.showEditModal = false;
 
-      /* ✅ MOSTRA TOAST */
+      /*  MOSTRA TOAST */
       this.showToast('success', message);
 
-      /* 🔥 FORZA AGGIORNAMENTO VIEW */
+      /*  FORZA AGGIORNAMENTO VIEW */
       this.cd.detectChanges();
 
       this.isSaving = false;

@@ -47,7 +47,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   /** Selected start node = technical id (safe + unique) */
   selectedNodeId: string = '';
 
-  // ✅ Cached dropdown/exits lists (avoid calling functions in template)
+  //  Cached dropdown/exits lists (avoid calling functions in template)
   currentRooms: { id: string; name: string }[] = [];
   currentExits: string[] = [];
 
@@ -195,7 +195,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
       this.currentExits = [];
 
       this.fetchNodes().then(() => {
-        // ✅ compute dropdown options once nodes are loaded
+        //  compute dropdown options once nodes are loaded
         this.recomputeViewLists();
         this.refreshAll();
       });
@@ -254,10 +254,10 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   selectFloor(floor: Floor) {
     this.selectedFloor = floor;
 
-    // ✅ recompute lists once (no template functions)
+    //  recompute lists once (no template functions)
     this.recomputeViewLists();
 
-    // ✅ if selected room not available on this floor, reset selection
+    //  if selected room not available on this floor, reset selection
     if (this.selectedNodeId && !this.currentRooms.some((r) => r.id === this.selectedNodeId)) {
       this.selectedNodeId = '';
       this.onSelectedPositionChange('');
@@ -275,7 +275,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
   }
 
   private recomputeViewLists() {
-    // ✅ build cached arrays used by template
+    //  build cached arrays used by template
     this.currentRooms = this.getCurrentRooms();
     this.currentExits = this.getCurrentExits();
   }
@@ -421,7 +421,7 @@ export class AdminBuildingComponent implements OnInit, OnDestroy {
     return Array.from(new Set(nodes)).sort((a, b) => a.localeCompare(b));
   }
 
-  // ✅ now accepts nodeId (event from ngModelChange)
+  //  now accepts nodeId (event from ngModelChange)
   onSelectedPositionChange(_nodeId: string) {
     this.resetPath();
     this.hasComputedEvacuation = false;

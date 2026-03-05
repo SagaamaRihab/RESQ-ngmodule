@@ -46,7 +46,7 @@ export class SignupComponent {
 
 
 
-  // ✅ password: 6 caratteri, maiuscola, minuscola, numero, speciale
+  //  password: 6 caratteri, maiuscola, minuscola, numero, speciale
   passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
 
@@ -73,7 +73,7 @@ export class SignupComponent {
   this.submitted = true;
   this.errorMessage = '';
 
-  // ❌ NON toccare showModal qui
+  
 
 
   // Form invalid
@@ -125,7 +125,7 @@ export class SignupComponent {
     )
     .subscribe({
 
-      // ✅ SUCCESS
+      //  SUCCESS
       next: () => {
 
         this.openModal(
@@ -135,7 +135,7 @@ export class SignupComponent {
 
       },
 
-      // ❌ ERROR
+      //  ERROR
       error: (err: any) => {
 
         console.error('SIGNUP ERROR:', err);
@@ -175,7 +175,7 @@ openModal(type: 'success' | 'error', message: string): void {
   this.modalMessage = message;
   this.showModal = true;
 
-  this.cdr.detectChanges(); // 🔥 forza refresh
+  this.cdr.detectChanges(); //  forza refresh
 
 }
 

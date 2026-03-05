@@ -36,7 +36,7 @@ export class CorridorsComponent implements OnInit {
   caricamento = true;
   errore: string | null = null;
 
-  // ✅ Mapping: technical label -> display name (from DB)
+  // Mapping: technical label -> display name (from DB)
   nodeNameById: Record<string, string> = {};
   private nodesLoaded = false;
 
@@ -49,7 +49,7 @@ export class CorridorsComponent implements OnInit {
   ngOnInit(): void {
     this.setDefaultFloorForBuilding(this.edificioSelezionato);
 
-    // ✅ Load nodes first (display names), then corridors
+    //  Load nodes first (display names), then corridors
     this.loadNodes().then(() => {
       this.loadCorridors();
     });
@@ -79,7 +79,7 @@ export class CorridorsComponent implements OnInit {
     });
   }
 
-  // ✅ Used by HTML to show friendly labels
+  //  Used by HTML to show friendly labels
   nodeDisplayName(id: string): string {
     return this.nodeNameById[id] ?? id;
   }
@@ -183,7 +183,7 @@ export class CorridorsComponent implements OnInit {
   // =========================
   toggleCorridor(c: Corridor): void {
     const old = c.blocked;
-    c.blocked = !c.blocked; // ✅ update immediate UI
+    c.blocked = !c.blocked; //  update immediate UI
     this.applyFilters();
 
     const req = old
@@ -191,7 +191,7 @@ export class CorridorsComponent implements OnInit {
       : this.corridorsService.blockCorridor(c.id);
 
     req.subscribe({
-      next: () => this.loadCorridors(), // ✅ sync true state
+      next: () => this.loadCorridors(), //  sync true state
       error: (e) => {
         console.error(e);
         c.blocked = old; // rollback
@@ -204,7 +204,7 @@ export class CorridorsComponent implements OnInit {
   // HELPERS
   // =========================
   private setDefaultFloorForBuilding(b: Building) {
-    // ✅ IMPORTANT: B should start at I
+    //  IMPORTANT: B should start at I
     if (b === 'A') this.pianoSelezionato = 'T';
     if (b === 'B') this.pianoSelezionato = 'I';
     if (b === 'D') this.pianoSelezionato = 'T'; // not used for D

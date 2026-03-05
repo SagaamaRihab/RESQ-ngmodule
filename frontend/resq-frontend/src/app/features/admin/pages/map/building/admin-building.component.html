@@ -38,7 +38,7 @@
           <!-- OVERLAY SVG -->
           <svg class="map-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
 
-            <!-- 🔴 Blocked corridors (red X) -->
+            <!--  Blocked corridors (red X) -->
             <g *ngFor="let e of displayedEdges">
               <g
                 *ngIf="e.blocked"
@@ -50,7 +50,7 @@
               </g>
             </g>
 
-            <!-- 🟢 EVACUATION PATH (GREEN LINES) -->
+            <!--  EVACUATION PATH (GREEN LINES) -->
             <g *ngFor="let seg of evacuationPathSegmentsForCurrentFloor">
               <line
                 class="evacuation-line"
@@ -63,13 +63,13 @@
 
           </svg>
 
-          <!-- 🟢 MY POSITION -->
+          <!--  MY POSITION -->
           <div class="self-marker" [ngStyle]="getSelectedPositionStyle()">
             <div class="self-dot"></div>
             <div class="self-label">Me</div>
           </div>
 
-          <!-- 🔵 OTHER USERS -->
+          <!--  OTHER USERS -->
           <div
             class="user-marker"
             *ngFor="let u of utentiAttivi"
@@ -89,7 +89,7 @@
         <div class="emergency-row">
           <label for="pos">Where are you?</label>
 
-          <!-- ✅ Stable select: model = selectedNodeId (technical id) -->
+          <!--  Stable select: model = selectedNodeId (technical id) -->
           <select
             id="pos"
             [(ngModel)]="selectedNodeId"

@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NotificationSocketService } from '../../../../../core/services/notification-socket.service';
+import { UserService } from '../../../../../core/services/user.service';
 
 type Floor = 'terra' | 'primo' | 'secondo' | 'interrato' | 'rialzato';
 type Point = { x: number; y: number };
@@ -48,7 +49,7 @@ export class BuildingComponent implements OnInit, OnDestroy {
   /** Selected start node = technical id (safe + unique) */
   selectedNodeId: string = '';
 
-  // ✅ Cached dropdown/exits lists (avoid calling functions in template)
+  //  Cached dropdown/exits lists (avoid calling functions in template)
   currentRooms: { id: string; name: string }[] = [];
   currentExits: string[] = [];
 
@@ -185,10 +186,22 @@ export class BuildingComponent implements OnInit, OnDestroy {
   constructor(
   private route: ActivatedRoute,
   private http: HttpClient,
-  private notificationSocket: NotificationSocketService
+  private notificationSocket: NotificationSocketService,
+  private userService: UserService
 ) {}
 
  ngOnInit(): void {
+
+  localStorage.removeItem('startNode');
+
+  //  SAVE MAP VISIT (non rompe nulla)
+  const userId = Number(localStorage.getItem('userId') || 0);
+  if (userId) {
+    this.userService.saveActivity(userId, 'view_map').subscribe({
+      error: (err) => console.error('saveActivity view_map error', err)
+    });
+  }
+
   this.routeSub = this.route.paramMap.subscribe((pm) => {
     const b = pm.get('building') ?? 'A';
     this.building = b;
@@ -213,39 +226,37 @@ export class BuildingComponent implements OnInit, OnDestroy {
   // polling ogni 3 secondi
   this.pollingInterval = setInterval(() => this.refreshAll(), 3000);
 
-  // ✅ CONNECT WEBSOCKET
+  //  CONNECT WEBSOCKET
   this.notificationSocket.connect();
 
-  // ✅ LISTEN NOTIFICATIONS
- this.notificationSocket.notification$.subscribe((data: any) => {
+  //  LISTEN NOTIFICATIONS
+  this.notificationSocket.notification$.subscribe((data: any) => {
+    if (!data) return;
 
-  if (!data) return;
+    console.log("WebSocket update:", data);
 
-  console.log("WebSocket update:", data);
+    const corridorId = parseInt(data.corridor.replace("Corridor ", ""));
+    const corridor = this.corridorMap[corridorId];
 
- const corridorId = parseInt(data.corridor.replace("Corridor ", ""));
-  const corridor = this.corridorMap[corridorId];
+    if (corridor) {
+      const from = this.nodeDisplayName(corridor.fromNode);
+      const to = this.nodeDisplayName(corridor.toNode);
 
-  if (corridor) {
+      if (data.status === "blocked") {
+        this.notificationType = "blocked";
+        this.notificationMessage = `🚫 Corridor ${from} ↔ ${to} blocked`;
+      }
 
-    const from = this.nodeDisplayName(corridor.fromNode);
-    const to = this.nodeDisplayName(corridor.toNode);
+      if (data.status === "unblocked") {
+        this.notificationType = "unblocked";
+        this.notificationMessage = `✅ Corridor ${from} ↔ ${to} reopened`;
+      }
 
-    if (data.status === "blocked") {
-      this.notificationType = "blocked";
-      this.notificationMessage = `🚫 Corridor ${from} ↔ ${to} blocked`;
+      setTimeout(() => {
+        this.notificationMessage = null;
+        this.notificationType = null;
+      }, 4000);
     }
-
-    if (data.status === "unblocked") {
-      this.notificationType = "unblocked";
-      this.notificationMessage = `✅ Corridor ${from} ↔ ${to} reopened`;
-    }
-
-    setTimeout(() => {
-      this.notificationMessage = null;
-      this.notificationType = null;
-    }, 4000);
-  }
 
     setTimeout(() => {
       this.notificationMessage = null;
@@ -306,10 +317,10 @@ export class BuildingComponent implements OnInit, OnDestroy {
   selectFloor(floor: Floor) {
     this.selectedFloor = floor;
 
-    // ✅ recompute lists once (no template functions)
+    //  recompute lists once (no template functions)
     this.recomputeViewLists();
 
-    // ✅ if selected room not available on this floor, reset selection
+    //  if selected room not available on this floor, reset selection
     if (this.selectedNodeId && !this.currentRooms.some((r) => r.id === this.selectedNodeId)) {
       this.selectedNodeId = '';
       this.onSelectedPositionChange('');
@@ -327,7 +338,7 @@ export class BuildingComponent implements OnInit, OnDestroy {
   }
 
   private recomputeViewLists() {
-    // ✅ build cached arrays used by template
+    //  build cached arrays used by template
     this.currentRooms = this.getCurrentRooms();
     this.currentExits = this.getCurrentExits();
   }
@@ -484,7 +495,7 @@ export class BuildingComponent implements OnInit, OnDestroy {
     return Array.from(new Set(nodes)).sort((a, b) => a.localeCompare(b));
   }
 
-  // ✅ now accepts nodeId (event from ngModelChange)
+  //  now accepts nodeId (event from ngModelChange)
   onSelectedPositionChange(_nodeId: string) {
     this.resetPath();
     this.hasComputedEvacuation = false;
