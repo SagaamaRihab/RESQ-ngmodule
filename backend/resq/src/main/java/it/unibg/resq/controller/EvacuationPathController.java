@@ -18,7 +18,7 @@ public class EvacuationPathController {
     private final EvacuationPathService evacuationPathService;
 
     // =========================
-    // 🚨 EVACUAZIONE DA DATABASE
+    // EVACUAZIONE DA DATABASE
     // =========================
     @GetMapping("/from/{start}")
     public EvacuationPathResponse getEvacuationPath(@PathVariable String start) {
@@ -39,7 +39,7 @@ public class EvacuationPathController {
     }
 
     // =========================
-    // 🧭 ROUTE GENERICA (DTO)
+    //  ROUTE GENERICA (DTO)
     // =========================
     @PostMapping("/route")
     public RouteResponse calculateRoute(@RequestBody RouteRequest request) {

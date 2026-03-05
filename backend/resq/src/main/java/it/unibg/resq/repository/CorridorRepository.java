@@ -8,4 +8,5 @@ import java.util.List;
 public interface CorridorRepository extends JpaRepository<Corridor, Long> {
 
     List<Corridor> findByBlockedFalse();
+
 }

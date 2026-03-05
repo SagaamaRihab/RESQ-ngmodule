@@ -105,12 +105,12 @@ public class MapService {
                     String to = dto.toNode();
                     if (from == null || to == null) return false;
 
-                    // ✅ CASO MIGLIORE: id contiene anche il floorCode (B_I_...)
+                    //  CASO MIGLIORE: id contiene anche il floorCode (B_I_...)
                     if (prefixWithFloor != null) {
                         return from.startsWith(prefixWithFloor) && to.startsWith(prefixWithFloor);
                     }
 
-                    // ⚠️ FALLBACK: id contiene solo building (D_...)
+                    //  FALLBACK: id contiene solo building (D_...)
                     return from.startsWith(prefixBuildingOnly) && to.startsWith(prefixBuildingOnly);
                 })
                 .toList();
@@ -136,7 +136,7 @@ public class MapService {
     }
 
     // =========================
-    // 🗺️ MAPPA COMPLETA
+    // MAPPA COMPLETA
     // =========================
     public MapDTO getMap() {
         log.debug("Recupero mappa completa");
@@ -163,7 +163,7 @@ public class MapService {
                 .toList();
     }
     // =========================
-    // ✅ EVACUATION (Strategy)
+    // EVACUATION (Strategy)
     // =========================
     public List<String> computeEvacuationPath(String startNode) {
 

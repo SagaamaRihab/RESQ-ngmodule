@@ -32,18 +32,12 @@
 
           <i class="fa-solid fa-location-dot"></i>
 
-          <!-- MODIFICATO: da input text a select -->
-          <select
+          <input
             id="startNode"
-            [(ngModel)]="startNode">
-
-            <option [ngValue]="''">-- Select --</option>
-
-            <option *ngFor="let n of nodes" [ngValue]="n.label">
-              {{ n.displayName || n.label }}
-            </option>
-
-          </select>
+            type="text"
+            [(ngModel)]="startNode"
+            placeholder="Es. A101"
+          />
 
         </div>
 
@@ -56,6 +50,7 @@
         [disabled]="loading">
 
         <span *ngIf="!loading">Calculate evacuation path</span>
+
         <span *ngIf="loading" class="spinner"></span>
 
       </button>

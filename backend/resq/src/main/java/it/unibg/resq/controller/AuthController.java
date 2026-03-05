@@ -22,7 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtService jwtService; // ✅ CAMPO MANCANTE
+    private final JwtService jwtService; //  CAMPO MANCANTE
 
     // =====================
     // SIGNUP

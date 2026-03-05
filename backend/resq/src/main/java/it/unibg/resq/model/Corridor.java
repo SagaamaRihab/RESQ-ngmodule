@@ -27,7 +27,4 @@ public class Corridor {
     @Column(nullable = false)
     private boolean blocked;
 
-
-    @Column(nullable = false)
-    private String building;   // es: "A", "B"
 }

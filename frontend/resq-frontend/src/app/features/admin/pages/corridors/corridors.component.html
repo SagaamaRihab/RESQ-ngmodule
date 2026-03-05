@@ -16,7 +16,7 @@
 
     <div class="select-group" *ngIf="edificioSelezionato !== 'D'">
       <label>Select Floor</label>
-      <select [(ngModel)]="pianoSelezionato" (change)="applyFilters()">
+      <select [(ngModel)]="pianoSelezionato" (ngModelChange)="onFloorChange($event)">
         <ng-container *ngIf="edificioSelezionato === 'A'">
           <option value="T">Ground Floor (T)</option>
           <option value="1">First Floor (1)</option>
@@ -66,7 +66,7 @@
           <td>{{ c.weight }}</td>
           <td>
             <span class="status-badge" [class.blocked]="c.blocked">
-              {{ c.blocked ? '🔴 BLOCKED' : '🟢 ACTIVE' }}
+              {{ c.blocked ? ' BLOCKED' : ' ACTIVE' }}
             </span>
           </td>
           <td class="text-right">

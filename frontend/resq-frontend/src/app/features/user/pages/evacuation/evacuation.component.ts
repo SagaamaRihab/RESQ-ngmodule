@@ -1,139 +1,149 @@
-import { Component } from '@angular/core';
+// ================= IMPORT =================
+
+// Component Angular
+import { Component, OnInit } from '@angular/core';
+
+// Moduli comuni
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+
+// Service per chiamare il backend
 import { EvacuationService } from '../../../../core/services/evacuation.service';
+
+// Modello risposta evacuazione
+import { EvacuationResponse } from '../../../../core/models/evacuation-response.model';
+
+// Componente per visualizzare il percorso
+import { PathViewerComponent } from '../../../../shared/components/path-viewer/path-viewer.component';
+
+
+// ================= COMPONENT =================
 
 @Component({
   selector: 'app-evacuation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PathViewerComponent],
   templateUrl: './evacuation.component.html',
   styleUrls: ['./evacuation.component.css'],
-
-  
 })
-export class EvacuationComponent {
 
-  selectedBuilding: string = '';
-  selectedFloor: string = '';
-  selectedNodeId: string = '';
+export class EvacuationComponent implements OnInit {
 
-  availableFloors: string[] = [];
-  filteredNodes: any[] = [];
-  roomsLoaded: boolean = false;
+  // =================================================
+  // ============ STATO PRINCIPALE ===================
+  // =================================================
 
+  // Nodo di partenza inserito dall'utente
+  startNode = '';
+
+  // Percorso calcolato
+  path: string[] = [];
+
+  // Corridoi bloccati (eventuale estensione futura)
+  blockedCorridors: string[] = [];
+
+  // Stato caricamento
+  loading = false;
+
+  // Messaggio errore
   error: string | null = null;
+  notification: string | null = null;
+
+
+  // Risposta completa dal backend
+  response: EvacuationResponse | null = null;
+
+
+  // =================================================
+  // ============ COSTRUTTORE ========================
+  // =================================================
 
   constructor(
-    private evacuationService: EvacuationService,
-    private router: Router
+    private evacuationService: EvacuationService
   ) {}
 
-  // =============================
-  // FLOORS CONFIG
-  // =============================
 
-  buildingFloors: any = {
-    A: ['Ground Floor', 'First Floor', 'Second Floor'],
-    B: ['Basement', 'Raised Floor', 'First Floor'],
-    D: ['Ground Floor']
-  };
-
-  floorCodeMap: any = {
-  A: {
-    'Ground Floor': 'GROUND',
-    'First Floor': 'FIRST',
-    'Second Floor': 'SECOND'
-  },
-  B: {
-    'Basement': 'BASEMENT',
-    'Raised Floor': 'RAISED',
-    'First Floor': 'FIRST'
-  },
-  D: {
-    'Ground Floor': 'GROUND'
-  }
-};
-
-  // =============================
-  // BUILDING CHANGE
-  // =============================
-
-  onBuildingChange() {
-
-    this.availableFloors =
-      this.buildingFloors[this.selectedBuilding] || [];
-
-    this.selectedFloor = '';
-    this.selectedNodeId = '';
-    this.filteredNodes = [];
-    this.error = null;
-  }
-
-  // =============================
-  // FLOOR CHANGE
-  // =============================
-
- onFloorChange() {
-
-  console.log("Building:", this.selectedBuilding);
-  console.log("Floor:", this.selectedFloor);
-
-  this.selectedNodeId = '';
-  this.filteredNodes = [];
-
-  if (!this.selectedFloor) return;
-
-  const floorCode =
-    this.floorCodeMap[this.selectedBuilding][this.selectedFloor];
-
-  console.log("Floor code sent to backend:", floorCode);
-
-  this.evacuationService
-    .getNodes(this.selectedBuilding, floorCode)
-    .subscribe(nodes => {
-
-      console.log("Nodes from backend:", nodes);
-
-      this.filteredNodes = nodes;
-    });
-}
-
-
-roomDropdownOpen = false;
-
-toggleRoomDropdown() {
-  this.roomDropdownOpen = !this.roomDropdownOpen;
-}
-
-selectRoom(node: any, event: Event) {
-  event.stopPropagation();
-  this.selectedNodeId = node.label;
-  this.roomDropdownOpen = false;
-}
-
-getSelectedRoomName(): string {
-  const room = this.filteredNodes.find(
-    r => r.label === this.selectedNodeId
-  );
-  return room ? room.displayName : '';
-}
-  // =============================
-  // CALCULATE
-  // =============================
+  // =================================================
+  // ============ CALCOLO PERCORSO ===================
+  // =================================================
 
   calculate(): void {
 
-    if (!this.selectedBuilding || !this.selectedNodeId) {
-      this.error = 'Please complete all selections';
+    console.log('CALCULATE BUTTON CLICKED');
+
+    // Reset stato
+    this.error = null;
+    this.response = null;
+    this.loading = true;
+
+    // Validazione input
+    if (!this.startNode.trim()) {
+      this.error = 'Please enter a starting node';
+      this.loading = false;
       return;
     }
 
-    this.router.navigate(
-      [`/user/map/${this.selectedBuilding}`],
-      { queryParams: { start: this.selectedNodeId } }
-    );
+    // Chiamata al backend
+    this.evacuationService
+      .calculateEvacuation(this.startNode.trim())
+      .subscribe({
+
+        // ================= SUCCESS =================
+        next: (res: EvacuationResponse) => {
+
+          this.response = res;
+          this.path = res?.path ?? [];
+
+          // ✅ NOTIFICA
+          this.notification = res.message;
+
+          // sparisce dopo 5 secondi
+          setTimeout(() => {
+            this.notification = null;
+          }, 5000);
+
+        },
+        
+
+
+        // ================= ERROR =================
+        error: (err) => {
+
+          console.error('ERROR:', err);
+
+          this.error = 'Error calculating evacuation route';
+          this.loading = false;
+        },
+
+
+        // ================= COMPLETE =================
+        complete: () => {
+
+          console.log('REQUEST COMPLETED');
+
+          this.loading = false;
+        }
+
+      });
+  }
+
+
+  // =================================================
+  // ============ INIZIALIZZAZIONE ===================
+  // =================================================
+
+  ngOnInit(): void {
+
+    // Se esiste nodo salvato → ricalcola automaticamente
+    const saved = localStorage.getItem('startNode');
+
+    if (saved) {
+
+      this.startNode = saved;
+
+      this.calculate();
+    }
+
   }
 
 }

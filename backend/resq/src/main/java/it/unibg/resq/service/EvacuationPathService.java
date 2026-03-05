@@ -25,11 +25,11 @@ public class EvacuationPathService {
     }
 
     // =========================================================
-    // 1️⃣ EVACUAZIONE DA DATABASE (caso reale)
+    // EVACUAZIONE DA DATABASE (caso reale)
     // =========================================================
     public List<String> calculateEvacuationPath(String startLabel) {
 
-        // 🔵 LOG: inizio operazione
+        //  LOG: inizio operazione
         log.info("Avvio calcolo evacuazione dal nodo: {}", startLabel);
 
         List<Corridor> corridors = corridorRepository.findAll();
@@ -55,7 +55,7 @@ public class EvacuationPathService {
 
         if (start == null) {
 
-            // 🔴 LOG: errore nodo non trovato
+            //  LOG: errore nodo non trovato
             log.error("Nodo iniziale non trovato: {}", startLabel);
 
             throw new NodeNotFoundException(startLabel);
@@ -81,7 +81,7 @@ public class EvacuationPathService {
         // Cerca percorso migliore verso ogni uscita
         for (GraphNode exit : exits) {
 
-            // 🟡 LOG: uscita in valutazione (debug)
+            // LOG: uscita in valutazione (debug)
             log.debug("Valuto uscita: {}", exit.getId());
 
             List<GraphNode> path =
@@ -91,7 +91,7 @@ public class EvacuationPathService {
 
                 double cost = calculateCost(path, graph);
 
-                // 🟢 LOG: percorso trovato per questa uscita
+                //  LOG: percorso trovato per questa uscita
                 log.debug("Percorso trovato per {} con costo {}",
                         exit.getId(), cost);
 
@@ -101,7 +101,7 @@ public class EvacuationPathService {
                 }
             }
             else {
-                // 🟠 LOG: nessun percorso per questa uscita
+                //  LOG: nessun percorso per questa uscita
                 log.debug("Nessun percorso verso {}", exit.getId());
             }
         }
@@ -109,13 +109,13 @@ public class EvacuationPathService {
         // Nessun percorso trovato
         if (bestPath.isEmpty()) {
 
-            // 🔴 LOG: fallimento globale
+            //  LOG: fallimento globale
             log.warn("Nessun percorso di evacuazione disponibile da {}", startLabel);
 
             throw new NoPathFoundException();
         }
 
-        // 🟢 LOG: successo finale
+        //  LOG: successo finale
         log.info("Percorso evacuazione calcolato. Costo: {}", bestCost);
 
         return bestPath.stream()
@@ -125,7 +125,7 @@ public class EvacuationPathService {
 
 
     // =========================================================
-    // 2️⃣ ROUTE GENERICA DA DTO
+    //  ROUTE GENERICA DA DTO
     // =========================================================
     public RouteResponse calculateRoute(RouteRequest request) {
 
@@ -170,7 +170,7 @@ public class EvacuationPathService {
     }
 
     // =========================================================
-    // 🔧 COSTO PERCORSO
+    //  COSTO PERCORSO
     // =========================================================
     private double calculateCost(List<GraphNode> path, Graph graph) {
 

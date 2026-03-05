@@ -20,7 +20,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    // 🔐 chiave segreta per ADMIN
+    //  chiave segreta per ADMIN
     private static final String ADMIN_SECRET = "RESQ_ADMIN_2026";
 
     // =======================
@@ -38,10 +38,7 @@ public class AuthService {
 
 
 
-
-
-
-        // 🔐 controllo ADMIN
+        //  controllo ADMIN
         if ("ADMIN".equals(request.getRole())) {
 
             if (request.getAdminKey() == null ||

@@ -37,7 +37,7 @@ public class MapController {
     // =========================
     // CORRIDOI (con filtri opzionali)
     // =========================
-    // ✅ Usabile da:
+    // Usabile da:
     // - tab admin: GET /api/map/corridors
     // - map overlay: GET /api/map/corridors?building=B&floor=interrato
     @GetMapping("/corridors")
@@ -52,7 +52,7 @@ public class MapController {
     }
 
     // =========================
-    // 🗺️ MAPPA COMPLETA
+    //  MAPPA COMPLETA
     // =========================
     @GetMapping
     public MapDTO getMap() {
@@ -60,7 +60,7 @@ public class MapController {
     }
 
     // =========================
-    // ✅ EVACUATION
+    // EVACUATION
     // =========================
     @GetMapping("/evacuation")
     public ResponseEntity<List<String>> getEvacuationPath(

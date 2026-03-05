@@ -9,5 +9,5 @@ import java.util.List;
 public interface NodeRepository extends JpaRepository<NodeEntity, Long> {
 
     Optional<NodeEntity> findByLabel(String label);
-    List<NodeEntity> findByBuildingAndFloor(String building, String floor);
+
 }

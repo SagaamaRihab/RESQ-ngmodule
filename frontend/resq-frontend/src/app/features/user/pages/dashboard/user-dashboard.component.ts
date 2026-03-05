@@ -1,68 +1,69 @@
 // ================= IMPORT =================
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
+// Component base Angular
+import { Component, OnInit } from '@angular/core';
 
-import { NotificationSocketService } from '../../../../core/services/notification-socket.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
+// Moduli comuni
+import { CommonModule } from '@angular/common';
+
+// Direttiva per usare routerLink nel template
+import { RouterLink } from '@angular/router';
+
+// Service per autenticazione (login/logout)
+import { AuthService } from '../../../../core/services/auth.service';
 
 
 // ================= COMPONENT =================
 
 @Component({
   selector: 'app-user-dashboard',
+
+  // Standalone component
   standalone: true,
-  imports: [CommonModule, RouterLink, MatSnackBarModule],
+
+  // Moduli utilizzati dal componente
+  imports: [CommonModule, RouterLink],
+
+  // Template HTML associato
   templateUrl: './user-dashboard.component.html',
+
+  // File CSS associato
   styleUrls: ['./user-dashboard.component.css']
 })
 
-export class UserDashboardComponent implements OnInit, OnDestroy {
+export class UserDashboardComponent implements OnInit {
 
+
+  // =================================================
+  // ============ DATI UTENTE ========================
+  // =================================================
+
+  // Username mostrato nella dashboard
   username: string | null = null;
-  private notificationSub!: Subscription;
+
+
+  // =================================================
+  // ============ COSTRUTTORE ========================
+  // =================================================
 
   constructor(
-    private authService: AuthService,
-    private socketService: NotificationSocketService,
-    private snackBar: MatSnackBar
+    private authService: AuthService
   ) {}
+
+
+  // =================================================
+  // ============ INIZIALIZZAZIONE ===================
+  // =================================================
 
   ngOnInit(): void {
 
+    // Recupera username salvato al login
     const stored = localStorage.getItem('username');
+
+    console.log('STORED USERNAME =', stored);
+
+    // Assegna valore alla variabile
     this.username = stored;
-
-    const building = localStorage.getItem('building');
-
-    if (building) {
-
-      this.socketService.connect(building);
-
-      this.notificationSub = this.socketService.notification$
-        .subscribe(notification => {
-
-          if (notification) {
-
-            this.snackBar.open(
-              `🚨 Corridoio bloccato: ${notification.fromNode} → ${notification.toNode}`,
-              'OK',
-              { duration: 5000 }
-            );
-
-          }
-        });
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.notificationSub) {
-      this.notificationSub.unsubscribe();
-    }
-    this.socketService.disconnect();
   }
 
 }

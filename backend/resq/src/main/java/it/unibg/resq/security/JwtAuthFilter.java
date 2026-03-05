@@ -35,12 +35,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        //  ROTTE PUBBLICHE (senza JWT)
-        if (path.startsWith("/api/auth") ||
-                path.startsWith("/api/nodes") ||
-                path.startsWith("/ws") ||
-                path.startsWith("/topic")) {
-
+        // Rotte pubbliche
+        if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -53,41 +49,37 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         final String token = authHeader.substring(7);
-        String email = null;
 
         try {
-            email = jwtService.extractUsername(token);
+
+            String email = jwtService.extractUsername(token);
+
+            if (email != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                User user = userRepository.findByEmail(email).orElse(null);
+
+                if (user != null && jwtService.isTokenValid(token, user)) {
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    user,
+                                    null,
+                                    List.of(() -> "ROLE_" + user.getRole().name())
+                            );
+
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+
         } catch (Exception e) {
             System.out.println("JWT ERROR: " + e.getMessage());
         }
 
-        if (email != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            User user = userRepository
-                    .findByEmail(email)
-                    .orElse(null);
-
-            if (user != null && jwtService.isTokenValid(token, user)) {
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                user.getEmail(),
-                                null,
-                                List.of(
-                                        new org.springframework.security.core.authority.SimpleGrantedAuthority(
-                                                "ROLE_" + user.getRole().name()
-                                        )
-                                )
-                        );
-
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
-            }
-        }
-
         filterChain.doFilter(request, response);
     }
-
 }

@@ -18,12 +18,12 @@ public class JwtService {
     private static final String SECRET_KEY =
             "12345678901234567890123456789012345678901234567890";
 
-    // 🔑 Estrae email (subject)
+    //  Estrae email (subject)
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 🔎 Metodo GENERICO per estrarre un claim
+    //  Metodo GENERICO per estrarre un claim
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
         final Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
@@ -37,7 +37,7 @@ public class JwtService {
                 .getBody();
     }
 
-    // ✅ Controllo validità token
+    //  Controllo validità token
     public boolean isTokenValid(String token, User user) {
         final String email = extractUsername(token);
         return email.equals(user.getEmail()) && !isTokenExpired(token);
@@ -51,7 +51,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // 🔐 Generazione token
+    //  Generazione token
     public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
@@ -68,7 +68,7 @@ public class JwtService {
     }
 
 
-    // 🔐 Estrae il ruolo dal token
+    //  Estrae il ruolo dal token
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
     }

@@ -28,7 +28,7 @@ public class UserController {
     // 
 
     /**
-     * ✅ Per l'Admin: Recupera le posizioni di tutti gli utenti per visualizzare i punti sulla mappa
+     *  Per l'Admin: Recupera le posizioni di tutti gli utenti per visualizzare i punti sulla mappa
      * Nota: Questo metodo richiede che getActiveUserPositions() sia definito in UserService
      */
     @GetMapping("/active-locations")
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     /**
-     * ✅ Per l'Utente: Invia la propria posizione (nodeId) quando entra in una stanza
+     *  Per l'Utente: Invia la propria posizione (nodeId) quando entra in una stanza
      * Nota: Questo metodo richiede che updateUserLocation() sia definito in UserService
      */
     @PostMapping("/me/location")
